@@ -4,6 +4,7 @@ slug: "the-bug-jsdom-could-not-see"
 date: "2026-11-03"
 lang: "en"
 kind: "note"
+category: "testing"
 summary: "A shadcn/ui PR sat for three months because its tests ran in jsdom, which does not fire scroll events for programmatic scrolls. Browser tests found that bug and two more in the same function."
 tags: ["accessibility", "focus", "testing", "react", "open-source"]
 repo: "shadcn-ui/ui"

@@ -32,7 +32,8 @@
     <header class="page-head">
       <p class="kicker">Writing</p>
       <h1>Notes on what a screen reader says.</h1>
-      <p class="lede">11 pieces: one essay and 10 notes from merged pull requests and runtime accessibility work. Some are also on LinkedIn; this is the canonical copy.</p>
+      <p class="lede">11 pieces, accessibility first: what a screen reader announces, plus testing and engineering work behind it. Some are also on LinkedIn; this is the canonical copy.</p>
+      <nav class="categories" aria-label="Categories"><ul><li><a href="./" aria-current="page">All <span class="count">11</span></a></li><li><a href="./category/accessibility/">Accessibility <span class="count">9</span></a></li><li><a href="./category/testing/">Testing <span class="count">1</span></a></li><li><a href="./category/engineering/">Engineering <span class="count">1</span></a></li></ul></nav>
     </header>
     <h2 class="year">2026</h2>
 <ul class="index-list">
@@ -89,7 +90,7 @@
   <a href="./naming-a-tree.html" aria-labelledby="entry-naming-a-tree">
     <span class="date"><time datetime="2026-08-26">Aug 26</time></span>
     <span class="title" id="entry-naming-a-tree">Naming a tree</span>
-    <span class="excerpt">TreeList dropped every rest prop, so a headerless tree could not be named at all. Naming it correctly came down to three decisions and three review rounds that each caught a real gap.</span>
+    <span class="excerpt">TreeList accepted every BaseProps attribute and dropped it before the DOM, so a headerless tree could not be named. The fix was three precedence rules and a test that asserted on the element carrying the role.</span>
   </a>
 </li>
 <li>

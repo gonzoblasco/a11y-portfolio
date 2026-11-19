@@ -28,6 +28,21 @@
 | `oss-2026-08-24.md` | Roundup de tres merges ya cubiertos por notas individuales. |
 | `astryx-treelist-naming.md` | Traducción al español del mismo PR #5493 que `naming-a-tree`. Se puede publicar como versión ES más adelante. |
 
+## Categorías
+
+Accesibilidad es la prioridad, no el límite. El sitio tiene cuatro categorías y el build
+genera una página por categoría con contenido.
+
+| Slug | Etiqueta | Artículos |
+|---|---|---|
+| `accessibility` | Accessibility | 9 |
+| `testing` | Testing | 1 (The bug jsdom could not see) |
+| `engineering` | Engineering | 1 (Orchestrating a 10,000-line refactor) |
+| `field-notes` | Field notes | 0 (reservada para ejercicios y proceso, ej. dev.to) |
+
+La categoría es obligatoria en el frontmatter. El build falla si falta o no es una de las
+cuatro. Una pieza sobre un ejercicio de dev.to va a `field-notes`, no a `accessibility`.
+
 ## Reglas editoriales
 
 - Un artículo por archivo en `content/writing/<slug>.md`, con frontmatter y `canonical`.

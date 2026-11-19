@@ -4,6 +4,7 @@ slug: "dialog-description"
 date: "2026-10-22"
 lang: "en"
 kind: "note"
+category: "accessibility"
 summary: "Carbon's ComposedModal forwarded only aria-labelledby, so screen reader users got a title and nothing about what the modal was for. The PR adds aria-describedby, and review caught a test that proved nothing."
 tags: ["accessibility", "aria", "dialog", "carbon", "open-source"]
 repo: "carbon-design-system/carbon"

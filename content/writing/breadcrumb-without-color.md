@@ -4,6 +4,7 @@ slug: "breadcrumb-without-color"
 date: "2026-08-24"
 lang: "en"
 kind: "note"
+category: "accessibility"
 summary: "Astryx told the current page in its breadcrumb from the links only by color, failing WCAG 1.4.1. The fix was one line of font weight, three weeks and a cleanup rebase away from merge."
 tags: ["accessibility", "wcag", "use-of-color", "react", "open-source"]
 repo: "facebook/astryx"

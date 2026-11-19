@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Accessibility — Writing — Gonzalo Blasco</title>
+  <meta name="description" content="What assistive technology actually announces, and the fixes behind it." />
+  <meta name="author" content="Gonzalo Blasco" />
+  <link rel="canonical" href="https://gonzoblasco.github.io/a11y-portfolio/writing/category/accessibility/" />
+  <meta property="og:site_name" content="Gonzalo Blasco" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Accessibility — Writing — Gonzalo Blasco" />
+  <meta property="og:description" content="What assistive technology actually announces, and the fixes behind it." />
+  <meta property="og:url" content="https://gonzoblasco.github.io/a11y-portfolio/writing/category/accessibility/" />
+  <meta name="twitter:card" content="summary" />
+  <link rel="alternate" type="application/atom+xml" href="../../../feed.xml" title="Gonzalo Blasco" />
+  <link rel="stylesheet" href="../../../style.css" />
+  <link rel="preload" href="../../../assets/fonts/fraunces-normal.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="../../../assets/fonts/newsreader-normal.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="../../../assets/fonts/ibm-plex-mono-400.woff2" as="font" type="font/woff2" crossorigin />
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site">
+  <div class="wrap head">
+    <a class="wordmark" href="../../../">Gonzalo Blasco</a>
+    <nav aria-label="Sections"><ul><li><a href="../../../writing/" aria-current="page">Writing</a></li><li><a href="../../../preflight/">Work</a></li><li><a href="../../../about/">About</a></li></ul></nav>
+  </div>
+</header>
+<main id="main">
+  <div class="wrap">
+    <header class="page-head">
+      <p class="kicker">Writing / Category</p>
+      <h1>Accessibility</h1>
+      <p class="lede">What assistive technology actually announces, and the fixes behind it.</p>
+      <nav class="categories" aria-label="Categories"><ul><li><a href="../../">All <span class="count">11</span></a></li><li><a href="../accessibility/" aria-current="page">Accessibility <span class="count">9</span></a></li><li><a href="../testing/">Testing <span class="count">1</span></a></li><li><a href="../engineering/">Engineering <span class="count">1</span></a></li></ul></nav>
+    </header>
+    <ul class="index-list">
+<li>
+  <a href="../../the-quieter-announcement.html" aria-labelledby="entry-the-quieter-announcement">
+    <span class="date"><time datetime="2026-11-17">Nov 17</time></span>
+    <span class="title" id="entry-the-quieter-announcement">The Quieter Announcement</span>
+    <span class="excerpt">I fixed a screen reader bug by deleting an announcement. React Spectrum&#39;s live region was overwriting what VoiceOver already said natively, and no linter could see the collision.</span>
+  </a>
+</li>
+<li>
+  <a href="../../dialog-description.html" aria-labelledby="entry-dialog-description">
+    <span class="date"><time datetime="2026-10-22">Oct 22</time></span>
+    <span class="title" id="entry-dialog-description">The dialog description that never arrived</span>
+    <span class="excerpt">Carbon&#39;s ComposedModal forwarded only aria-labelledby, so screen reader users got a title and nothing about what the modal was for. The PR adds aria-describedby, and review caught a test that proved nothing.</span>
+  </a>
+</li>
+<li>
+  <a href="../../sortable-headers.html" aria-labelledby="entry-sortable-headers">
+    <span class="date"><time datetime="2026-10-07">Oct 7</time></span>
+    <span class="title" id="entry-sortable-headers">Sortable headers are not toggle buttons</span>
+    <span class="excerpt">A sortable Datagrid header announced itself as a toggle button, because aria-pressed competed with aria-sort and won. Removing the attribute let the sort direction reach the user again.</span>
+  </a>
+</li>
+<li>
+  <a href="../../focus-after-step-change.html" aria-labelledby="entry-focus-after-step-change">
+    <span class="date"><time datetime="2026-09-14">Sep 14</time></span>
+    <span class="title" id="entry-focus-after-step-change">Focus after the step changed</span>
+    <span class="excerpt">After Next in CreateFullPage, focus jumped to the skip link because the helper inferred visibility from an attribute the component never sets. One querySelector on the real class fixed it.</span>
+  </a>
+</li>
+<li>
+  <a href="../../posinset-across-sections.html" aria-labelledby="entry-posinset-across-sections">
+    <span class="date"><time datetime="2026-09-09">Sep 9</time></span>
+    <span class="title" id="entry-posinset-across-sections">Counting items across sections</span>
+    <span class="excerpt">A test-only PR locks in that aria-posinset stays global across menu sections. The first version flattened the fixture, went green and tested nothing; the corrected one renders the real sections.</span>
+  </a>
+</li>
+<li>
+  <a href="../../naming-a-tree.html" aria-labelledby="entry-naming-a-tree">
+    <span class="date"><time datetime="2026-08-26">Aug 26</time></span>
+    <span class="title" id="entry-naming-a-tree">Naming a tree</span>
+    <span class="excerpt">TreeList accepted every BaseProps attribute and dropped it before the DOM, so a headerless tree could not be named. The fix was three precedence rules and a test that asserted on the element carrying the role.</span>
+  </a>
+</li>
+<li>
+  <a href="../../hovercard-dialog-semantics.html" aria-labelledby="entry-hovercard-dialog-semantics">
+    <span class="date"><time datetime="2026-08-25">Aug 25</time></span>
+    <span class="title" id="entry-hovercard-dialog-semantics">When a HoverCard calls itself a dialog</span>
+    <span class="excerpt">A labelled HoverCard trigger described itself with aria-describedby, so screen reader users heard the dialog&#39;s contents as a description instead of learning that a dialog opens. The fix is the right popup contract.</span>
+  </a>
+</li>
+<li>
+  <a href="../../aria-orientation-role-owners.html" aria-labelledby="entry-aria-orientation-role-owners">
+    <span class="date"><time datetime="2026-08-24">Aug 24</time></span>
+    <span class="title" id="entry-aria-orientation-role-owners">aria-orientation belongs to the role owner</span>
+    <span class="excerpt">A Combobox grid carried aria-orientation, an attribute the grid role does not support, so screen readers got contradictory navigation cues. Moving it to the elements that own the role fixed it.</span>
+  </a>
+</li>
+<li>
+  <a href="../../breadcrumb-without-color.html" aria-labelledby="entry-breadcrumb-without-color">
+    <span class="date"><time datetime="2026-08-24">Aug 24</time></span>
+    <span class="title" id="entry-breadcrumb-without-color">A breadcrumb that does not rely on color</span>
+    <span class="excerpt">Astryx told the current page in its breadcrumb from the links only by color, failing WCAG 1.4.1. The fix was one line of font weight, three weeks and a cleanup rebase away from merge.</span>
+  </a>
+</li>
+    </ul>
+  </div>
+</main>
+<footer class="site">
+  <div class="wrap">
+    <span>Gonzalo Blasco · Buenos Aires</span>
+    <span><a href="mailto:gonzoblasco@icloud.com">gonzoblasco@icloud.com</a> · <a href="https://github.com/gonzoblasco">GitHub</a> · <a href="https://www.linkedin.com/in/gonzalo-blasco">LinkedIn</a></span>
+  </div>
+</footer>
+</body>
+</html>

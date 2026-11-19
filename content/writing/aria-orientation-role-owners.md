@@ -4,6 +4,7 @@ slug: "aria-orientation-role-owners"
 date: "2026-08-24"
 lang: "en"
 kind: "note"
+category: "accessibility"
 summary: "A Combobox grid carried aria-orientation, an attribute the grid role does not support, so screen readers got contradictory navigation cues. Moving it to the elements that own the role fixed it."
 tags: ["accessibility", "aria", "aria-orientation", "combobox", "open-source"]
 repo: "mui/base-ui"

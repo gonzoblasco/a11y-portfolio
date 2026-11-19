@@ -4,13 +4,13 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Naming a tree — Gonzalo Blasco</title>
-  <meta name="description" content="TreeList dropped every rest prop, so a headerless tree could not be named at all. Naming it correctly came down to three decisions and three review rounds that each caught a real gap." />
+  <meta name="description" content="TreeList accepted every BaseProps attribute and dropped it before the DOM, so a headerless tree could not be named. The fix was three precedence rules and a test that asserted on the element carrying the role." />
   <meta name="author" content="Gonzalo Blasco" />
   <link rel="canonical" href="https://gonzoblasco.github.io/a11y-portfolio/writing/naming-a-tree.html" />
   <meta property="og:site_name" content="Gonzalo Blasco" />
   <meta property="og:type" content="article" />
   <meta property="og:title" content="Naming a tree — Gonzalo Blasco" />
-  <meta property="og:description" content="TreeList dropped every rest prop, so a headerless tree could not be named at all. Naming it correctly came down to three decisions and three review rounds that each caught a real gap." />
+  <meta property="og:description" content="TreeList accepted every BaseProps attribute and dropped it before the DOM, so a headerless tree could not be named. The fix was three precedence rules and a test that asserted on the element carrying the role." />
   <meta property="og:url" content="https://gonzoblasco.github.io/a11y-portfolio/writing/naming-a-tree.html" />
   <meta name="twitter:card" content="summary" />
   <link rel="alternate" type="application/atom+xml" href="../feed.xml" title="Gonzalo Blasco" />
@@ -32,26 +32,44 @@
     <header class="article-head">
       <p class="kicker"><a href="./">Writing</a> <span aria-hidden="true">/</span> <time datetime="2026-08-26">Aug 2026</time></p>
       <h1>Naming a tree</h1>
-      <p class="lede">TreeList dropped every rest prop, so a headerless tree could not be named at all. Naming it correctly came down to three decisions and three review rounds that each caught a real gap.</p>
+      <p class="lede">TreeList accepted every BaseProps attribute and dropped it before the DOM, so a headerless tree could not be named. The fix was three precedence rules and a test that asserted on the element carrying the role.</p>
       <p class="article-meta">
+        <span>Accessibility</span>
         <span>Note</span>
-        <span>1 min read</span>
+        <span>4 min read</span>
         <span><time datetime="2026-08-26">August 26, 2026</time></span>
         <span>Originally published on LinkedIn</span>
       </p>
     </header>
     <div class="prose">
-<p>A follow-up I had in review, fixing the same class of dropped accessibility attributes in <code>List</code> and <code>TreeList</code>, just landed in astryx.</p>
-<p>The bug: <code>TreeList</code> destructured a fixed set of props with no rest spread, so every <code>BaseProps</code> attribute (<code>aria-*</code>, <code>role</code>, <code>tabIndex</code>, <code>id</code>, event handlers) was silently dropped before reaching the DOM. A tree without a visible header could not be named at all: a screen reader announced an unnamed tree, and nothing said which tree it was.</p>
-<p>The fix was more than &quot;add <code>...restProps</code>&quot;. Three decisions shaped it:</p>
-<ol>
-<li><code>aria-label</code> and <code>aria-labelledby</code> land on the <code>&lt;ul role=&quot;tree&quot;&gt;</code> itself, not the wrapping <code>&lt;div&gt;</code>. A tree is named where the tree role is, not on a layout node that does nothing semantically.</li>
-<li>A visible header keeps naming the tree. When <code>header</code> is rendered, the generated header id wins over any caller <code>aria-labelledby</code>, so assistive tech hears the same name the user sees. A caller label only applies on the headerless path.</li>
-<li>The contract <code>role=&quot;tree&quot;</code> is written after the rest spread. A consumer passing <code>role=&quot;listbox&quot;</code> can no longer clobber the semantic role that makes the tree a tree.</li>
-</ol>
-<p>The review process was the sharpest part: three rounds, and each one caught a real gap. First the wrong target element, then the precedence rule I had gotten backwards. Getting an accessible name right is genuinely harder than it looks, because it is about who you label and when the visible label should win.</p>
-<p>Five regression tests, 81 passing. And the <code>List</code> half is handled separately by the maintainers, no duplicated work.</p>
-<p>PR: <a href="https://github.com/facebook/astryx/pull/5493">https://github.com/facebook/astryx/pull/5493</a></p>
+<p>A tree without a name is not a tree to a screen reader. It is a shape that opens and closes and never says what it contains.</p>
+<p>Last August I merged a fix in Astryx for exactly that. The report looked small: <code>TreeList</code> accepted the same <code>BaseProps</code> as every other component in the library, TypeScript checked the prop, and the tree was still unnamed. The component destructured a fixed set of props with no rest spread, so <code>aria-*</code>, <code>role</code>, <code>tabIndex</code>, <code>id</code> and event handlers were dropped before the DOM. The pull request has the shortest reproduction I know:</p>
+<pre tabindex="0" role="region" aria-label="Code sample"><code class="language-tsx">render(&lt;TreeList items={items} aria-label=&quot;File tree&quot; /&gt;);
+
+// &lt;div class=&quot;astryx-tree-list ...&quot;&gt;
+//   &lt;ul role=&quot;tree&quot;&gt;
+// aria-label -&gt; null
+</code></pre>
+<p>The accessibility cost is the sharp one. A tree is named where the tree role is. When the component had a visible <code>header</code>, it generated an id and wired <code>aria-labelledby</code> to it. When it did not, there was no naming path. A screen reader announced &quot;tree&quot; and nothing else. In a file explorer with two trees, a blind user cannot tell which one they are in, and the only way to find out is to open one and listen to what falls out.</p>
+<p>The type was the contract, and the type was lying.</p>
+<h2 id="why-nothing-caught-it">Why nothing caught it</h2>
+<p>TypeScript accepted the prop because <code>TreeListProps</code> extends <code>BaseProps</code>. The header of that type says it keeps <code>aria-*</code>, <code>role</code>, <code>tabIndex</code>, <code>id</code> and event handlers. Nothing warned at runtime: React does not know that <code>aria-label</code> disappeared between the props object and the <code>&lt;ul&gt;</code>.</p>
+<p>The accessibility audit on the pull request itself reported no violations. The tree was still unnamed. An unnamed <code>tree</code> is not a missing required attribute; it is a valid tree that happens to be unusable. That is the gap. A linter can tell you whether a role allows an attribute. It cannot tell you whether the thing has a name a person can use.</p>
+<p>The first test I wrote made the same mistake. It asserted on <code>container.firstElementChild</code>, the layout <code>&lt;div&gt;</code> that received the spread. The test went green. The <code>&lt;ul role=&quot;tree&quot;&gt;</code> still had nothing.</p>
+<h2 id="the-first-review">The first review</h2>
+<p>cixzhang's first review was precise: &quot;The tree still can't be named.&quot; <code>aria-label</code> landed on the wrapper div, not on the <code>&lt;ul&gt;</code> that carries <code>role=&quot;tree&quot;</code>. The screenshot of Chromium's accessibility tree showed the tree with an empty name. My test was asserting on the div I had changed, not on the element that carries the role.</p>
+<p>There was a second problem in the same review. I had spread <code>...restProps</code> after <code>role=&quot;tree&quot;</code>, so a consumer could pass <code>role=&quot;listbox&quot;</code> and displace the contract. The role that makes a tree a tree was optional by accident. The convention in the repo is the opposite: contract props go after the spread, so the component wins. <code>ListItem</code> and <code>Kbd</code>, in the same directory, already spread their rest props. <code>TreeList</code> and <code>List</code> were the exceptions, and the issue listed ten more components with the same shape. One omission copied.</p>
+<p>I had it backwards in two places at once: the spread order and the test target.</p>
+<h2 id="the-second-review">The second review</h2>
+<p>The next version pulled <code>aria-label</code> and <code>aria-labelledby</code> out of the rest and put them on the <code>&lt;ul role=&quot;tree&quot;&gt;</code>. It also wrote <code>role=&quot;tree&quot;</code> after the spread. The tree could be named. The role was stable.</p>
+<p>Then cixzhang asked for one more thing: when <code>TreeList</code> renders a visible <code>header</code>, the generated header id should keep naming the tree. My version let a caller <code>aria-labelledby</code> replace it, so assistive technology could hear a different name than the one on screen. That is a quiet failure. The visible label and the announced label diverge, and the person reading the screen and the person listening to it are no longer in the same document.</p>
+<p>The fix was a precedence rule: if a visible header exists, its id wins; a caller label only applies on the headerless path. I added tests for both paths and asserted on <code>getByRole('tree')</code>, not on the wrapper. The List half was left to the maintainers so the same work was not done twice.</p>
+<p>What the fix did not do is invent a default name. &quot;Tree&quot; is not a name; it is the role said twice. The component cannot know what the tree contains. It had to expose the name the caller already had, and then get out of the way.</p>
+<h2 id="the-rule">The rule</h2>
+<p>Name the element that carries the role. Test the element that carries the role. A wrapper is not the thing.</p>
+<p>A visible label outranks a programmatic one, because the two have to describe the same object. And a contract prop belongs after the spread: the component owns the semantics that make it what it is.</p>
+<p>The lesson of the ten other components is not that ten components are broken. It is that a missing convention propagates: one omission gets copied, and every copy looks correct in review because the type says it is. The fix is not a patch per component. It is the house pattern, written down and tested where the role lives.</p>
+<p>Five regression tests, and the tree has a name now. That is the whole product.</p>
 
     </div>
     <footer class="article-foot">

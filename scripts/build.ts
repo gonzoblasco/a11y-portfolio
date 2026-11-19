@@ -18,12 +18,38 @@ const GITHUB = "https://github.com/gonzoblasco";
 const LINKEDIN = "https://www.linkedin.com/in/gonzalo-blasco";
 const PREFLIGHT_REPO = "https://github.com/gonzoblasco/preflight-a11y";
 
+const CATEGORIES = {
+  accessibility: {
+    label: "Accessibility",
+    description:
+      "What assistive technology actually announces, and the fixes behind it.",
+  },
+  testing: {
+    label: "Testing",
+    description:
+      "Where tests run, what they can see, and the bugs they miss.",
+  },
+  engineering: {
+    label: "Engineering",
+    description:
+      "Architecture, refactors and the tools we build with.",
+  },
+  "field-notes": {
+    label: "Field notes",
+    description:
+      "What we learn outside the code: exercises, challenges and process.",
+  },
+} as const;
+
+type CategorySlug = keyof typeof CATEGORIES;
+
 type Meta = {
   title: string;
   slug: string;
   date: string;
   lang: string;
   kind: string;
+  category: CategorySlug;
   summary: string;
   tags: string[];
   repo?: string;
@@ -169,7 +195,7 @@ const articles: Article[] = readdirSync(writingDir)
     const raw = readFileSync(join(writingDir, file), "utf8");
     const { meta, content } = parseFrontMatter(raw, file);
 
-    for (const key of ["title", "slug", "date", "lang", "kind"]) {
+    for (const key of ["title", "slug", "date", "lang", "kind", "category"]) {
       if (!meta[key] || typeof meta[key] !== "string") fail(`${file}: missing required key "${key}"`);
     }
     if (!/^\d{4}-\d{2}-\d{2}$/.test(meta.date as string)) fail(`${file}: date must be YYYY-MM-DD`);
@@ -179,6 +205,9 @@ const articles: Article[] = readdirSync(writingDir)
     }
     if (!["en", "es"].includes(meta.lang as string)) fail(`${file}: lang must be en or es`);
     if (!["essay", "note"].includes(meta.kind as string)) fail(`${file}: kind must be essay or note`);
+    if (!(meta.category as string in CATEGORIES)) {
+      fail(`${file}: category must be one of ${Object.keys(CATEGORIES).join(", ")}`);
+    }
 
     const words = content.split(/\s+/).filter(Boolean).length;
     return {
@@ -187,6 +216,7 @@ const articles: Article[] = readdirSync(writingDir)
       date: meta.date as string,
       lang: meta.lang as string,
       kind: meta.kind as string,
+      category: meta.category as CategorySlug,
       summary: (meta.summary as string) || "",
       tags: Array.isArray(meta.tags) ? meta.tags : [],
       repo: meta.repo as string | undefined,
@@ -295,6 +325,34 @@ function entryRow(article: Article, root: string): string {
 </li>`;
 }
 
+function indexRow(article: Article, hrefPrefix: string): string {
+  const badge = article.lang === "es" ? '<span class="badge" lang="es">En español</span>' : "";
+  return `<li>
+  <a href="${hrefPrefix}${article.slug}.html" aria-labelledby="entry-${article.slug}">
+    <span class="date"><time datetime="${article.date}">${formatShortDate(article.date)}</time></span>
+    <span class="title" id="entry-${article.slug}">${escapeHtml(article.title)}${badge}</span>
+    <span class="excerpt">${escapeHtml(article.summary)}</span>
+  </a>
+</li>`;
+}
+
+function categoryNav(options: {
+  allHref: string;
+  hrefPrefix: string;
+  current?: CategorySlug;
+}): string {
+  const { allHref, hrefPrefix, current } = options;
+  const items = [
+    `<li><a href="${allHref}"${current ? "" : ' aria-current="page"'}>All <span class="count">${articles.length}</span></a></li>`,
+    ...(Object.entries(CATEGORIES) as Array<[CategorySlug, { label: string }]>).map(([slug, meta]) => {
+      const count = articles.filter((article) => article.category === slug).length;
+      if (count === 0) return "";
+      return `<li><a href="${hrefPrefix}${slug}/"${current === slug ? ' aria-current="page"' : ""}>${meta.label} <span class="count">${count}</span></a></li>`;
+    }),
+  ].filter(Boolean);
+  return `<nav class="categories" aria-label="Categories"><ul>${items.join("")}</ul></nav>`;
+}
+
 function homeEntries(): string {
   return articles
     .slice(0, 3)
@@ -326,6 +384,7 @@ const homeBody = `<main id="main">
     <ul class="entries">
 ${homeEntries()}
     </ul>
+    ${categoryNav({ allHref: "./writing/", hrefPrefix: "./writing/category/" })}
   </section>
 
   <section class="work wrap" aria-labelledby="work">
@@ -364,15 +423,7 @@ const writingGroups = years
   .map((year) => {
     const rows = articles
       .filter((article) => article.date.startsWith(year))
-      .map(
-        (article) => `<li>
-  <a href="./${article.slug}.html" aria-labelledby="entry-${article.slug}">
-    <span class="date"><time datetime="${article.date}">${formatShortDate(article.date)}</time></span>
-    <span class="title" id="entry-${article.slug}">${escapeHtml(article.title)}${article.lang === "es" ? '<span class="badge" lang="es">En español</span>' : ""}</span>
-    <span class="excerpt">${escapeHtml(article.summary)}</span>
-  </a>
-</li>`
-      )
+      .map((article) => indexRow(article, "./"))
       .join("\n");
     return `<h2 class="year">${year}</h2>\n<ul class="index-list">\n${rows}\n</ul>`;
   })
@@ -383,7 +434,8 @@ const writingBody = `<main id="main">
     <header class="page-head">
       <p class="kicker">Writing</p>
       <h1>Notes on what a screen reader says.</h1>
-      <p class="lede">${articles.length} pieces: one essay and ${articles.length - 1} notes from merged pull requests and runtime accessibility work. Some are also on LinkedIn; this is the canonical copy.</p>
+      <p class="lede">${articles.length} pieces, accessibility first: what a screen reader announces, plus testing and engineering work behind it. Some are also on LinkedIn; this is the canonical copy.</p>
+      ${categoryNav({ allHref: "./", hrefPrefix: "./category/" })}
     </header>
     ${writingGroups}
   </div>
@@ -400,6 +452,42 @@ writeFile(
     body: writingBody,
   })
 );
+
+/* category pages */
+
+for (const [slug, meta] of Object.entries(CATEGORIES) as Array<
+  [CategorySlug, { label: string; description: string }]
+>) {
+  const items = articles.filter((article) => article.category === slug);
+  if (items.length === 0) continue;
+
+  const rows = items.map((article) => indexRow(article, "../../")).join("\n");
+  const categoryBody = `<main id="main">
+  <div class="wrap">
+    <header class="page-head">
+      <p class="kicker">Writing / Category</p>
+      <h1>${meta.label}</h1>
+      <p class="lede">${meta.description}</p>
+      ${categoryNav({ allHref: "../../", hrefPrefix: "../", current: slug })}
+    </header>
+    <ul class="index-list">
+${rows}
+    </ul>
+  </div>
+</main>`;
+
+  writeFile(
+    `writing/category/${slug}/index.html`,
+    page({
+      root: "../../../",
+      current: "writing",
+      title: `${meta.label} — Writing — Gonzalo Blasco`,
+      description: meta.description,
+      canonical: `${BASE}/writing/category/${slug}/`,
+      body: categoryBody,
+    })
+  );
+}
 
 /* articles */
 
@@ -427,6 +515,7 @@ for (const article of articles) {
       <h1${isSpanish ? ' lang="es"' : ""}>${escapeHtml(article.title)}</h1>
       ${article.summary ? `<p class="lede"${isSpanish ? ' lang="es"' : ""}>${escapeHtml(article.summary)}</p>` : ""}
       <p class="article-meta"${isSpanish ? ' lang="en"' : ""}>
+        <span>${CATEGORIES[article.category].label}</span>
         <span>${kindLabel}</span>
         <span>${minutes} min read</span>
         <span><time datetime="${article.date}">${formatLongDate(article.date)}</time></span>
@@ -628,6 +717,7 @@ const feedEntries = articles
     <title>${escapeHtml(article.title)}</title>
     <id>${BASE}/writing/${article.slug}.html</id>
     <link href="${BASE}/writing/${article.slug}.html" />
+    <category term="${article.category}" />
     <updated>${new Date(`${article.date}T12:00:00Z`).toISOString()}</updated>
     <summary>${escapeHtml(article.summary)}</summary>
     <content type="html">${escapeHtml(article.html)}</content>
@@ -660,6 +750,9 @@ const urls: Array<{ loc: string; lastmod?: string }> = [
   { loc: `${BASE}/writing/` },
   { loc: `${BASE}/about/` },
   { loc: `${BASE}/preflight/` },
+  ...(Object.keys(CATEGORIES) as CategorySlug[])
+    .filter((slug) => articles.some((article) => article.category === slug))
+    .map((slug) => ({ loc: `${BASE}/writing/category/${slug}/` })),
   ...articles.map((article) => ({ loc: `${BASE}/writing/${article.slug}.html`, lastmod: article.date })),
 ];
 

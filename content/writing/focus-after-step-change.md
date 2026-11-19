@@ -4,6 +4,7 @@ slug: "focus-after-step-change"
 date: "2026-09-14"
 lang: "en"
 kind: "note"
+category: "accessibility"
 summary: "After Next in CreateFullPage, focus jumped to the skip link because the helper inferred visibility from an attribute the component never sets. One querySelector on the real class fixed it."
 tags: ["accessibility", "focus-management", "keyboard", "ibm-products", "open-source"]
 repo: "carbon-design-system/ibm-products"

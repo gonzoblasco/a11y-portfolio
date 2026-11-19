@@ -4,6 +4,7 @@ slug: "posinset-across-sections"
 date: "2026-09-09"
 lang: "en"
 kind: "note"
+category: "accessibility"
 summary: "A test-only PR locks in that aria-posinset stays global across menu sections. The first version flattened the fixture, went green and tested nothing; the corrected one renders the real sections."
 tags: ["accessibility", "aria", "testing", "react-spectrum", "open-source"]
 repo: "adobe/react-spectrum"

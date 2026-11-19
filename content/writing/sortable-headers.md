@@ -4,6 +4,7 @@ slug: "sortable-headers"
 date: "2026-10-07"
 lang: "en"
 kind: "note"
+category: "accessibility"
 summary: "A sortable Datagrid header announced itself as a toggle button, because aria-pressed competed with aria-sort and won. Removing the attribute let the sort direction reach the user again."
 tags: ["accessibility", "aria", "aria-sort", "datagrid", "screen-readers"]
 repo: "carbon-design-system/ibm-products"

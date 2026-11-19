@@ -4,6 +4,7 @@ slug: "hovercard-dialog-semantics"
 date: "2026-08-25"
 lang: "en"
 kind: "note"
+category: "accessibility"
 summary: "A labelled HoverCard trigger described itself with aria-describedby, so screen reader users heard the dialog's contents as a description instead of learning that a dialog opens. The fix is the right popup contract."
 tags: ["accessibility", "aria", "hovercard", "react", "open-source"]
 repo: "facebook/astryx"

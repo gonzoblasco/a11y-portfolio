@@ -4,6 +4,7 @@ slug: "orchestrating-a-refactor"
 date: "2026-08-28"
 lang: "en"
 kind: "note"
+category: "engineering"
 summary: "A 10,000-line monolith became a modular app through a staged agent pipeline: planning, execution, cross-review by a different model, and verification. The public API did not change."
 tags: ["engineering", "ai", "refactoring", "architecture", "agents"]
 source: "linkedin"

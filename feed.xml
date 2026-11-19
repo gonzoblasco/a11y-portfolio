@@ -14,6 +14,7 @@
     <title>The Quieter Announcement</title>
     <id>https://gonzoblasco.github.io/a11y-portfolio/writing/the-quieter-announcement.html</id>
     <link href="https://gonzoblasco.github.io/a11y-portfolio/writing/the-quieter-announcement.html" />
+    <category term="accessibility" />
     <updated>2026-11-17T12:00:00.000Z</updated>
     <summary>I fixed a screen reader bug by deleting an announcement. React Spectrum&#39;s live region was overwriting what VoiceOver already said natively, and no linter could see the collision.</summary>
     <content type="html">&lt;p&gt;I once fixed a screen reader bug by deleting an announcement.&lt;/p&gt;
@@ -72,6 +73,7 @@
     <title>The bug jsdom could not see</title>
     <id>https://gonzoblasco.github.io/a11y-portfolio/writing/the-bug-jsdom-could-not-see.html</id>
     <link href="https://gonzoblasco.github.io/a11y-portfolio/writing/the-bug-jsdom-could-not-see.html" />
+    <category term="testing" />
     <updated>2026-11-03T12:00:00.000Z</updated>
     <summary>A shadcn/ui PR sat for three months because its tests ran in jsdom, which does not fire scroll events for programmatic scrolls. Browser tests found that bug and two more in the same function.</summary>
     <content type="html">&lt;p&gt;A PR I opened in August merged yesterday. Three months. And what unblocked it was not the code: it was a test that could not see the bug.&lt;/p&gt;
@@ -90,6 +92,7 @@
     <title>The dialog description that never arrived</title>
     <id>https://gonzoblasco.github.io/a11y-portfolio/writing/dialog-description.html</id>
     <link href="https://gonzoblasco.github.io/a11y-portfolio/writing/dialog-description.html" />
+    <category term="accessibility" />
     <updated>2026-10-22T12:00:00.000Z</updated>
     <summary>Carbon&#39;s ComposedModal forwarded only aria-labelledby, so screen reader users got a title and nothing about what the modal was for. The PR adds aria-describedby, and review caught a test that proved nothing.</summary>
     <content type="html">&lt;p&gt;I just merged a PR into Carbon Design System that adds native support for the &lt;code&gt;aria-describedby&lt;/code&gt; prop on the &lt;code&gt;ComposedModal&lt;/code&gt; component. The change closes #21342, a known accessibility gap where screen reader users could not programmatically associate a description with a modal dialog.&lt;/p&gt;
@@ -106,6 +109,7 @@
     <title>Sortable headers are not toggle buttons</title>
     <id>https://gonzoblasco.github.io/a11y-portfolio/writing/sortable-headers.html</id>
     <link href="https://gonzoblasco.github.io/a11y-portfolio/writing/sortable-headers.html" />
+    <category term="accessibility" />
     <updated>2026-10-07T12:00:00.000Z</updated>
     <summary>A sortable Datagrid header announced itself as a toggle button, because aria-pressed competed with aria-sort and won. Removing the attribute let the sort direction reach the user again.</summary>
     <content type="html">&lt;p&gt;A screen reader does not read what your component means. It reads what your markup declares. When the two disagree, the user hears the declaration, and acts on it.&lt;/p&gt;
@@ -127,6 +131,7 @@
     <title>Focus after the step changed</title>
     <id>https://gonzoblasco.github.io/a11y-portfolio/writing/focus-after-step-change.html</id>
     <link href="https://gonzoblasco.github.io/a11y-portfolio/writing/focus-after-step-change.html" />
+    <category term="accessibility" />
     <updated>2026-09-14T12:00:00.000Z</updated>
     <summary>After Next in CreateFullPage, focus jumped to the skip link because the helper inferred visibility from an attribute the component never sets. One querySelector on the real class fixed it.</summary>
     <content type="html">&lt;p&gt;The bug report said focus was lost. It was not lost. It went somewhere specific: the &amp;quot;Skip to main content&amp;quot; link at the top of the page.&lt;/p&gt;
@@ -150,6 +155,7 @@
     <title>Counting items across sections</title>
     <id>https://gonzoblasco.github.io/a11y-portfolio/writing/posinset-across-sections.html</id>
     <link href="https://gonzoblasco.github.io/a11y-portfolio/writing/posinset-across-sections.html" />
+    <category term="accessibility" />
     <updated>2026-09-09T12:00:00.000Z</updated>
     <summary>A test-only PR locks in that aria-posinset stays global across menu sections. The first version flattened the fixture, went green and tested nothing; the corrected one renders the real sections.</summary>
     <content type="html">&lt;p&gt;Not every accessibility bug breaks something visibly. Some just disappear from the test suite one day, and nobody notices.&lt;/p&gt;
@@ -171,6 +177,7 @@
     <title>Orchestrating a 10,000-line refactor</title>
     <id>https://gonzoblasco.github.io/a11y-portfolio/writing/orchestrating-a-refactor.html</id>
     <link href="https://gonzoblasco.github.io/a11y-portfolio/writing/orchestrating-a-refactor.html" />
+    <category term="engineering" />
     <updated>2026-08-28T12:00:00.000Z</updated>
     <summary>A 10,000-line monolith became a modular app through a staged agent pipeline: planning, execution, cross-review by a different model, and verification. The public API did not change.</summary>
     <content type="html">&lt;p&gt;Refactoring 10,000 lines of monolithic code is not a writing problem, it is an orchestration problem.&lt;/p&gt;
@@ -199,25 +206,44 @@
     <title>Naming a tree</title>
     <id>https://gonzoblasco.github.io/a11y-portfolio/writing/naming-a-tree.html</id>
     <link href="https://gonzoblasco.github.io/a11y-portfolio/writing/naming-a-tree.html" />
+    <category term="accessibility" />
     <updated>2026-08-26T12:00:00.000Z</updated>
-    <summary>TreeList dropped every rest prop, so a headerless tree could not be named at all. Naming it correctly came down to three decisions and three review rounds that each caught a real gap.</summary>
-    <content type="html">&lt;p&gt;A follow-up I had in review, fixing the same class of dropped accessibility attributes in &lt;code&gt;List&lt;/code&gt; and &lt;code&gt;TreeList&lt;/code&gt;, just landed in astryx.&lt;/p&gt;
-&lt;p&gt;The bug: &lt;code&gt;TreeList&lt;/code&gt; destructured a fixed set of props with no rest spread, so every &lt;code&gt;BaseProps&lt;/code&gt; attribute (&lt;code&gt;aria-*&lt;/code&gt;, &lt;code&gt;role&lt;/code&gt;, &lt;code&gt;tabIndex&lt;/code&gt;, &lt;code&gt;id&lt;/code&gt;, event handlers) was silently dropped before reaching the DOM. A tree without a visible header could not be named at all: a screen reader announced an unnamed tree, and nothing said which tree it was.&lt;/p&gt;
-&lt;p&gt;The fix was more than &amp;quot;add &lt;code&gt;...restProps&lt;/code&gt;&amp;quot;. Three decisions shaped it:&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;&lt;code&gt;aria-label&lt;/code&gt; and &lt;code&gt;aria-labelledby&lt;/code&gt; land on the &lt;code&gt;&amp;lt;ul role=&amp;quot;tree&amp;quot;&amp;gt;&lt;/code&gt; itself, not the wrapping &lt;code&gt;&amp;lt;div&amp;gt;&lt;/code&gt;. A tree is named where the tree role is, not on a layout node that does nothing semantically.&lt;/li&gt;
-&lt;li&gt;A visible header keeps naming the tree. When &lt;code&gt;header&lt;/code&gt; is rendered, the generated header id wins over any caller &lt;code&gt;aria-labelledby&lt;/code&gt;, so assistive tech hears the same name the user sees. A caller label only applies on the headerless path.&lt;/li&gt;
-&lt;li&gt;The contract &lt;code&gt;role=&amp;quot;tree&amp;quot;&lt;/code&gt; is written after the rest spread. A consumer passing &lt;code&gt;role=&amp;quot;listbox&amp;quot;&lt;/code&gt; can no longer clobber the semantic role that makes the tree a tree.&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;The review process was the sharpest part: three rounds, and each one caught a real gap. First the wrong target element, then the precedence rule I had gotten backwards. Getting an accessible name right is genuinely harder than it looks, because it is about who you label and when the visible label should win.&lt;/p&gt;
-&lt;p&gt;Five regression tests, 81 passing. And the &lt;code&gt;List&lt;/code&gt; half is handled separately by the maintainers, no duplicated work.&lt;/p&gt;
-&lt;p&gt;PR: &lt;a href=&quot;https://github.com/facebook/astryx/pull/5493&quot;&gt;https://github.com/facebook/astryx/pull/5493&lt;/a&gt;&lt;/p&gt;
+    <summary>TreeList accepted every BaseProps attribute and dropped it before the DOM, so a headerless tree could not be named. The fix was three precedence rules and a test that asserted on the element carrying the role.</summary>
+    <content type="html">&lt;p&gt;A tree without a name is not a tree to a screen reader. It is a shape that opens and closes and never says what it contains.&lt;/p&gt;
+&lt;p&gt;Last August I merged a fix in Astryx for exactly that. The report looked small: &lt;code&gt;TreeList&lt;/code&gt; accepted the same &lt;code&gt;BaseProps&lt;/code&gt; as every other component in the library, TypeScript checked the prop, and the tree was still unnamed. The component destructured a fixed set of props with no rest spread, so &lt;code&gt;aria-*&lt;/code&gt;, &lt;code&gt;role&lt;/code&gt;, &lt;code&gt;tabIndex&lt;/code&gt;, &lt;code&gt;id&lt;/code&gt; and event handlers were dropped before the DOM. The pull request has the shortest reproduction I know:&lt;/p&gt;
+&lt;pre tabindex=&quot;0&quot; role=&quot;region&quot; aria-label=&quot;Code sample&quot;&gt;&lt;code class=&quot;language-tsx&quot;&gt;render(&amp;lt;TreeList items={items} aria-label=&amp;quot;File tree&amp;quot; /&amp;gt;);
+
+// &amp;lt;div class=&amp;quot;astryx-tree-list ...&amp;quot;&amp;gt;
+//   &amp;lt;ul role=&amp;quot;tree&amp;quot;&amp;gt;
+// aria-label -&amp;gt; null
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The accessibility cost is the sharp one. A tree is named where the tree role is. When the component had a visible &lt;code&gt;header&lt;/code&gt;, it generated an id and wired &lt;code&gt;aria-labelledby&lt;/code&gt; to it. When it did not, there was no naming path. A screen reader announced &amp;quot;tree&amp;quot; and nothing else. In a file explorer with two trees, a blind user cannot tell which one they are in, and the only way to find out is to open one and listen to what falls out.&lt;/p&gt;
+&lt;p&gt;The type was the contract, and the type was lying.&lt;/p&gt;
+&lt;h2 id=&quot;why-nothing-caught-it&quot;&gt;Why nothing caught it&lt;/h2&gt;
+&lt;p&gt;TypeScript accepted the prop because &lt;code&gt;TreeListProps&lt;/code&gt; extends &lt;code&gt;BaseProps&lt;/code&gt;. The header of that type says it keeps &lt;code&gt;aria-*&lt;/code&gt;, &lt;code&gt;role&lt;/code&gt;, &lt;code&gt;tabIndex&lt;/code&gt;, &lt;code&gt;id&lt;/code&gt; and event handlers. Nothing warned at runtime: React does not know that &lt;code&gt;aria-label&lt;/code&gt; disappeared between the props object and the &lt;code&gt;&amp;lt;ul&amp;gt;&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;The accessibility audit on the pull request itself reported no violations. The tree was still unnamed. An unnamed &lt;code&gt;tree&lt;/code&gt; is not a missing required attribute; it is a valid tree that happens to be unusable. That is the gap. A linter can tell you whether a role allows an attribute. It cannot tell you whether the thing has a name a person can use.&lt;/p&gt;
+&lt;p&gt;The first test I wrote made the same mistake. It asserted on &lt;code&gt;container.firstElementChild&lt;/code&gt;, the layout &lt;code&gt;&amp;lt;div&amp;gt;&lt;/code&gt; that received the spread. The test went green. The &lt;code&gt;&amp;lt;ul role=&amp;quot;tree&amp;quot;&amp;gt;&lt;/code&gt; still had nothing.&lt;/p&gt;
+&lt;h2 id=&quot;the-first-review&quot;&gt;The first review&lt;/h2&gt;
+&lt;p&gt;cixzhang&#39;s first review was precise: &amp;quot;The tree still can&#39;t be named.&amp;quot; &lt;code&gt;aria-label&lt;/code&gt; landed on the wrapper div, not on the &lt;code&gt;&amp;lt;ul&amp;gt;&lt;/code&gt; that carries &lt;code&gt;role=&amp;quot;tree&amp;quot;&lt;/code&gt;. The screenshot of Chromium&#39;s accessibility tree showed the tree with an empty name. My test was asserting on the div I had changed, not on the element that carries the role.&lt;/p&gt;
+&lt;p&gt;There was a second problem in the same review. I had spread &lt;code&gt;...restProps&lt;/code&gt; after &lt;code&gt;role=&amp;quot;tree&amp;quot;&lt;/code&gt;, so a consumer could pass &lt;code&gt;role=&amp;quot;listbox&amp;quot;&lt;/code&gt; and displace the contract. The role that makes a tree a tree was optional by accident. The convention in the repo is the opposite: contract props go after the spread, so the component wins. &lt;code&gt;ListItem&lt;/code&gt; and &lt;code&gt;Kbd&lt;/code&gt;, in the same directory, already spread their rest props. &lt;code&gt;TreeList&lt;/code&gt; and &lt;code&gt;List&lt;/code&gt; were the exceptions, and the issue listed ten more components with the same shape. One omission copied.&lt;/p&gt;
+&lt;p&gt;I had it backwards in two places at once: the spread order and the test target.&lt;/p&gt;
+&lt;h2 id=&quot;the-second-review&quot;&gt;The second review&lt;/h2&gt;
+&lt;p&gt;The next version pulled &lt;code&gt;aria-label&lt;/code&gt; and &lt;code&gt;aria-labelledby&lt;/code&gt; out of the rest and put them on the &lt;code&gt;&amp;lt;ul role=&amp;quot;tree&amp;quot;&amp;gt;&lt;/code&gt;. It also wrote &lt;code&gt;role=&amp;quot;tree&amp;quot;&lt;/code&gt; after the spread. The tree could be named. The role was stable.&lt;/p&gt;
+&lt;p&gt;Then cixzhang asked for one more thing: when &lt;code&gt;TreeList&lt;/code&gt; renders a visible &lt;code&gt;header&lt;/code&gt;, the generated header id should keep naming the tree. My version let a caller &lt;code&gt;aria-labelledby&lt;/code&gt; replace it, so assistive technology could hear a different name than the one on screen. That is a quiet failure. The visible label and the announced label diverge, and the person reading the screen and the person listening to it are no longer in the same document.&lt;/p&gt;
+&lt;p&gt;The fix was a precedence rule: if a visible header exists, its id wins; a caller label only applies on the headerless path. I added tests for both paths and asserted on &lt;code&gt;getByRole(&#39;tree&#39;)&lt;/code&gt;, not on the wrapper. The List half was left to the maintainers so the same work was not done twice.&lt;/p&gt;
+&lt;p&gt;What the fix did not do is invent a default name. &amp;quot;Tree&amp;quot; is not a name; it is the role said twice. The component cannot know what the tree contains. It had to expose the name the caller already had, and then get out of the way.&lt;/p&gt;
+&lt;h2 id=&quot;the-rule&quot;&gt;The rule&lt;/h2&gt;
+&lt;p&gt;Name the element that carries the role. Test the element that carries the role. A wrapper is not the thing.&lt;/p&gt;
+&lt;p&gt;A visible label outranks a programmatic one, because the two have to describe the same object. And a contract prop belongs after the spread: the component owns the semantics that make it what it is.&lt;/p&gt;
+&lt;p&gt;The lesson of the ten other components is not that ten components are broken. It is that a missing convention propagates: one omission gets copied, and every copy looks correct in review because the type says it is. The fix is not a patch per component. It is the house pattern, written down and tested where the role lives.&lt;/p&gt;
+&lt;p&gt;Five regression tests, and the tree has a name now. That is the whole product.&lt;/p&gt;
 </content>
   </entry>
   <entry>
     <title>When a HoverCard calls itself a dialog</title>
     <id>https://gonzoblasco.github.io/a11y-portfolio/writing/hovercard-dialog-semantics.html</id>
     <link href="https://gonzoblasco.github.io/a11y-portfolio/writing/hovercard-dialog-semantics.html" />
+    <category term="accessibility" />
     <updated>2026-08-25T12:00:00.000Z</updated>
     <summary>A labelled HoverCard trigger described itself with aria-describedby, so screen reader users heard the dialog&#39;s contents as a description instead of learning that a dialog opens. The fix is the right popup contract.</summary>
     <content type="html">&lt;p&gt;I just got a PR merged into astryx, Meta&#39;s React component library, that fixes a subtle accessibility bug in &lt;code&gt;HoverCard&lt;/code&gt;.&lt;/p&gt;
@@ -239,6 +265,7 @@
     <title>aria-orientation belongs to the role owner</title>
     <id>https://gonzoblasco.github.io/a11y-portfolio/writing/aria-orientation-role-owners.html</id>
     <link href="https://gonzoblasco.github.io/a11y-portfolio/writing/aria-orientation-role-owners.html" />
+    <category term="accessibility" />
     <updated>2026-08-24T12:00:00.000Z</updated>
     <summary>A Combobox grid carried aria-orientation, an attribute the grid role does not support, so screen readers got contradictory navigation cues. Moving it to the elements that own the role fixed it.</summary>
     <content type="html">&lt;p&gt;The hardest accessibility bug to spot is not the one that breaks the screen reader. It is the one that confuses it with invalid information.&lt;/p&gt;
@@ -258,6 +285,7 @@
     <title>A breadcrumb that does not rely on color</title>
     <id>https://gonzoblasco.github.io/a11y-portfolio/writing/breadcrumb-without-color.html</id>
     <link href="https://gonzoblasco.github.io/a11y-portfolio/writing/breadcrumb-without-color.html" />
+    <category term="accessibility" />
     <updated>2026-08-24T12:00:00.000Z</updated>
     <summary>Astryx told the current page in its breadcrumb from the links only by color, failing WCAG 1.4.1. The fix was one line of font weight, three weeks and a cleanup rebase away from merge.</summary>
     <content type="html">&lt;p&gt;Some fixes are invisible. This one is a single line of CSS that took three weeks to land, and it is the kind of change that makes the web a little more usable for people who do not see color the way most of us do.&lt;/p&gt;
