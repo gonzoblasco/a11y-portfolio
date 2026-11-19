@@ -263,11 +263,6 @@ for (const [key, list] of pairs) {
   }
 }
 
-function spanishCounterpart(article: Article): Article | undefined {
-  if (!article.pair) return undefined;
-  return (pairs.get(article.pair) || []).find((a) => a.lang === "es");
-}
-
 // One row per piece, not per page: a translation is a view of the same piece.
 const listed = articles.filter((article) => !article.original_lang);
 
