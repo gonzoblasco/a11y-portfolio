@@ -412,7 +412,7 @@ function homeEntries(): string {
 
 /* ---------- pages ---------- */
 
-const homeBody = `<main id="main">
+const homeBody = `<main id="main" tabindex="-1">
   <section class="hero wrap" aria-labelledby="title">
     <div class="hero-main">
       <p class="kicker">Accessibility engineering · Buenos Aires</p>
@@ -479,7 +479,7 @@ const writingGroups = years
   })
   .join("\n");
 
-const writingBody = `<main id="main">
+const writingBody = `<main id="main" tabindex="-1">
   <div class="wrap">
     <header class="page-head">
       <p class="kicker">Writing</p>
@@ -512,7 +512,7 @@ for (const [slug, meta] of Object.entries(CATEGORIES) as Array<
   if (items.length === 0) continue;
 
   const rows = items.map((article) => indexRow(article, "../../")).join("\n");
-  const categoryBody = `<main id="main">
+  const categoryBody = `<main id="main" tabindex="-1">
   <div class="wrap">
     <header class="page-head">
       <p class="kicker">Writing / Category</p>
@@ -593,7 +593,7 @@ for (const article of articles) {
       } <span aria-hidden="true">→</span></a>`
     : "";
 
-  const articleBody = `<main id="main">
+  const articleBody = `<main id="main" tabindex="-1">
   <article class="article wrap">
     <header class="article-head">
       <p class="kicker"${isSpanish ? ' lang="en"' : ""}><a href="./">Writing</a> <span aria-hidden="true">/</span> <time datetime="${article.date}">${formatMonthYear(article.date)}</time>${isSpanish ? '<span class="badge" lang="es">En español</span>' : ""}</p>
@@ -636,7 +636,7 @@ ${article.html}
 
 /* about */
 
-const aboutBody = `<main id="main">
+const aboutBody = `<main id="main" tabindex="-1">
   <div class="wrap">
     <header class="page-head">
       <p class="kicker">About</p>
@@ -755,7 +755,7 @@ ${role.bullets.map((b) => `          <li>${escapeHtml(b)}</li>`).join("\n")}
     .join("\n");
 }
 
-const profileBody = `<main id="main">
+const profileBody = `<main id="main" tabindex="-1">
   <div class="wrap">
     <header class="page-head">
       <p class="kicker">Profile</p>

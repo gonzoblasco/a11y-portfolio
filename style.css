@@ -122,6 +122,15 @@ summary:focus-visible {
   top: 1rem;
 }
 
+/*
+ * The skip link targets <main tabindex="-1">. A programmatic focus target is
+ * not a control, so it does not need a ring; without this the whole page shows
+ * an outline the moment someone uses the link.
+ */
+#main:focus {
+  outline: none;
+}
+
 .wrap {
   width: min(var(--max), calc(100% - 3rem));
   margin-inline: auto;
@@ -632,8 +641,20 @@ h1 em {
   outline-offset: 4px;
 }
 
+/*
+ * The chip is a link, and its border is 1.47:1 against the paper: too faint to
+ * read as an affordance. The underline says "link" without changing the palette.
+ */
+.index-list .badge,
+.entries .badge {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
 .index-list .badge:hover,
-.index-list .badge:focus-visible {
+.index-list .badge:focus-visible,
+.entries .badge:hover,
+.entries .badge:focus-visible {
   color: var(--ink);
   border-color: var(--ink);
 }
