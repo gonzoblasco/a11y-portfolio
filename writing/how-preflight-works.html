@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>What happens during a Preflight scan — Gonzalo Blasco</title>
+  <meta name="description" content="A URL goes in, a real browser renders the page, axe reads the rules, a virtual screen reader walks the accessibility tree, a score refuses to be green while someone is blocked, and a fix prompt comes out." />
+  <meta name="author" content="Gonzalo Blasco" />
+  <link rel="canonical" href="https://gonzoblasco.github.io/a11y-portfolio/writing/how-preflight-works.html" />
+  <meta property="og:site_name" content="Gonzalo Blasco" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="What happens during a Preflight scan — Gonzalo Blasco" />
+  <meta property="og:description" content="A URL goes in, a real browser renders the page, axe reads the rules, a virtual screen reader walks the accessibility tree, a score refuses to be green while someone is blocked, and a fix prompt comes out." />
+  <meta property="og:url" content="https://gonzoblasco.github.io/a11y-portfolio/writing/how-preflight-works.html" />
+  <meta name="twitter:card" content="summary" />
+  <link rel="alternate" type="application/atom+xml" href="../feed.xml" title="Gonzalo Blasco" />
+  <link rel="stylesheet" href="../style.css" />
+  <link rel="preload" href="../assets/fonts/fraunces-normal.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="../assets/fonts/newsreader-normal.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="../assets/fonts/ibm-plex-mono-400.woff2" as="font" type="font/woff2" crossorigin />
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site">
+  <div class="wrap head">
+    <a class="wordmark" href="../">Gonzalo Blasco</a>
+    <nav aria-label="Sections"><ul><li><a href="../writing/" aria-current="page">Writing</a></li><li><a href="../writing/preflight.html">Work</a></li><li><a href="../about/">About</a></li></ul></nav>
+  </div>
+</header>
+<main id="main">
+  <article class="article wrap">
+    <header class="article-head">
+      <p class="kicker"><a href="./">Writing</a> <span aria-hidden="true">/</span> <time datetime="2026-11-18">Nov 2026</time></p>
+      <h1>What happens during a Preflight scan</h1>
+      <p class="lede">A URL goes in, a real browser renders the page, axe reads the rules, a virtual screen reader walks the accessibility tree, a score refuses to be green while someone is blocked, and a fix prompt comes out.</p>
+      <p class="article-meta">
+        <span>Engineering</span>
+        <span>Essay</span>
+        <span>5 min read</span>
+        <span><time datetime="2026-11-18">November 18, 2026</time></span>
+        
+      </p>
+    </header>
+    <div class="prose">
+<p>A scan looks like one action: paste a URL, wait, read a report. Underneath it is a sequence of measurements, and each one exists because a simpler version produced a wrong answer.</p>
+<p>This is what happens between the URL and the fix prompt.</p>
+<h2 id="1-the-url-is-checked-before-anything-opens">1. The URL is checked before anything opens</h2>
+<p>The first job is deciding whether the scanner should touch the address at all.</p>
+<p>A public scan refuses private hosts on the literal address and again after DNS resolution. That second check matters: a hostname can resolve to <code>127.0.0.1</code> or a link-local address, and a scanner that follows it becomes a free port scanner for anyone who can call it. The local CLI is different by design. It accepts <code>localhost</code> and private addresses, because the person running it and the machine being scanned are the same. Pass <code>--public-only</code> if you want the strict behavior locally.</p>
+<p>Only then does a browser open.</p>
+<h2 id="2-a-real-browser-renders-the-page">2. A real browser renders the page</h2>
+<p>Preflight launches Chrome, not an HTML parser. It uses the installed Chrome channel rather than the bundled headless shell, because the accessibility tree of the shell is not the tree users run.</p>
+<p>The context is fixed on purpose: 1366 by 900, device scale 1, <code>prefers-reduced-motion: reduce</code>, <code>en-US</code>. A scan that changes viewport or locale between runs is not comparable to the next one. Navigation has a 20 second timeout and the whole scan has a 45 second budget. A page that hangs fails visibly instead of holding a worker.</p>
+<p>The page loads with <code>domcontentloaded</code>, then waits for <code>load</code> with a cap, because scanning a skeleton produces findings that belong to the skeleton.</p>
+<h2 id="3-animations-are-frozen-then-the-page-is-allowed-to-settle">3. Animations are frozen, then the page is allowed to settle</h2>
+<p>This is the step most tools skip, and it is the source of the false positives that make a score untrustworthy.</p>
+<p>Entrance animations are a measured problem. A live React SPA produced three contrast failures that were the page sampled mid-fade at roughly 52 percent opacity. <code>prefers-reduced-motion</code> alone does not fix it, because libraries such as framer-motion animate inline styles and never consult the media query.</p>
+<p>Preflight does two things in order. It freezes every animation and transition at its end state, then samples the page until two consecutive visual samples agree. The first is a belt, the second is suspenders. Only then does analysis start.</p>
+<p>The result is deterministic: the same page produces the same findings on every run. Without that, a score is not evidence.</p>
+<h2 id="4-axe-reads-the-rules">4. axe reads the rules</h2>
+<p>The engine runs axe-core on the stable page, across the rules that apply to the rendered state. That is the mechanical layer: contrast, roles, allowed attributes, names, landmark structure, and the rest of the rule set a mature checker already knows.</p>
+<p>Axe is necessary and not sufficient. It answers whether the markup declares the right things. It cannot answer what a person hears when the component is used. The next step is for that question.</p>
+<h2 id="5-a-virtual-screen-reader-walks-the-accessibility-tree">5. A virtual screen reader walks the accessibility tree</h2>
+<p>The page HTML is passed to a virtual screen reader, which walks the tree and records what it announces, in order. Every phrase becomes part of a transcript. A role announced with no name is marked and explained in plain language.</p>
+<p>This is the observation no attribute linter can produce. It is also bounded: the transcript reflects what the DOM declares, not how VoiceOver or NVDA times a specific announcement in a specific browser. The report says so.</p>
+<p>Content behind interaction is only read if it is open on load. A modal that appears after a click is not in the scan, because the scan does not click.</p>
+<h2 id="6-findings-become-plain-language">6. Findings become plain language</h2>
+<p>Each axe violation is mapped to a rule with three pieces: what the rule means, what the person experiences, and what to change. When a rule has no dedicated copy, a fallback keeps the finding instead of dropping it.</p>
+<p>Each finding keeps its nodes: selector, HTML, failure summary. That is what makes the next step possible. A finding without a location is a lecture; a finding with a selector is a repair.</p>
+<p>Findings are read twice, and only the ones present in both reads are reported. A consent banner caught mid-mount is a transient state, not a defect of the page.</p>
+<h2 id="7-the-score-refuses-to-be-green-while-someone-is-blocked">7. The score refuses to be green while someone is blocked</h2>
+<p>The score is computed once, in one place, from the findings. The surfaces do not recompute it.</p>
+<p>The rule is simple to say and hard to implement honestly: a page with 92 findings fixed and one unusable checkout does not get an A. Blocking defects cap the score. <code>92/100 but checkout is broken</code> is how a tool gets uninstalled, because the number and the experience disagree.</p>
+<h2 id="8-the-fix-prompt-is-built-from-the-finding-not-from-a-template">8. The fix prompt is built from the finding, not from a template</h2>
+<p>For each finding and each node, the engine builds a step: where the problem is, what to change, the measured cause, and the announcement the reader must produce afterwards.</p>
+<p>Two details make it more than a list. The target is inferred from the selector, so the instruction names a component or a shared source instead of a DOM path. And failures that share a cause are grouped under one key, so a CSS variable used in two places produces one repair, not two.</p>
+<p>The last line of every step is the contract: re-run Preflight and confirm the rule reports no failing elements. That is what lets a builder verify its own work instead of guessing &quot;looks good to me&quot;.</p>
+<h2 id="9-the-loop-closes-by-scanning-again">9. The loop closes by scanning again</h2>
+<p>A report is not the end of the process. The repair prompt is applied, the page is scanned again, and the new score and transcript are the evidence. The README reports a live product repaired from 49/100 F to 100/100 A this way, with every step verified by re-scanning the deployed URL.</p>
+<p>That is the difference between a thermometer and a gate. A thermometer tells you the temperature. A gate tells you whether the thing can ship, and what to do before it does.</p>
+<h2 id="what-it-deliberately-does-not-do">What it deliberately does not do</h2>
+<p>It does not certify. Automated checks catch roughly a third of accessibility defects, and every report says so.</p>
+<p>It does not crawl. One URL per scan, by design.</p>
+<p>It does not fix your code. It measures, explains, and hands you the instruction. Editing the project is the builder's job.</p>
+<p>It does not replace a person with a keyboard and a real screen reader. It narrows where that person should look.</p>
+<h2 id="one-engine-several-surfaces">One engine, several surfaces</h2>
+<p>The same engine runs behind the CLI, the GitHub Action, the web report and the MCP server. The MCP tools are read-only by design, so a hosted builder can call them without an approval prompt. The score, the rule copy and the limits travel with every observation. A surface that recomputes the score is a bug, not a feature.</p>
+<p>The point of the architecture is not elegance. It is that the thing you run locally and the thing a builder calls remotely cannot disagree about what the page says.</p>
+
+    </div>
+    <footer class="article-foot">
+      <span></span>
+      <a href="./">Back to all notes</a>
+    </footer>
+  </article>
+</main>
+<footer class="site">
+  <div class="wrap">
+    <span>Gonzalo Blasco · Buenos Aires</span>
+    <span><a href="mailto:gonzoblasco@icloud.com">gonzoblasco@icloud.com</a> · <a href="https://github.com/gonzoblasco">GitHub</a> · <a href="https://www.linkedin.com/in/gonzalo-blasco">LinkedIn</a></span>
+  </div>
+</footer>
+</body>
+</html>

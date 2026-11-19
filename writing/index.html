@@ -24,7 +24,7 @@
 <header class="site">
   <div class="wrap head">
     <a class="wordmark" href="../">Gonzalo Blasco</a>
-    <nav aria-label="Sections"><ul><li><a href="../writing/" aria-current="page">Writing</a></li><li><a href="../preflight/">Work</a></li><li><a href="../about/">About</a></li></ul></nav>
+    <nav aria-label="Sections"><ul><li><a href="../writing/" aria-current="page">Writing</a></li><li><a href="../writing/preflight.html">Work</a></li><li><a href="../about/">About</a></li></ul></nav>
   </div>
 </header>
 <main id="main">
@@ -32,8 +32,8 @@
     <header class="page-head">
       <p class="kicker">Writing</p>
       <h1>Notes on what a screen reader says.</h1>
-      <p class="lede">12 pieces, accessibility first: what a screen reader announces, plus testing and engineering work behind it. Some are also on LinkedIn; this is the canonical copy.</p>
-      <nav class="categories" aria-label="Categories"><ul><li><a href="./" aria-current="page">All <span class="count">12</span></a></li><li><a href="./category/accessibility/">Accessibility <span class="count">9</span></a></li><li><a href="./category/testing/">Testing <span class="count">1</span></a></li><li><a href="./category/engineering/">Engineering <span class="count">1</span></a></li><li><a href="./category/field-notes/">Field notes <span class="count">1</span></a></li></ul></nav>
+      <p class="lede">14 pieces, accessibility first: what a screen reader announces, plus testing and engineering work behind it. Some are also on LinkedIn; this is the canonical copy.</p>
+      <nav class="categories" aria-label="Categories"><ul><li><a href="./" aria-current="page">All <span class="count">14</span></a></li><li><a href="./category/accessibility/">Accessibility <span class="count">9</span></a></li><li><a href="./category/testing/">Testing <span class="count">1</span></a></li><li><a href="./category/engineering/">Engineering <span class="count">3</span></a></li><li><a href="./category/field-notes/">Field notes <span class="count">1</span></a></li></ul></nav>
     </header>
     <h2 class="year">2026</h2>
 <ul class="index-list">
@@ -42,6 +42,20 @@
     <span class="date"><time datetime="2026-11-18">Nov 18</time></span>
     <span class="title" id="entry-the-challenge-was-already-over">The challenge was closed before we started</span>
     <span class="excerpt">I had a five-phase plan for a 72-hour challenge before I read the entry window. It had closed 44 days earlier, and the plan was a table of contents rather than a decision.</span>
+  </a>
+</li>
+<li>
+  <a href="./preflight.html" aria-labelledby="entry-preflight">
+    <span class="date"><time datetime="2026-11-18">Nov 18</time></span>
+    <span class="title" id="entry-preflight">Preflight: the gate that listens</span>
+    <span class="excerpt">Preflight reads what a screen reader actually announces, scores the page by whether someone is blocked, and returns a repair prompt an AI builder can execute. What it does, what it refuses to claim, and why the transcript is the product.</span>
+  </a>
+</li>
+<li>
+  <a href="./how-preflight-works.html" aria-labelledby="entry-how-preflight-works">
+    <span class="date"><time datetime="2026-11-18">Nov 18</time></span>
+    <span class="title" id="entry-how-preflight-works">What happens during a Preflight scan</span>
+    <span class="excerpt">A URL goes in, a real browser renders the page, axe reads the rules, a virtual screen reader walks the accessibility tree, a score refuses to be green while someone is blocked, and a fix prompt comes out.</span>
   </a>
 </li>
 <li>

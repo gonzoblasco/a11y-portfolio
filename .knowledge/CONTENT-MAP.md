@@ -20,6 +20,8 @@
 | 10 | `orchestrating-a-refactor` | Orchestrating a 10,000-line refactor | 2026-08-28 | en | note | Moderno AI Cleaner Pro |
 | 11 | `posinset-across-sections` | Counting items across sections | 2026-09-09 | en | note | react-spectrum #10554 |
 | 12 | `the-challenge-was-already-over` | The challenge was closed before we started | 2026-11-18 | en | note | field notes / dev.to audit |
+| 13 | `preflight` | Preflight: the gate that listens | 2026-11-18 | en | essay | producto / README |
+| 14 | `how-preflight-works` | What happens during a Preflight scan | 2026-11-18 | en | essay | arquitectura del motor |
 
 ## Qué NO entra (y por qué)
 
@@ -38,7 +40,7 @@ genera una página por categoría con contenido.
 |---|---|---|
 | `accessibility` | Accessibility | 9 |
 | `testing` | Testing | 1 (The bug jsdom could not see) |
-| `engineering` | Engineering | 1 (Orchestrating a 10,000-line refactor) |
+| `engineering` | Engineering | 3 (Orchestrating a 10,000-line refactor, Preflight, What happens during a Preflight scan) |
 | `field-notes` | Field notes | 1 (The challenge was closed before we started) |
 
 La categoría es obligatoria en el frontmatter. El build falla si falta o no es una de las

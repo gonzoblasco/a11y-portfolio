@@ -243,7 +243,7 @@ articles.sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
 function nav(root: string, current: string): string {
   const items: Array<[string, string, string]> = [
     ["Writing", `${root}writing/`, "writing"],
-    ["Work", `${root}preflight/`, "preflight"],
+    ["Work", `${root}writing/preflight.html`, "preflight"],
     ["About", `${root}about/`, "about"],
   ];
   return `<nav aria-label="Sections"><ul>${items
@@ -390,9 +390,9 @@ ${homeEntries()}
   <section class="work wrap" aria-labelledby="work">
     <h2 id="work"><span>02</span> Work</h2>
     <div class="work-body">
-      <h3>Preflight</h3>
+      <h3><a href="./writing/preflight.html">Preflight</a></h3>
       <p>A pre-launch accessibility gate for AI-built websites. It loads a page in a browser, reads what a screen reader actually announces, and returns a repair prompt your builder can execute.</p>
-      <p><a href="./preflight/">See how it works</a></p>
+      <p><a href="./writing/how-preflight-works.html">See how it works</a></p>
     </div>
     <dl class="work-meta">
       <dt>Merged</dt><dd>12 PRs</dd>
@@ -536,7 +536,7 @@ ${article.html}
     `writing/${article.slug}.html`,
     page({
       root,
-      current: "writing",
+      current: article.slug === "preflight" ? "preflight" : "writing",
       title: `${article.title} — Gonzalo Blasco`,
       description: article.summary || `${article.title}, by Gonzalo Blasco.`,
       canonical: `${BASE}/writing/${article.slug}.html`,
@@ -563,7 +563,7 @@ const aboutBody = `<main id="main">
 
         <p>My open source work is mostly in design systems: twelve merged pull requests across Adobe React Spectrum, IBM Carbon, IBM Products, Meta Astryx, MUI Base UI, MUI Material UI and shadcn/ui. The fixes are usually small and structural: an ARIA contract, a focus path, an announcement that competes with the one the platform already makes.</p>
 
-        <p>That is also the thesis behind <a href="../preflight/">Preflight</a>: a linter can tell you whether the attributes are present. It cannot tell you what a blind person hears when they use the component. The second question requires running the page, in a browser, with assistive technology attached.</p>
+        <p>That is also the thesis behind <a href="../writing/preflight.html">Preflight</a>: a linter can tell you whether the attributes are present. It cannot tell you what a blind person hears when they use the component. The second question requires running the page, in a browser, with assistive technology attached.</p>
 
         <p>I live in Buenos Aires and work remotely. I write in English, and occasionally in Spanish for the local market.</p>
       </div>
@@ -604,90 +604,28 @@ writeFile(
   })
 );
 
-/* preflight */
-
-const preflightBody = `<main id="main">
-  <div class="wrap">
-    <header class="page-head">
-      <p class="kicker">Product</p>
-      <h1>Preflight</h1>
-      <p class="lede">Your AI built the site. This proves it works, and tells the builder how to fix it.</p>
-    </header>
-
-    <div class="page-body">
-      <div class="prose-col prose">
-        <p>A pre-launch accessibility gate that reads your page the way a screen reader consumes it, then hands back a repair prompt your AI builder can execute.</p>
-
-        <h2>What it shows you</h2>
-        <p>Every attribute a linter checks can be present and the page can still be unusable. Preflight walks the page and records what is announced, in order, including the gaps:</p>
-
-        <pre class="example" tabindex="0" role="region" aria-label="Example screen reader transcript">  1  document
-  2  image                        <span class="problem">&lt;- an image with no name</span>
-  3  link, Pricing
-  4  button                       <span class="problem">&lt;- a button with no name</span>
-  5  heading, Ship your landing page in minutes, level 1
-  6  image                        <span class="problem">&lt;- another one</span></pre>
-
-        <h2>How it works</h2>
-        <ol class="steps">
-          <li>
-            <div>
-              <h3>The transcript</h3>
-              <p>The page is walked with a screen reader and every phrase it speaks is recorded, in order. A role announced with no name is marked and explained in plain language.</p>
-            </div>
-          </li>
-          <li>
-            <div>
-              <h3>The verdict</h3>
-              <p>One score that refuses to be green while someone is blocked. A page with 92 findings fixed and one unusable checkout does not get an A.</p>
-            </div>
-          </li>
-          <li>
-            <div>
-              <h3>The fix prompt</h3>
-              <p>An ordered prompt, ready to paste into the tool that generated the page. Every step names the element, the change, and the announcement the reader must produce afterwards.</p>
-            </div>
-          </li>
-        </ol>
-
-        <p>It does not certify anything, it does not crawl, and it does not edit your code. Automated checks catch roughly a third of accessibility defects; every report says so.</p>
-
-        <p><a class="cta" href="mailto:${EMAIL}?subject=Preflight%20scan">Request a scan</a></p>
-      </div>
-
-      <aside class="side-col" aria-label="Preflight details">
-        <h2>Status</h2>
-        <ul>
-          <li>Open source, local-first</li>
-          <li>One URL per scan</li>
-          <li>Runs in CI with exit codes</li>
-        </ul>
-        <h2>Repository</h2>
-        <ul>
-          <li><a href="${PREFLIGHT_REPO}">github.com/gonzoblasco/preflight-a11y</a></li>
-        </ul>
-        <h2>Scope</h2>
-        <ul>
-          <li>AI-built sites</li>
-          <li>Pre-launch checks</li>
-          <li>Repair prompts, not certifications</li>
-        </ul>
-      </aside>
-    </div>
-  </div>
-</main>`;
+/* preflight: keep the old URL, point it at the product article */
 
 writeFile(
   "preflight/index.html",
-  page({
-    root: "../",
-    current: "preflight",
-    title: "Preflight — Gonzalo Blasco",
-    description:
-      "A pre-launch accessibility gate that reads what a screen reader actually announces and returns a repair prompt your AI builder can execute.",
-    canonical: `${BASE}/preflight/`,
-    body: preflightBody,
-  })
+  `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Preflight moved — Gonzalo Blasco</title>
+  <meta name="robots" content="noindex" />
+  <link rel="canonical" href="${BASE}/writing/preflight.html" />
+  <meta http-equiv="refresh" content="0; url=../writing/preflight.html" />
+  <link rel="stylesheet" href="../style.css" />
+</head>
+<body>
+  <main id="main" class="wrap redirect">
+    <h1>Preflight moved</h1>
+    <p>Preflight now lives in the writing section. <a href="../writing/preflight.html">Continue to Preflight</a>.</p>
+  </main>
+</body>
+</html>`
 );
 
 /* 404 */
@@ -749,7 +687,6 @@ const urls: Array<{ loc: string; lastmod?: string }> = [
   { loc: `${BASE}/` },
   { loc: `${BASE}/writing/` },
   { loc: `${BASE}/about/` },
-  { loc: `${BASE}/preflight/` },
   ...(Object.keys(CATEGORIES) as CategorySlug[])
     .filter((slug) => articles.some((article) => article.category === slug))
     .map((slug) => ({ loc: `${BASE}/writing/category/${slug}/` })),

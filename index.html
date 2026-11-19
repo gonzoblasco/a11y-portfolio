@@ -24,7 +24,7 @@
 <header class="site">
   <div class="wrap head">
     <a class="wordmark" href="./">Gonzalo Blasco</a>
-    <nav aria-label="Sections"><ul><li><a href="./writing/">Writing</a></li><li><a href="./preflight/">Work</a></li><li><a href="./about/">About</a></li></ul></nav>
+    <nav aria-label="Sections"><ul><li><a href="./writing/">Writing</a></li><li><a href="./writing/preflight.html">Work</a></li><li><a href="./about/">About</a></li></ul></nav>
   </div>
 </header>
 <main id="main">
@@ -55,29 +55,29 @@
   </a>
 </li>
 <li>
-  <a href="./writing/the-quieter-announcement.html" aria-labelledby="entry-the-quieter-announcement">
-    <span class="date"><time datetime="2026-11-17">Nov 2026</time></span>
-    <span class="title" id="entry-the-quieter-announcement">The Quieter Announcement</span>
-    <span class="excerpt">I fixed a screen reader bug by deleting an announcement. React Spectrum&#39;s live region was overwriting what VoiceOver already said natively, and no linter could see the collision.</span>
+  <a href="./writing/preflight.html" aria-labelledby="entry-preflight">
+    <span class="date"><time datetime="2026-11-18">Nov 2026</time></span>
+    <span class="title" id="entry-preflight">Preflight: the gate that listens</span>
+    <span class="excerpt">Preflight reads what a screen reader actually announces, scores the page by whether someone is blocked, and returns a repair prompt an AI builder can execute. What it does, what it refuses to claim, and why the transcript is the product.</span>
   </a>
 </li>
 <li>
-  <a href="./writing/the-bug-jsdom-could-not-see.html" aria-labelledby="entry-the-bug-jsdom-could-not-see">
-    <span class="date"><time datetime="2026-11-03">Nov 2026</time></span>
-    <span class="title" id="entry-the-bug-jsdom-could-not-see">The bug jsdom could not see</span>
-    <span class="excerpt">A shadcn/ui PR sat for three months while 61 jsdom tests passed. jsdom does not fire scroll events for programmatic scrolls, so it could not see the spacer collapse the fix introduced. Browser tests found that and two more bugs.</span>
+  <a href="./writing/how-preflight-works.html" aria-labelledby="entry-how-preflight-works">
+    <span class="date"><time datetime="2026-11-18">Nov 2026</time></span>
+    <span class="title" id="entry-how-preflight-works">What happens during a Preflight scan</span>
+    <span class="excerpt">A URL goes in, a real browser renders the page, axe reads the rules, a virtual screen reader walks the accessibility tree, a score refuses to be green while someone is blocked, and a fix prompt comes out.</span>
   </a>
 </li>
     </ul>
-    <nav class="categories" aria-label="Categories"><ul><li><a href="./writing/" aria-current="page">All <span class="count">12</span></a></li><li><a href="./writing/category/accessibility/">Accessibility <span class="count">9</span></a></li><li><a href="./writing/category/testing/">Testing <span class="count">1</span></a></li><li><a href="./writing/category/engineering/">Engineering <span class="count">1</span></a></li><li><a href="./writing/category/field-notes/">Field notes <span class="count">1</span></a></li></ul></nav>
+    <nav class="categories" aria-label="Categories"><ul><li><a href="./writing/" aria-current="page">All <span class="count">14</span></a></li><li><a href="./writing/category/accessibility/">Accessibility <span class="count">9</span></a></li><li><a href="./writing/category/testing/">Testing <span class="count">1</span></a></li><li><a href="./writing/category/engineering/">Engineering <span class="count">3</span></a></li><li><a href="./writing/category/field-notes/">Field notes <span class="count">1</span></a></li></ul></nav>
   </section>
 
   <section class="work wrap" aria-labelledby="work">
     <h2 id="work"><span>02</span> Work</h2>
     <div class="work-body">
-      <h3>Preflight</h3>
+      <h3><a href="./writing/preflight.html">Preflight</a></h3>
       <p>A pre-launch accessibility gate for AI-built websites. It loads a page in a browser, reads what a screen reader actually announces, and returns a repair prompt your builder can execute.</p>
-      <p><a href="./preflight/">See how it works</a></p>
+      <p><a href="./writing/how-preflight-works.html">See how it works</a></p>
     </div>
     <dl class="work-meta">
       <dt>Merged</dt><dd>12 PRs</dd>
