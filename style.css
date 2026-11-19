@@ -572,11 +572,14 @@ h1 em {
   border-bottom: 1px solid var(--rule);
 }
 
-.index-list a {
+.index-list .row {
   display: grid;
   grid-template-columns: 7.5rem minmax(0, 1fr);
   gap: 0.2rem 2rem;
   padding: 1.4rem 0;
+}
+
+.index-list .title a {
   text-decoration: none;
   color: inherit;
 }
@@ -606,14 +609,22 @@ h1 em {
   max-width: 64ch;
 }
 
-.index-list a:hover .title,
-.index-list a:focus-visible .title {
+.index-list .title a:hover,
+.index-list .title a:focus-visible {
   color: var(--oxide);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
 }
 
-.index-list a:focus-visible {
+.index-list .title a:focus-visible {
   outline: 2px solid var(--oxide);
-  outline-offset: 6px;
+  outline-offset: 4px;
+}
+
+.index-list .badge:hover,
+.index-list .badge:focus-visible {
+  color: var(--ink);
+  border-color: var(--ink);
 }
 
 /* Article */
@@ -1038,7 +1049,7 @@ footer.site a:hover {
   }
 
   .entries a,
-  .index-list a {
+  .index-list .row {
     grid-template-columns: 1fr;
     gap: 0.35rem;
   }

@@ -34,85 +34,71 @@
       <p class="kicker">Writing / Category</p>
       <h1>Accessibility</h1>
       <p class="lede">What assistive technology actually announces, and the fixes behind it.</p>
-      <nav class="categories" aria-label="Categories"><ul><li><a href="../../">All <span class="count">21</span></a></li><li><a href="../accessibility/" aria-current="page">Accessibility <span class="count">11</span></a></li><li><a href="../testing/">Testing <span class="count">2</span></a></li><li><a href="../engineering/">Engineering <span class="count">7</span></a></li><li><a href="../field-notes/">Field notes <span class="count">1</span></a></li></ul></nav>
+      <nav class="categories" aria-label="Categories"><ul><li><a href="../../">All <span class="count">16</span></a></li><li><a href="../accessibility/" aria-current="page">Accessibility <span class="count">9</span></a></li><li><a href="../testing/">Testing <span class="count">1</span></a></li><li><a href="../engineering/">Engineering <span class="count">5</span></a></li><li><a href="../field-notes/">Field notes <span class="count">1</span></a></li></ul></nav>
     </header>
     <ul class="index-list">
 <li>
-  <a href="../../un-anuncio-mas-silencioso.html" aria-labelledby="entry-un-anuncio-mas-silencioso">
+  <div class="row">
     <span class="date"><time datetime="2026-11-17">Nov 17</time></span>
-    <span class="title" id="entry-un-anuncio-mas-silencioso">Un anuncio más silencioso<span class="badge" lang="es">En español</span></span>
-    <span class="excerpt">Arreglé un bug de lector de pantalla borrando un anuncio. La live region de React Spectrum pisaba lo que VoiceOver ya decía solo, y ningún linter podía ver esa colisión.</span>
-  </a>
-</li>
-<li>
-  <a href="../../the-quieter-announcement.html" aria-labelledby="entry-the-quieter-announcement">
-    <span class="date"><time datetime="2026-11-17">Nov 17</time></span>
-    <span class="title" id="entry-the-quieter-announcement">The Quieter Announcement<span class="badge" lang="es">También en español</span></span>
+    <span class="title" id="entry-the-quieter-announcement"><a href="../../the-quieter-announcement.html">The Quieter Announcement</a> <a class="badge" href="../../un-anuncio-mas-silencioso.html" hreflang="es" lang="es">en español</a></span>
     <span class="excerpt">I fixed a screen reader bug by deleting an announcement. React Spectrum&#39;s live region was overwriting what VoiceOver already said natively, and no linter could see the collision.</span>
-  </a>
+  </div>
 </li>
 <li>
-  <a href="../../dialog-description.html" aria-labelledby="entry-dialog-description">
+  <div class="row">
     <span class="date"><time datetime="2026-10-22">Oct 22</time></span>
-    <span class="title" id="entry-dialog-description">The dialog description that never arrived</span>
+    <span class="title" id="entry-dialog-description"><a href="../../dialog-description.html">The dialog description that never arrived</a></span>
     <span class="excerpt">Carbon&#39;s ComposedModal forwarded a title but no description, so screen readers announced a dialog with no clear purpose. The PR added aria-describedby, and review caught a test that proved only the attribute.</span>
-  </a>
+  </div>
 </li>
 <li>
-  <a href="../../sortable-headers.html" aria-labelledby="entry-sortable-headers">
+  <div class="row">
     <span class="date"><time datetime="2026-10-07">Oct 7</time></span>
-    <span class="title" id="entry-sortable-headers">Sortable headers are not toggle buttons</span>
+    <span class="title" id="entry-sortable-headers"><a href="../../sortable-headers.html">Sortable headers are not toggle buttons</a></span>
     <span class="excerpt">A sortable Datagrid header announced itself as a toggle button, because aria-pressed competed with aria-sort and won. Removing the attribute let the sort direction reach the user again.</span>
-  </a>
+  </div>
 </li>
 <li>
-  <a href="../../focus-after-step-change.html" aria-labelledby="entry-focus-after-step-change">
+  <div class="row">
     <span class="date"><time datetime="2026-09-14">Sep 14</time></span>
-    <span class="title" id="entry-focus-after-step-change">Focus after the step changed</span>
+    <span class="title" id="entry-focus-after-step-change"><a href="../../focus-after-step-change.html">Focus after the step changed</a></span>
     <span class="excerpt">Pressing Next in CreateFullPage sent focus to the skip link: the helper looked for an inert attribute the component never set. One querySelector for the visible step class fixed it, and a focus assertion that had never existed.</span>
-  </a>
+  </div>
 </li>
 <li>
-  <a href="../../posinset-across-sections.html" aria-labelledby="entry-posinset-across-sections">
+  <div class="row">
     <span class="date"><time datetime="2026-09-09">Sep 9</time></span>
-    <span class="title" id="entry-posinset-across-sections">Counting items across sections</span>
+    <span class="title" id="entry-posinset-across-sections"><a href="../../posinset-across-sections.html">Counting items across sections</a></span>
     <span class="excerpt">A test-only PR locks in that aria-posinset stays global across menu sections. The first version flattened the fixture, went green and tested nothing; the corrected one renders the real sections.</span>
-  </a>
+  </div>
 </li>
 <li>
-  <a href="../../naming-a-tree.html" aria-labelledby="entry-naming-a-tree">
+  <div class="row">
     <span class="date"><time datetime="2026-08-26">Aug 26</time></span>
-    <span class="title" id="entry-naming-a-tree">Naming a tree</span>
+    <span class="title" id="entry-naming-a-tree"><a href="../../naming-a-tree.html">Naming a tree</a></span>
     <span class="excerpt">TreeList accepted every BaseProps attribute and dropped it before the DOM, so a headerless tree could not be named. The fix was three precedence rules and a test that asserted on the element carrying the role.</span>
-  </a>
+  </div>
 </li>
 <li>
-  <a href="../../hovercard-dialog-semantics.html" aria-labelledby="entry-hovercard-dialog-semantics">
+  <div class="row">
     <span class="date"><time datetime="2026-08-25">Aug 25</time></span>
-    <span class="title" id="entry-hovercard-dialog-semantics">When a HoverCard calls itself a dialog</span>
+    <span class="title" id="entry-hovercard-dialog-semantics"><a href="../../hovercard-dialog-semantics.html">When a HoverCard calls itself a dialog</a></span>
     <span class="excerpt">A labelled HoverCard trigger described itself with aria-describedby, so screen reader users heard the card&#39;s contents as a description instead of learning that a dialog opens. The fix is the popup contract, with two review catches along the way.</span>
-  </a>
+  </div>
 </li>
 <li>
-  <a href="../../aria-orientation-role-owners.html" aria-labelledby="entry-aria-orientation-role-owners">
+  <div class="row">
     <span class="date"><time datetime="2026-08-24">Aug 24</time></span>
-    <span class="title" id="entry-aria-orientation-role-owners">aria-orientation belongs to the role owner<span class="badge" lang="es">También en español</span></span>
+    <span class="title" id="entry-aria-orientation-role-owners"><a href="../../aria-orientation-role-owners.html">aria-orientation belongs to the role owner</a> <a class="badge" href="../../aria-orientation-le-pertenece-al-dueno-del-rol.html" hreflang="es" lang="es">en español</a></span>
     <span class="excerpt">A Combobox with grid rendered aria-orientation on role=grid, which does not support it. The attribute moved to the components that assign the role; the keyboard hook kept only the behavior.</span>
-  </a>
+  </div>
 </li>
 <li>
-  <a href="../../aria-orientation-le-pertenece-al-dueno-del-rol.html" aria-labelledby="entry-aria-orientation-le-pertenece-al-dueno-del-rol">
+  <div class="row">
     <span class="date"><time datetime="2026-08-24">Aug 24</time></span>
-    <span class="title" id="entry-aria-orientation-le-pertenece-al-dueno-del-rol">aria-orientation le pertenece al dueño del rol<span class="badge" lang="es">En español</span></span>
-    <span class="excerpt">Un Combobox con grid renderizaba aria-orientation sobre role=grid, que no lo admite. El atributo se mudó a los componentes que asignan el rol; el hook de teclado se quedó solo con el comportamiento.</span>
-  </a>
-</li>
-<li>
-  <a href="../../breadcrumb-without-color.html" aria-labelledby="entry-breadcrumb-without-color">
-    <span class="date"><time datetime="2026-08-24">Aug 24</time></span>
-    <span class="title" id="entry-breadcrumb-without-color">A breadcrumb that does not rely on color</span>
+    <span class="title" id="entry-breadcrumb-without-color"><a href="../../breadcrumb-without-color.html">A breadcrumb that does not rely on color</a></span>
     <span class="excerpt">Astryx marked the current breadcrumb item with a slightly darker gray and nothing else, failing WCAG 1.4.1. The fix was one font-weight declaration, and the trade was a few pixels of width.</span>
-  </a>
+  </div>
 </li>
     </ul>
   </div>

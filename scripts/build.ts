@@ -268,6 +268,10 @@ function spanishCounterpart(article: Article): Article | undefined {
   return (pairs.get(article.pair) || []).find((a) => a.lang === "es");
 }
 
+// One row per piece, not per page: a translation is a view of the same piece.
+const listed = articles.filter((article) => !article.original_lang);
+
+
 /* ---------- layout ---------- */
 
 function nav(root: string, current: string): string {
@@ -350,31 +354,30 @@ ${footer(root, lang)}
 
 /* ---------- fragments ---------- */
 
-function langBadge(article: Article): string {
-  if (article.lang === "es") return '<span class="badge" lang="es">En español</span>';
-  if (spanishCounterpart(article)) return '<span class="badge" lang="es">También en español</span>';
-  return "";
+function langBadge(article: Article, hrefPrefix: string): string {
+  const other = counterpart(article);
+  if (!other) return "";
+  const label = other.lang === "es" ? "en español" : "in English";
+  return ` <a class="badge" href="${hrefPrefix}${other.slug}.html" hreflang="${other.lang}" lang="${other.lang}">${label}</a>`;
 }
 
 function entryRow(article: Article, root: string): string {
-  const badge = langBadge(article);
   return `<li>
-  <a href="${root}writing/${article.slug}.html" aria-labelledby="entry-${article.slug}">
+  <div class="row">
     <span class="date"><time datetime="${article.date}">${formatMonthYear(article.date)}</time></span>
-    <span class="title" id="entry-${article.slug}">${escapeHtml(article.title)}${badge}</span>
+    <span class="title" id="entry-${article.slug}"><a href="${root}writing/${article.slug}.html">${escapeHtml(article.title)}</a>${langBadge(article, `${root}writing/`)}</span>
     <span class="excerpt">${escapeHtml(article.summary)}</span>
-  </a>
+  </div>
 </li>`;
 }
 
 function indexRow(article: Article, hrefPrefix: string): string {
-  const badge = langBadge(article);
   return `<li>
-  <a href="${hrefPrefix}${article.slug}.html" aria-labelledby="entry-${article.slug}">
+  <div class="row">
     <span class="date"><time datetime="${article.date}">${formatShortDate(article.date)}</time></span>
-    <span class="title" id="entry-${article.slug}">${escapeHtml(article.title)}${badge}</span>
+    <span class="title" id="entry-${article.slug}"><a href="${hrefPrefix}${article.slug}.html">${escapeHtml(article.title)}</a>${langBadge(article, hrefPrefix)}</span>
     <span class="excerpt">${escapeHtml(article.summary)}</span>
-  </a>
+  </div>
 </li>`;
 }
 
@@ -385,9 +388,9 @@ function categoryNav(options: {
 }): string {
   const { allHref, hrefPrefix, current } = options;
   const items = [
-    `<li><a href="${allHref}"${current ? "" : ' aria-current="page"'}>All <span class="count">${articles.length}</span></a></li>`,
+    `<li><a href="${allHref}"${current ? "" : ' aria-current="page"'}>All <span class="count">${listed.length}</span></a></li>`,
     ...(Object.entries(CATEGORIES) as Array<[CategorySlug, { label: string }]>).map(([slug, meta]) => {
-      const count = articles.filter((article) => article.category === slug).length;
+      const count = listed.filter((article) => article.category === slug).length;
       if (count === 0) return "";
       return `<li><a href="${hrefPrefix}${slug}/"${current === slug ? ' aria-current="page"' : ""}>${meta.label} <span class="count">${count}</span></a></li>`;
     }),
@@ -396,7 +399,7 @@ function categoryNav(options: {
 }
 
 function homeEntries(): string {
-  return articles
+  return listed
     .slice(0, 3)
     .map((article) => entryRow(article, "./"))
     .join("\n");
@@ -459,11 +462,11 @@ writeFile(
 
 /* writing index */
 
-const years = [...new Set(articles.map((article) => article.date.slice(0, 4)))].sort((a, b) => (a < b ? 1 : -1));
+const years = [...new Set(listed.map((article) => article.date.slice(0, 4)))].sort((a, b) => (a < b ? 1 : -1));
 
 const writingGroups = years
   .map((year) => {
-    const rows = articles
+    const rows = listed
       .filter((article) => article.date.startsWith(year))
       .map((article) => indexRow(article, "./"))
       .join("\n");
@@ -476,7 +479,7 @@ const writingBody = `<main id="main">
     <header class="page-head">
       <p class="kicker">Writing</p>
       <h1>Notes on what a screen reader says.</h1>
-      <p class="lede">${articles.length} pieces, accessibility first: what a screen reader announces, plus testing and engineering work behind it. Some are also on LinkedIn; this is the canonical copy.</p>
+      <p class="lede">${listed.length} pieces, accessibility first: what a screen reader announces, plus testing and engineering work behind it. Some are also on LinkedIn; this is the canonical copy.</p>
       ${categoryNav({ allHref: "./", hrefPrefix: "./category/" })}
     </header>
     ${writingGroups}
@@ -500,7 +503,7 @@ writeFile(
 for (const [slug, meta] of Object.entries(CATEGORIES) as Array<
   [CategorySlug, { label: string; description: string }]
 >) {
-  const items = articles.filter((article) => article.category === slug);
+  const items = listed.filter((article) => article.category === slug);
   if (items.length === 0) continue;
 
   const rows = items.map((article) => indexRow(article, "../../")).join("\n");
