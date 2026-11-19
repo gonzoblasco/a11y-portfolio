@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Preflight — Gonzalo Blasco</title>
+  <meta name="description" content="A pre-launch accessibility gate that reads what a screen reader actually announces and returns a repair prompt your AI builder can execute." />
+  <meta name="author" content="Gonzalo Blasco" />
+  <link rel="canonical" href="https://gonzoblasco.github.io/a11y-portfolio/preflight/" />
+  <meta property="og:site_name" content="Gonzalo Blasco" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Preflight — Gonzalo Blasco" />
+  <meta property="og:description" content="A pre-launch accessibility gate that reads what a screen reader actually announces and returns a repair prompt your AI builder can execute." />
+  <meta property="og:url" content="https://gonzoblasco.github.io/a11y-portfolio/preflight/" />
+  <meta name="twitter:card" content="summary" />
+  <link rel="alternate" type="application/atom+xml" href="../feed.xml" title="Gonzalo Blasco" />
+  <link rel="stylesheet" href="../style.css" />
+  <link rel="preload" href="../assets/fonts/fraunces-normal.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="../assets/fonts/newsreader-normal.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="../assets/fonts/ibm-plex-mono-400.woff2" as="font" type="font/woff2" crossorigin />
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site">
+  <div class="wrap head">
+    <a class="wordmark" href="../">Gonzalo Blasco</a>
+    <nav aria-label="Sections"><ul><li><a href="../writing/">Writing</a></li><li><a href="../preflight/" aria-current="page">Work</a></li><li><a href="../about/">About</a></li></ul></nav>
+  </div>
+</header>
+<main id="main">
+  <div class="wrap">
+    <header class="page-head">
+      <p class="kicker">Product</p>
+      <h1>Preflight</h1>
+      <p class="lede">Your AI built the site. This proves it works, and tells the builder how to fix it.</p>
+    </header>
+
+    <div class="page-body">
+      <div class="prose-col prose">
+        <p>A pre-launch accessibility gate that reads your page the way a screen reader consumes it, then hands back a repair prompt your AI builder can execute.</p>
+
+        <h2>What it shows you</h2>
+        <p>Every attribute a linter checks can be present and the page can still be unusable. Preflight walks the page and records what is announced, in order, including the gaps:</p>
+
+        <pre class="example" tabindex="0" role="region" aria-label="Example screen reader transcript">  1  document
+  2  image                        <span class="problem">&lt;- an image with no name</span>
+  3  link, Pricing
+  4  button                       <span class="problem">&lt;- a button with no name</span>
+  5  heading, Ship your landing page in minutes, level 1
+  6  image                        <span class="problem">&lt;- another one</span></pre>
+
+        <h2>How it works</h2>
+        <ol class="steps">
+          <li>
+            <div>
+              <h3>The transcript</h3>
+              <p>The page is walked with a screen reader and every phrase it speaks is recorded, in order. A role announced with no name is marked and explained in plain language.</p>
+            </div>
+          </li>
+          <li>
+            <div>
+              <h3>The verdict</h3>
+              <p>One score that refuses to be green while someone is blocked. A page with 92 findings fixed and one unusable checkout does not get an A.</p>
+            </div>
+          </li>
+          <li>
+            <div>
+              <h3>The fix prompt</h3>
+              <p>An ordered prompt, ready to paste into the tool that generated the page. Every step names the element, the change, and the announcement the reader must produce afterwards.</p>
+            </div>
+          </li>
+        </ol>
+
+        <p>It does not certify anything, it does not crawl, and it does not edit your code. Automated checks catch roughly a third of accessibility defects; every report says so.</p>
+
+        <p><a class="cta" href="mailto:gonzoblasco@icloud.com?subject=Preflight%20scan">Request a scan</a></p>
+      </div>
+
+      <aside class="side-col" aria-label="Preflight details">
+        <h2>Status</h2>
+        <ul>
+          <li>Open source, local-first</li>
+          <li>One URL per scan</li>
+          <li>Runs in CI with exit codes</li>
+        </ul>
+        <h2>Repository</h2>
+        <ul>
+          <li><a href="https://github.com/gonzoblasco/preflight-a11y">github.com/gonzoblasco/preflight-a11y</a></li>
+        </ul>
+        <h2>Scope</h2>
+        <ul>
+          <li>AI-built sites</li>
+          <li>Pre-launch checks</li>
+          <li>Repair prompts, not certifications</li>
+        </ul>
+      </aside>
+    </div>
+  </div>
+</main>
+<footer class="site">
+  <div class="wrap">
+    <span>Gonzalo Blasco · Buenos Aires</span>
+    <span><a href="mailto:gonzoblasco@icloud.com">gonzoblasco@icloud.com</a> · <a href="https://github.com/gonzoblasco">GitHub</a> · <a href="https://www.linkedin.com/in/gonzalo-blasco">LinkedIn</a></span>
+  </div>
+</footer>
+</body>
+</html>

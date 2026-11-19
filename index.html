@@ -1,87 +1,94 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Gonzalo Blasco, accessibility engineer</title>
-<meta name="description" content="Accessibility engineer. Merged fixes in Adobe React Spectrum, IBM Carbon, Meta Astryx and MUI. I build tools that listen to screen readers.">
-<link rel="stylesheet" href="./style.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Gonzalo Blasco — Accessibility engineer</title>
+  <meta name="description" content="Accessibility engineer. I fix what assistive technology announces, not what the markup declares. Twelve merged pull requests across React Spectrum, Carbon, Astryx, MUI and shadcn/ui." />
+  <meta name="author" content="Gonzalo Blasco" />
+  <link rel="canonical" href="https://gonzoblasco.github.io/a11y-portfolio/" />
+  <meta property="og:site_name" content="Gonzalo Blasco" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Gonzalo Blasco — Accessibility engineer" />
+  <meta property="og:description" content="Accessibility engineer. I fix what assistive technology announces, not what the markup declares. Twelve merged pull requests across React Spectrum, Carbon, Astryx, MUI and shadcn/ui." />
+  <meta property="og:url" content="https://gonzoblasco.github.io/a11y-portfolio/" />
+  <meta name="twitter:card" content="summary" />
+  <link rel="alternate" type="application/atom+xml" href="./feed.xml" title="Gonzalo Blasco" />
+  <link rel="stylesheet" href="./style.css" />
+  <link rel="preload" href="./assets/fonts/fraunces-normal.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="./assets/fonts/newsreader-normal.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="./assets/fonts/ibm-plex-mono-400.woff2" as="font" type="font/woff2" crossorigin />
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
-
 <header class="site">
-  <div class="wrap">
-    <p class="name"><a href="./">Gonzalo Blasco</a></p>
-    <nav aria-label="Sections">
-      <ul>
-        <li><a href="#writing">Writing</a></li>
-        <li><a href="#work">Work</a></li>
-        <li><a href="https://github.com/gonzoblasco">GitHub</a></li>
-      </ul>
-    </nav>
+  <div class="wrap head">
+    <a class="wordmark" href="./">Gonzalo Blasco</a>
+    <nav aria-label="Sections"><ul><li><a href="./writing/">Writing</a></li><li><a href="./preflight/">Work</a></li><li><a href="./about/">About</a></li></ul></nav>
   </div>
 </header>
+<main id="main">
+  <section class="hero wrap" aria-labelledby="title">
+    <div class="hero-main">
+      <p class="kicker">Accessibility engineering · Buenos Aires</p>
+      <h1 id="title">What a screen reader <em>actually</em> says.</h1>
+      <p class="lede">I fix what assistive technology announces, not what the markup declares. Twelve merged pull requests across React Spectrum, Carbon, Astryx, MUI and shadcn/ui.</p>
+      <p class="actions"><a class="cta" href="./writing/">Read the notes</a> <a href="mailto:gonzoblasco@icloud.com">Get in touch</a></p>
+    </div>
+    <div class="note">
+      <p class="label">Currently</p>
+      <p>Preflight, a pre-launch accessibility gate. It reads the accessibility output a screen reader consumes and returns a repair prompt a builder can execute.</p>
+    </div>
+  </section>
 
-<main id="main" class="wrap">
-  <h1>What a screen reader actually says</h1>
-
-  <p class="lede">
-    Accessibility engineer. Merged fixes in Adobe React Spectrum, IBM Carbon, Meta Astryx and MUI.
-    I build tools that listen to screen readers instead of reading attributes.
-  </p>
-
-  <p>
-    Twelve merged pull requests upstream, all of them about the same question: what does a blind
-    person hear when this component is used. Not what the markup declares. What the speech output
-    says, in the order it says it.
-  </p>
-
-  <section aria-labelledby="writing">
-    <h2 id="writing">Writing</h2>
-    <ul class="list">
-      <li>
-        <h3><a href="./writing/the-quieter-announcement.html">The Quieter Announcement</a></h3>
-        <p class="meta">November 2026</p>
-        <p>
-          I fixed a VoiceOver bug in Adobe's ComboBox by deleting an announcement. Why every linter
-          passed while the experience got worse, and what that says about how we test accessibility.
-        </p>
-      </li>
+  <section class="section wrap" aria-labelledby="writing">
+    <div class="section-head">
+      <h2 id="writing"><span>01</span> Writing</h2>
+      <a href="./writing/">All notes</a>
+    </div>
+    <ul class="entries">
+<li>
+  <a href="./writing/the-quieter-announcement.html" aria-labelledby="entry-the-quieter-announcement">
+    <span class="date"><time datetime="2026-11-17">Nov 2026</time></span>
+    <span class="title" id="entry-the-quieter-announcement">The Quieter Announcement</span>
+    <span class="excerpt">I fixed a screen reader bug by deleting an announcement. React Spectrum&#39;s live region was overwriting what VoiceOver already said natively, and no linter could see the collision.</span>
+  </a>
+</li>
+<li>
+  <a href="./writing/hidden-slides-focus.html" aria-labelledby="entry-hidden-slides-focus">
+    <span class="date"><time datetime="2026-11-03">Nov 2026</time></span>
+    <span class="title" id="entry-hidden-slides-focus">Los slides ocultos no deberían tener foco<span class="badge" lang="es">En español</span></span>
+    <span class="excerpt">Un PR en shadcn/ui estuvo tres meses trabado porque los tests corrían en jsdom, que no ve el scroll programático. Los tests en browser encontraron ese bug y dos más en la misma función.</span>
+  </a>
+</li>
+<li>
+  <a href="./writing/dialog-description.html" aria-labelledby="entry-dialog-description">
+    <span class="date"><time datetime="2026-10-22">Oct 2026</time></span>
+    <span class="title" id="entry-dialog-description">The dialog description that never arrived</span>
+    <span class="excerpt">Carbon&#39;s ComposedModal forwarded only aria-labelledby, so screen reader users got a title and nothing about what the modal was for. The PR adds aria-describedby, and review caught a test that proved nothing.</span>
+  </a>
+</li>
     </ul>
   </section>
 
-  <section aria-labelledby="work">
-    <h2 id="work">Work</h2>
-    <ul class="list">
-      <li>
-        <h3><a href="https://github.com/gonzoblasco/preflight-a11y">Preflight</a></h3>
-        <p>
-          A pre launch accessibility gate: it loads a page in a browser, reads the accessibility
-          output the way a screen reader consumes it, and returns a repair prompt a builder can act
-          on. Built for sites generated by AI builders, where every attribute is present and the
-          page is still unusable.
-        </p>
-      </li>
-      <li>
-        <h3><a href="https://github.com/gonzoblasco">Open source</a></h3>
-        <p>
-          Merged fixes across Adobe React Spectrum, IBM Carbon, IBM Products, Meta Astryx, MUI Base
-          UI, MUI Material UI and shadcn/ui. Mostly ARIA contracts, focus management and screen
-          reader announcements.
-        </p>
-      </li>
-    </ul>
+  <section class="work wrap" aria-labelledby="work">
+    <h2 id="work"><span>02</span> Work</h2>
+    <div class="work-body">
+      <h3>Preflight</h3>
+      <p>A pre-launch accessibility gate for AI-built websites. It loads a page in a browser, reads what a screen reader actually announces, and returns a repair prompt your builder can execute.</p>
+      <p><a href="./preflight/">See how it works</a></p>
+    </div>
+    <dl class="work-meta">
+      <dt>Merged</dt><dd>12 PRs</dd>
+      <dt>Repos</dt><dd>React Spectrum · Carbon · Astryx · MUI · shadcn/ui</dd>
+      <dt>Focus</dt><dd>ARIA contracts, focus management, announcements</dd>
+    </dl>
   </section>
 </main>
-
 <footer class="site">
   <div class="wrap">
-    <ul>
-      <li><a href="https://github.com/gonzoblasco">github.com/gonzoblasco</a></li>
-      <li><a href="https://www.linkedin.com/in/gonzalo-blasco">LinkedIn</a></li>
-      <li><a href="mailto:gonzoblasco@icloud.com">gonzoblasco@icloud.com</a></li>
-    </ul>
+    <span>Gonzalo Blasco · Buenos Aires</span>
+    <span><a href="mailto:gonzoblasco@icloud.com">gonzoblasco@icloud.com</a> · <a href="https://github.com/gonzoblasco">GitHub</a> · <a href="https://www.linkedin.com/in/gonzalo-blasco">LinkedIn</a></span>
   </div>
 </footer>
 </body>

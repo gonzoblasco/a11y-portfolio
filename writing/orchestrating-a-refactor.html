@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Orchestrating a 10,000-line refactor — Gonzalo Blasco</title>
+  <meta name="description" content="A 10,000-line monolith became a modular app through a staged agent pipeline: planning, execution, cross-review by a different model, and verification. The public API did not change." />
+  <meta name="author" content="Gonzalo Blasco" />
+  <link rel="canonical" href="https://gonzoblasco.github.io/a11y-portfolio/writing/orchestrating-a-refactor.html" />
+  <meta property="og:site_name" content="Gonzalo Blasco" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Orchestrating a 10,000-line refactor — Gonzalo Blasco" />
+  <meta property="og:description" content="A 10,000-line monolith became a modular app through a staged agent pipeline: planning, execution, cross-review by a different model, and verification. The public API did not change." />
+  <meta property="og:url" content="https://gonzoblasco.github.io/a11y-portfolio/writing/orchestrating-a-refactor.html" />
+  <meta name="twitter:card" content="summary" />
+  <link rel="alternate" type="application/atom+xml" href="../feed.xml" title="Gonzalo Blasco" />
+  <link rel="stylesheet" href="../style.css" />
+  <link rel="preload" href="../assets/fonts/fraunces-normal.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="../assets/fonts/newsreader-normal.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="../assets/fonts/ibm-plex-mono-400.woff2" as="font" type="font/woff2" crossorigin />
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site">
+  <div class="wrap head">
+    <a class="wordmark" href="../">Gonzalo Blasco</a>
+    <nav aria-label="Sections"><ul><li><a href="../writing/" aria-current="page">Writing</a></li><li><a href="../preflight/">Work</a></li><li><a href="../about/">About</a></li></ul></nav>
+  </div>
+</header>
+<main id="main">
+  <article class="article wrap">
+    <header class="article-head">
+      <p class="kicker"><a href="./">Writing</a> <span aria-hidden="true">/</span> <time datetime="2026-08-28">Aug 2026</time></p>
+      <h1>Orchestrating a 10,000-line refactor</h1>
+      <p class="lede">A 10,000-line monolith became a modular app through a staged agent pipeline: planning, execution, cross-review by a different model, and verification. The public API did not change.</p>
+      <p class="article-meta">
+        <span>Note</span>
+        <span>1 min read</span>
+        <span><time datetime="2026-08-28">August 28, 2026</time></span>
+        <span>Originally published on LinkedIn</span>
+      </p>
+    </header>
+    <div class="prose">
+<p>Refactoring 10,000 lines of monolithic code is not a writing problem, it is an orchestration problem.</p>
+<p>I recently finished the modular restructuring of a macOS cleaning app. The challenge was not just moving files, but guaranteeing the original behavior stayed intact while the architecture became something maintainable and testable.</p>
+<h2 id="the-process-an-a-b-pipeline-and-differentiated-reasoning">The process: an A/B pipeline and differentiated reasoning</h2>
+<p>Instead of using AI as an autocomplete chat, I used an orchestrated agent system:</p>
+<ol>
+<li>Planning (Kanam, MAX): analysis of the monolithic structure and design of the route and module map. The orchestrator defines the strategy before a single line is written.</li>
+<li>Execution (Agent A, HIGH): implementation of the modularization, separating routes, utility libraries and business logic.</li>
+<li>Cross-review (Agent B, HIGH): a second agent, running a different model, reviews the first agent's code. This step is critical. It catches scope hallucinations and syntax errors that the first agent ignores because of tunnel vision.</li>
+<li>Final verification: endpoint validation and unit tests over the most critical modules, security and paths.</li>
+</ol>
+<h2 id="the-why-system-over-tool">The why: system over tool</h2>
+<p>Many developers use AI to generate functions. Here we used it to manage complexity.</p>
+<p>Separating the thinking phase (MAX) from the execution phase (HIGH), and adding a cross-review layer on top, sharply lowers the risk of introducing bugs during a massive refactor. It is not about writing faster. It is about reducing the error rate on deep structural changes.</p>
+<p>Result:</p>
+<ul>
+<li>From 3 giant files to a professional modular structure.</li>
+<li>27 unit tests proving the security rules did not change.</li>
+<li>Zero changes to the public API, keeping full compatibility with the frontend.</li>
+</ul>
+<p>AI does not replace the engineer, but it redefines the scale of what a single engineer can refactor in one session.</p>
+
+    </div>
+    <footer class="article-foot">
+      <span></span>
+      <a href="./">Back to all notes</a>
+    </footer>
+  </article>
+</main>
+<footer class="site">
+  <div class="wrap">
+    <span>Gonzalo Blasco · Buenos Aires</span>
+    <span><a href="mailto:gonzoblasco@icloud.com">gonzoblasco@icloud.com</a> · <a href="https://github.com/gonzoblasco">GitHub</a> · <a href="https://www.linkedin.com/in/gonzalo-blasco">LinkedIn</a></span>
+  </div>
+</footer>
+</body>
+</html>

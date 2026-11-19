@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Gonzalo Blasco — Writing</title>
+  <subtitle>Notes on accessibility, screen readers and the fixes behind merged pull requests.</subtitle>
+  <id>https://gonzoblasco.github.io/a11y-portfolio/</id>
+  <link href="https://gonzoblasco.github.io/a11y-portfolio/writing/" />
+  <link rel="self" href="https://gonzoblasco.github.io/a11y-portfolio/feed.xml" />
+  <updated>2026-11-17T12:00:00.000Z</updated>
+  <author>
+    <name>Gonzalo Blasco</name>
+    <uri>https://gonzoblasco.github.io/a11y-portfolio/</uri>
+  </author>
+  <entry>
+    <title>The Quieter Announcement</title>
+    <id>https://gonzoblasco.github.io/a11y-portfolio/writing/the-quieter-announcement.html</id>
+    <link href="https://gonzoblasco.github.io/a11y-portfolio/writing/the-quieter-announcement.html" />
+    <updated>2026-11-17T12:00:00.000Z</updated>
+    <summary>I fixed a screen reader bug by deleting an announcement. React Spectrum&#39;s live region was overwriting what VoiceOver already said natively, and no linter could see the collision.</summary>
+    <content type="html">&lt;p&gt;I once fixed a screen reader bug by deleting an announcement.&lt;/p&gt;
+&lt;p&gt;That sounds backwards, and it is the point. On the surface, the change was small: 41 lines added, 80 removed, one hook, two test files, merged into Adobe&#39;s React Spectrum in October. What it revealed is that most accessibility work is aimed at the wrong target.&lt;/p&gt;
+&lt;h2 id=&quot;what-the-user-heard&quot;&gt;What the user heard&lt;/h2&gt;
+&lt;p&gt;A ComboBox with sections. You open it, you arrow down through the options. VoiceOver, on macOS and iOS, speaks each item as you move through it: the label, the role, the position, and whether it is currently selected.&lt;/p&gt;
+&lt;p&gt;That is a rich announcement. It is also, in a very literal sense, a gift. The browser and the screen reader cooperated to produce it.&lt;/p&gt;
+&lt;p&gt;Then React Spectrum overwrote it.&lt;/p&gt;
+&lt;p&gt;The &lt;code&gt;useComboBox&lt;/code&gt; hook carried a workaround, and the comment above it explained why it existed:&lt;/p&gt;
+&lt;pre tabindex=&quot;0&quot; role=&quot;region&quot; aria-label=&quot;Code sample&quot;&gt;&lt;code class=&quot;language-js&quot;&gt;// VoiceOver has issues with announcing aria-activedescendant properly on change
+// (especially on iOS). We use a live region announcer to announce focus changes
+// manually.
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;An &lt;code&gt;aria-activedescendant&lt;/code&gt; pattern moves focus in the accessibility tree without moving real focus. Some screen readers historically did not follow that movement reliably, so the library announced each change by hand, through a live region, to be safe.&lt;/p&gt;
+&lt;p&gt;The workaround was correct when it was written. It stopped being correct when VoiceOver started announcing per item details natively. And once both things were happening at the same time, they did not cooperate. They competed.&lt;/p&gt;
+&lt;p&gt;The live region fired on every focused item change and replaced the native speech with a single string: the item name. So instead of hearing &amp;quot;Pricing, menu item, 3 of 12, selected&amp;quot;, a user heard &amp;quot;Pricing&amp;quot;, and then moved on.&lt;/p&gt;
+&lt;p&gt;Less information, delivered more urgently. Which is the definition of a regression that hides.&lt;/p&gt;
+&lt;h2 id=&quot;why-nothing-caught-it&quot;&gt;Why nothing caught it&lt;/h2&gt;
+&lt;p&gt;Run that page through axe. Everything passes.&lt;/p&gt;
+&lt;p&gt;The combobox has the right role. &lt;code&gt;aria-expanded&lt;/code&gt; is synced. &lt;code&gt;aria-controls&lt;/code&gt; points at the right listbox. The options carry &lt;code&gt;aria-selected&lt;/code&gt; and &lt;code&gt;aria-posinset&lt;/code&gt;, and the &lt;code&gt;aria-setsize&lt;/code&gt; matches. The live region exists, is not hidden, and is not empty. Every attribute a linter knows how to check is either present or not applicable.&lt;/p&gt;
+&lt;p&gt;The bug lived somewhere no linter looks: in the collision between two things that were each individually correct.&lt;/p&gt;
+&lt;p&gt;Accessibility, at that layer, is not a property of the markup. It is a property of the runtime, and more specifically it is a property of what a person actually hears. Markup is the input to that. It is not the thing itself.&lt;/p&gt;
+&lt;h2 id=&quot;the-fix&quot;&gt;The fix&lt;/h2&gt;
+&lt;p&gt;The announcement was still needed for one narrow case: moving into a new section, where VoiceOver stays quiet and the section title and option count would otherwise be lost. So the gate became the section, not the item.&lt;/p&gt;
+&lt;pre tabindex=&quot;0&quot; role=&quot;region&quot; aria-label=&quot;Code sample 2&quot;&gt;&lt;code class=&quot;language-js&quot;&gt;if (isGroupChange) {
+  const announcement = stringFormatter.format(&#39;focusAnnouncement&#39;, {
+    isGroupChange: true,
+    groupTitle: sectionTitle,
+    groupCount: section ? [...getChildNodes(section, state.collection)].length : 0,
+    optionText: focusedItem[&#39;aria-label&#39;] || focusedItem.textValue || &#39;&#39;,
+    isSelected
+  });
+
+  announce(announcement);
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Everything else stays silent and lets the platform speak. Arrowing through a section: native speech, intact. Arrowing to the selected item: native speech, intact. Entering a section: one manual announcement with the section title and the option count, then out of the way.&lt;/p&gt;
+&lt;p&gt;The review was the hard part, and it was the interesting part. I had updated the combobox tests to assert that per item navigation no longer triggers a manual announcement. The maintainer pushed back twice. The first version, in their reading, was &lt;code&gt;not.toHaveBeenCalled&lt;/code&gt; wearing a costume. The second round asked what those tests covered that nothing else did. The answer, eventually, was nothing. Once the announcement moved to section changes, the tests had nothing left to assert, and they were removed. The suite ended at 259 tests across two packages.&lt;/p&gt;
+&lt;p&gt;I shipped a smaller diff than I opened, and the PR was better for it. That is not the instinct most people have.&lt;/p&gt;
+&lt;h2 id=&quot;the-second-failure-which-was-mine&quot;&gt;The second failure, which was mine&lt;/h2&gt;
+&lt;p&gt;A month earlier I had merged a test only PR into the same repository, locking in that &lt;code&gt;aria-posinset&lt;/code&gt; stays global across menu sections. Four items across two sections must count 1 through 4, matching &lt;code&gt;aria-setsize=4&lt;/code&gt;. If a section restarts the count, a screen reader announces &amp;quot;item 1 of 2&amp;quot; when the truth is &amp;quot;item 1 of 4&amp;quot;.&lt;/p&gt;
+&lt;p&gt;React Spectrum was already doing it right. Nothing guaranteed it. So the test was there to make sure a future refactor could not quietly break it.&lt;/p&gt;
+&lt;p&gt;My first version of that test was worthless.&lt;/p&gt;
+&lt;p&gt;The helper I used to build the fixture flattened the sections into a plain list of items. The DOM that the test rendered never contained the sectioned structure the test claimed to cover. It went green. It was decoration. A maintainer spotted it in seconds.&lt;/p&gt;
+&lt;p&gt;The corrected version renders each section through the real hook, including labelled groups and their headings, and also covers the section without a heading, where the accessible name comes from &lt;code&gt;aria-label&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Two PRs, two different mistakes, and the same root cause: I was reasoning about the model in my head instead of the artifact that ships. In the first case I trusted the attribute over the announcement. In the second I trusted the fixture over the DOM.&lt;/p&gt;
+&lt;h2 id=&quot;the-rule-i-kept&quot;&gt;The rule I kept&lt;/h2&gt;
+&lt;p&gt;If you want to know whether a component is accessible, do not ask what attributes it has. Ask what a screen reader says when a person uses it. Those are different questions, and only one of them is the product.&lt;/p&gt;
+&lt;p&gt;Most tooling answers the first question, because the first question is cheap. It can be answered by parsing HTML, and parsing HTML scales. The second question requires running the thing, in a browser, with an assistive technology attached, and reading the output. It does not scale nearly as well. It also happens to be the only one that predicts what a blind user experiences.&lt;/p&gt;
+&lt;p&gt;That gap is what I ended up building a tool around. Preflight loads a page in a browser, reads its accessibility output the way a screen reader consumes it, and reports what is actually announced rather than what is merely declared.&lt;/p&gt;
+&lt;p&gt;The demo page in its README has every attribute in place, and two unnamed images and an unnamed button. Valid HTML, clean lint, unusable.&lt;/p&gt;
+&lt;p&gt;PRs: &lt;a href=&quot;https://github.com/adobe/react-spectrum/pull/10503&quot;&gt;adobe/react-spectrum#10503&lt;/a&gt; and &lt;a href=&quot;https://github.com/adobe/react-spectrum/pull/10554&quot;&gt;#10554&lt;/a&gt;.&lt;/p&gt;
+</content>
+  </entry>
+  <entry>
+    <title>Los slides ocultos no deberían tener foco</title>
+    <id>https://gonzoblasco.github.io/a11y-portfolio/writing/hidden-slides-focus.html</id>
+    <link href="https://gonzoblasco.github.io/a11y-portfolio/writing/hidden-slides-focus.html" />
+    <updated>2026-11-03T12:00:00.000Z</updated>
+    <summary>Un PR en shadcn/ui estuvo tres meses trabado porque los tests corrían en jsdom, que no ve el scroll programático. Los tests en browser encontraron ese bug y dos más en la misma función.</summary>
+    <content type="html">&lt;p&gt;Un PR que abrí en agosto se mergeó ayer. Tres meses. Y lo que lo destrabó no fue el código: fue un test que no podía ver el bug.&lt;/p&gt;
+&lt;p&gt;El bug: en un chat con streaming y scroll anclado, si scrolleás mientras la respuesta se va escribiendo, el espacio reservado debajo del mensaje se rompe. Con autoScroll prendido, la vista salta al fondo aunque la respuesta todavía sea chica. Con autoScroll apagado, te queda un hueco muerto abajo que nunca se resuelve.&lt;/p&gt;
+&lt;p&gt;En los dos casos, una acción completamente normal, scrollear para leer, destruye la vista.&lt;/p&gt;
+&lt;p&gt;El fix tenía dos partes: condicionar el re-armado de follow-mode a que el spacer esté en cero, y drenar ese spacer cuando se suelta el ancla, haciendo que la respuesta lo vaya llenando sin mover al lector.&lt;/p&gt;
+&lt;p&gt;Los tests pasaban. 61 tests, todo verde. Y el PR no era mergeable.&lt;/p&gt;
+&lt;p&gt;El motivo lo dijo shadcn en la review, y fue la mejor review que me hicieron este año: los tests corrían en jsdom, y jsdom no dispara eventos de scroll para scrolls programáticos. Sin eso, el test no puede ver que el drain rompía justo lo que el PR venía a arreglar. En un browser real, cada turno anclado salía disparado al fondo.&lt;/p&gt;
+&lt;p&gt;Verde en CI no significa correcto. Significa que ese entorno no vio el problema.&lt;/p&gt;
+&lt;p&gt;Agregué tests en modo browser. Y ahí salió: además de ese, había dos errores más en la misma función. Uno de ellos era la matemática del drenaje, que acumulaba error en scroll inercial. También contó daltino, que en agosto levantó el caso del stream que corta con el spacer a medio drenar.&lt;/p&gt;
+&lt;p&gt;El aprendizaje no es &amp;quot;testeá mejor&amp;quot;. Es más específico: cuando el bug vive en el scroll, en la geometría o en el timing, el test tiene que correr donde el bug existe. jsdom es excelente para el DOM. Para lo que pasa mientras el navegador hace scroll, es ciego por diseño.&lt;/p&gt;
+&lt;p&gt;PR: &lt;a href=&quot;https://github.com/shadcn-ui/ui/pull/11465&quot;&gt;https://github.com/shadcn-ui/ui/pull/11465&lt;/a&gt;&lt;/p&gt;
+</content>
+  </entry>
+  <entry>
+    <title>The dialog description that never arrived</title>
+    <id>https://gonzoblasco.github.io/a11y-portfolio/writing/dialog-description.html</id>
+    <link href="https://gonzoblasco.github.io/a11y-portfolio/writing/dialog-description.html" />
+    <updated>2026-10-22T12:00:00.000Z</updated>
+    <summary>Carbon&#39;s ComposedModal forwarded only aria-labelledby, so screen reader users got a title and nothing about what the modal was for. The PR adds aria-describedby, and review caught a test that proved nothing.</summary>
+    <content type="html">&lt;p&gt;I just merged a PR into Carbon Design System that adds native support for the &lt;code&gt;aria-describedby&lt;/code&gt; prop on the &lt;code&gt;ComposedModal&lt;/code&gt; component. The change closes #21342, a known accessibility gap where screen reader users could not programmatically associate a description with a modal dialog.&lt;/p&gt;
+&lt;p&gt;What was missing? The modal only forwarded &lt;code&gt;aria-labelledby&lt;/code&gt;. Without &lt;code&gt;aria-describedby&lt;/code&gt;, developers could not give the dialog a concise, contextual description, and assistive technology users got the title with nothing about what the modal was for.&lt;/p&gt;
+&lt;p&gt;How we fixed it: a new optional &lt;code&gt;aria-describedby&lt;/code&gt; prop, wired through so that when the &lt;code&gt;enable-dialog-element&lt;/code&gt; feature flag is on the attribute lands on the native &lt;code&gt;&amp;lt;dialog&amp;gt;&lt;/code&gt; element, and otherwise falls back to the &lt;code&gt;div[role=&amp;quot;dialog&amp;quot;]&lt;/code&gt; container.&lt;/p&gt;
+&lt;p&gt;The review process was the interesting part. The maintainer pushed back on three things, and the first one is the one I keep coming back to: my first test referenced a &lt;code&gt;description-modal-id&lt;/code&gt; element without rendering it, so it asserted the attribute was present on the dialog but proved nothing about whether the description actually existed in the page. The fix was to render the element alongside the modal. The other two were about not leaking implementation details: a reference to the internal &lt;code&gt;cds--modal-container&lt;/code&gt; class in a comment, and documenting the new prop properly instead of leaving it implicit.&lt;/p&gt;
+&lt;p&gt;And then the maintainer asked whether the review comments had actually been addressed, when some of them had not. That was worth hearing.&lt;/p&gt;
+&lt;p&gt;The PR landed with a test that renders the description element and asserts the attribute reaches the native &lt;code&gt;&amp;lt;dialog&amp;gt;&lt;/code&gt; when the flag is on, plus the &lt;code&gt;div[role=&amp;quot;dialog&amp;quot;]&lt;/code&gt; fallback.&lt;/p&gt;
+&lt;p&gt;If your dialog has a title but no description, that is a gap your users cannot see either.&lt;/p&gt;
+&lt;p&gt;PR: &lt;a href=&quot;https://github.com/carbon-design-system/carbon/pull/22887&quot;&gt;https://github.com/carbon-design-system/carbon/pull/22887&lt;/a&gt;&lt;/p&gt;
+</content>
+  </entry>
+  <entry>
+    <title>Sortable headers are not toggle buttons</title>
+    <id>https://gonzoblasco.github.io/a11y-portfolio/writing/sortable-headers.html</id>
+    <link href="https://gonzoblasco.github.io/a11y-portfolio/writing/sortable-headers.html" />
+    <updated>2026-10-07T12:00:00.000Z</updated>
+    <summary>A sortable Datagrid header announced itself as a toggle button, because aria-pressed competed with aria-sort and won. Removing the attribute let the sort direction reach the user again.</summary>
+    <content type="html">&lt;p&gt;A screen reader does not read what your component means. It reads what your markup declares. When the two disagree, the user hears the declaration, and acts on it.&lt;/p&gt;
+&lt;p&gt;A Datagrid had a sortable column header. Visually it was obvious: click to sort ascending, click again for descending, the little arrow flips. For a screen reader it was a toggle button. Not a sorted column: a toggle.&lt;/p&gt;
+&lt;p&gt;The reason was one attribute. The sortable header button rendered by &lt;code&gt;useSortableColumns&lt;/code&gt; set &lt;code&gt;aria-pressed&lt;/code&gt; to &lt;code&gt;true&lt;/code&gt; or &lt;code&gt;false&lt;/code&gt;. To a screen reader, a button with &lt;code&gt;aria-pressed&lt;/code&gt; is a toggle button, and that is exactly how VoiceOver announced it: &amp;quot;toggle button&amp;quot;, state pressed or not pressed. The current sort direction, ascending, descending or unsorted, never reached the user.&lt;/p&gt;
+&lt;p&gt;The confusing part: the direction was already announced, correctly, somewhere else. &lt;code&gt;aria-sort&lt;/code&gt; lives on the &lt;code&gt;columnheader&lt;/code&gt; element and carries the state. So the component was saying two different things at once: &lt;code&gt;aria-sort=&amp;quot;ascending&amp;quot;&lt;/code&gt; on the header, and &lt;code&gt;aria-pressed=&amp;quot;false&amp;quot;&lt;/code&gt; on the button inside it. The screen reader prioritized the toggle and dropped the semantics the user actually needed.&lt;/p&gt;
+&lt;p&gt;The fix was to stop saying the wrong thing. Remove &lt;code&gt;aria-pressed&lt;/code&gt;, and the now-unused helper that computed it. Sort state stays on &lt;code&gt;aria-sort&lt;/code&gt; in the columnheader, which is also what the core &lt;code&gt;@carbon/react&lt;/code&gt; DataTable does. Its sort trigger does not use &lt;code&gt;aria-pressed&lt;/code&gt; at all. Datagrid was the outlier.&lt;/p&gt;
+&lt;p&gt;The regression test asserts the sortable header button has no &lt;code&gt;aria-pressed&lt;/code&gt; attribute. It fails on &lt;code&gt;main&lt;/code&gt; (the attribute is there, set to &lt;code&gt;false&lt;/code&gt;) and passes with the fix.&lt;/p&gt;
+&lt;p&gt;Two things I keep in mind from this one:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;aria-pressed&lt;/code&gt; is not a state container. It is a role assignment. The moment you set it, you have told assistive tech &amp;quot;this is a toggle&amp;quot;. Use it only when the control really is a two-state toggle. For sort, the correct signal is &lt;code&gt;aria-sort&lt;/code&gt; on the header: a different element, a different meaning.&lt;/li&gt;
+&lt;li&gt;Redundant ARIA is not harmless. Two declarations for the same concept do not reinforce each other; they compete, and the wrong one can win. Before adding an attribute, check whether the correct semantics already exist elsewhere in the same widget.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;If a component announces a control as something it is not, the fix is usually not &amp;quot;add more ARIA&amp;quot;. It is &amp;quot;remove the attribute that lies&amp;quot;.&lt;/p&gt;
+&lt;p&gt;PR: &lt;a href=&quot;https://github.com/carbon-design-system/ibm-products/pull/9879&quot;&gt;https://github.com/carbon-design-system/ibm-products/pull/9879&lt;/a&gt;&lt;/p&gt;
+</content>
+  </entry>
+  <entry>
+    <title>Focus after the step changed</title>
+    <id>https://gonzoblasco.github.io/a11y-portfolio/writing/focus-after-step-change.html</id>
+    <link href="https://gonzoblasco.github.io/a11y-portfolio/writing/focus-after-step-change.html" />
+    <updated>2026-09-14T12:00:00.000Z</updated>
+    <summary>After Next in CreateFullPage, focus jumped to the skip link because the helper inferred visibility from an attribute the component never sets. One querySelector on the real class fixed it.</summary>
+    <content type="html">&lt;p&gt;The bug report said focus was lost. It was not lost. It went somewhere specific: the &amp;quot;Skip to main content&amp;quot; link at the top of the page.&lt;/p&gt;
+&lt;p&gt;In a multi-step &lt;code&gt;CreateFullPage&lt;/code&gt;, a keyboard user presses Next and expects focus to land on the first interactive element of the newly visible step. Instead it jumped to the skip link, a nasty regression for anyone navigating with a keyboard, introduced between v2.43 and v2.44.&lt;/p&gt;
+&lt;p&gt;The root cause was an inference. A helper called &lt;code&gt;getActiveStep()&lt;/code&gt; walked every step in the DOM and returned the first one whose ancestor chain had no &lt;code&gt;[inert]&lt;/code&gt; attribute. The idea: &amp;quot;the visible step is the one that is not inert.&amp;quot;&lt;/p&gt;
+&lt;p&gt;But &lt;code&gt;CreateFullPageStep&lt;/code&gt; never sets &lt;code&gt;inert&lt;/code&gt;. It hides non-active steps with &lt;code&gt;display: none&lt;/code&gt;, through a CSS modifier class. So the walk always returned the first step in DOM order, no matter which step was actually active.&lt;/p&gt;
+&lt;p&gt;Then the hook did the reasonable thing with that wrong step: it found inputs inside it and called &lt;code&gt;.focus()&lt;/code&gt;. Calling &lt;code&gt;.focus()&lt;/code&gt; on an element inside a &lt;code&gt;display: none&lt;/code&gt; subtree is a browser no-op. Focus never moved to the new step, stayed on the Next button or drifted to &lt;code&gt;&amp;lt;body&amp;gt;&lt;/code&gt;, and the next tab stop picked it up: the skip link.&lt;/p&gt;
+&lt;p&gt;The fix was to stop inferring visibility from an attribute that was never set, and query the class the component already applies to the visible step. One &lt;code&gt;querySelector&lt;/code&gt;, O(1), unambiguous.&lt;/p&gt;
+&lt;p&gt;The regression test renders two steps with real inputs, activates Next, and asserts that &lt;code&gt;document.activeElement&lt;/code&gt; is the input of the visible step, and not the skip link, and not the body. It fails on &lt;code&gt;main&lt;/code&gt; (the &lt;code&gt;waitFor&lt;/code&gt; times out) and passes with the fix.&lt;/p&gt;
+&lt;p&gt;Two things I took from this one:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&amp;quot;Hidden&amp;quot; has more than one meaning in the DOM. &lt;code&gt;inert&lt;/code&gt;, &lt;code&gt;display: none&lt;/code&gt;, &lt;code&gt;aria-hidden&lt;/code&gt; and &lt;code&gt;visibility&lt;/code&gt; each remove an element from a different surface: focus, layout, the accessibility tree, paint. Code that assumes one and gets another fails silently. No error, no exception, just wrong behavior.&lt;/li&gt;
+&lt;li&gt;The blast radius was worth spelling out. The same hook is used by &lt;code&gt;CreateTearsheet&lt;/code&gt;, whose steps do set &lt;code&gt;inert&lt;/code&gt;. Both paths had to keep resolving correctly, so that went into the PR description before review, not after.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;One note on the process: the maintainer flagged the component as heading toward deprecation, with an example pattern as the replacement. I kept the fix anyway. It is one line in a shared hook plus a test, no new API surface, and the bug is live for anyone on the published package today. Two maintainers approved it and it merged.&lt;/p&gt;
+&lt;p&gt;If you have a focus helper that decides &amp;quot;which container is visible&amp;quot; by looking for a marker attribute, check that the component actually sets that marker. That unverified assumption is the whole bug.&lt;/p&gt;
+&lt;p&gt;PR: &lt;a href=&quot;https://github.com/carbon-design-system/ibm-products/pull/9878&quot;&gt;https://github.com/carbon-design-system/ibm-products/pull/9878&lt;/a&gt;&lt;/p&gt;
+</content>
+  </entry>
+  <entry>
+    <title>Counting items across sections</title>
+    <id>https://gonzoblasco.github.io/a11y-portfolio/writing/posinset-across-sections.html</id>
+    <link href="https://gonzoblasco.github.io/a11y-portfolio/writing/posinset-across-sections.html" />
+    <updated>2026-09-09T12:00:00.000Z</updated>
+    <summary>A test-only PR locks in that aria-posinset stays global across menu sections. The first version flattened the fixture, went green and tested nothing; the corrected one renders the real sections.</summary>
+    <content type="html">&lt;p&gt;Not every accessibility bug breaks something visibly. Some just disappear from the test suite one day, and nobody notices.&lt;/p&gt;
+&lt;p&gt;A few days ago I got a PR merged in Adobe React Spectrum that illustrates this point: it is a test-only PR, and that is exactly what makes it interesting.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://github.com/adobe/react-spectrum/pull/10554&quot;&gt;PR #10554 - adobe/react-spectrum&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&quot;the-context&quot;&gt;The context&lt;/h2&gt;
+&lt;p&gt;In a menu with sections (groups of items), the ARIA specification requires &lt;code&gt;aria-posinset&lt;/code&gt; to be global: if there are 4 items spread across 2 sections, the positions run 1 through 4 continuously, consistent with &lt;code&gt;aria-setsize=4&lt;/code&gt;. If a section restarts the count, screen readers announce positions that do not match reality (&amp;quot;item 1 of 2&amp;quot; when it is actually &amp;quot;item 1 of 4&amp;quot;), and navigation becomes confusing.&lt;/p&gt;
+&lt;p&gt;React Spectrum was already producing the correct values. The problem was that nothing guaranteed it: a future refactor of the index computation could silently reintroduce per-section restarts without any test failing.&lt;/p&gt;
+&lt;h2 id=&quot;the-test-trap&quot;&gt;The test trap&lt;/h2&gt;
+&lt;p&gt;Writing the test looked trivial: render a menu with sections and assert the positions are 1, 2, 3, 4. But the first version had a flaw I did not see myself. The helper building the mock flattened the sections into a plain list of items. The resulting DOM never contained the sectioned structure the test claimed to cover.&lt;/p&gt;
+&lt;p&gt;The test passed. But it was not testing what it said it was testing. A maintainer spotted it in seconds, and rightly so: it is exactly the kind of shortcut that gives false confidence.&lt;/p&gt;
+&lt;h2 id=&quot;the-fix&quot;&gt;The fix&lt;/h2&gt;
+&lt;p&gt;The final version renders each section through the real hook (&lt;code&gt;useMenuSection&lt;/code&gt;), including the labelled groups and their headings, and also covers sections without a heading, where the accessible name comes from &lt;code&gt;aria-label&lt;/code&gt;. That way, any future change in section logic, not just the index computation, gets exercised by the test.&lt;/p&gt;
+&lt;h2 id=&quot;why-it-matters&quot;&gt;Why it matters&lt;/h2&gt;
+&lt;p&gt;An accessibility test is only as good as the structure it exercises. If the setup simplifies the DOM down to a flat list, a green test is decoration. The rule I took away: the test must render the real component structure, fail when the behavior breaks, and verify exactly what the PR claims.&lt;/p&gt;
+</content>
+  </entry>
+  <entry>
+    <title>Orchestrating a 10,000-line refactor</title>
+    <id>https://gonzoblasco.github.io/a11y-portfolio/writing/orchestrating-a-refactor.html</id>
+    <link href="https://gonzoblasco.github.io/a11y-portfolio/writing/orchestrating-a-refactor.html" />
+    <updated>2026-08-28T12:00:00.000Z</updated>
+    <summary>A 10,000-line monolith became a modular app through a staged agent pipeline: planning, execution, cross-review by a different model, and verification. The public API did not change.</summary>
+    <content type="html">&lt;p&gt;Refactoring 10,000 lines of monolithic code is not a writing problem, it is an orchestration problem.&lt;/p&gt;
+&lt;p&gt;I recently finished the modular restructuring of a macOS cleaning app. The challenge was not just moving files, but guaranteeing the original behavior stayed intact while the architecture became something maintainable and testable.&lt;/p&gt;
+&lt;h2 id=&quot;the-process-an-a-b-pipeline-and-differentiated-reasoning&quot;&gt;The process: an A/B pipeline and differentiated reasoning&lt;/h2&gt;
+&lt;p&gt;Instead of using AI as an autocomplete chat, I used an orchestrated agent system:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Planning (Kanam, MAX): analysis of the monolithic structure and design of the route and module map. The orchestrator defines the strategy before a single line is written.&lt;/li&gt;
+&lt;li&gt;Execution (Agent A, HIGH): implementation of the modularization, separating routes, utility libraries and business logic.&lt;/li&gt;
+&lt;li&gt;Cross-review (Agent B, HIGH): a second agent, running a different model, reviews the first agent&#39;s code. This step is critical. It catches scope hallucinations and syntax errors that the first agent ignores because of tunnel vision.&lt;/li&gt;
+&lt;li&gt;Final verification: endpoint validation and unit tests over the most critical modules, security and paths.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&quot;the-why-system-over-tool&quot;&gt;The why: system over tool&lt;/h2&gt;
+&lt;p&gt;Many developers use AI to generate functions. Here we used it to manage complexity.&lt;/p&gt;
+&lt;p&gt;Separating the thinking phase (MAX) from the execution phase (HIGH), and adding a cross-review layer on top, sharply lowers the risk of introducing bugs during a massive refactor. It is not about writing faster. It is about reducing the error rate on deep structural changes.&lt;/p&gt;
+&lt;p&gt;Result:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;From 3 giant files to a professional modular structure.&lt;/li&gt;
+&lt;li&gt;27 unit tests proving the security rules did not change.&lt;/li&gt;
+&lt;li&gt;Zero changes to the public API, keeping full compatibility with the frontend.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;AI does not replace the engineer, but it redefines the scale of what a single engineer can refactor in one session.&lt;/p&gt;
+</content>
+  </entry>
+  <entry>
+    <title>Naming a tree</title>
+    <id>https://gonzoblasco.github.io/a11y-portfolio/writing/naming-a-tree.html</id>
+    <link href="https://gonzoblasco.github.io/a11y-portfolio/writing/naming-a-tree.html" />
+    <updated>2026-08-26T12:00:00.000Z</updated>
+    <summary>TreeList dropped every rest prop, so a headerless tree could not be named at all. Naming it correctly came down to three decisions and three review rounds that each caught a real gap.</summary>
+    <content type="html">&lt;p&gt;A follow-up I had in review, fixing the same class of dropped accessibility attributes in &lt;code&gt;List&lt;/code&gt; and &lt;code&gt;TreeList&lt;/code&gt;, just landed in astryx.&lt;/p&gt;
+&lt;p&gt;The bug: &lt;code&gt;TreeList&lt;/code&gt; destructured a fixed set of props with no rest spread, so every &lt;code&gt;BaseProps&lt;/code&gt; attribute (&lt;code&gt;aria-*&lt;/code&gt;, &lt;code&gt;role&lt;/code&gt;, &lt;code&gt;tabIndex&lt;/code&gt;, &lt;code&gt;id&lt;/code&gt;, event handlers) was silently dropped before reaching the DOM. A tree without a visible header could not be named at all: a screen reader announced an unnamed tree, and nothing said which tree it was.&lt;/p&gt;
+&lt;p&gt;The fix was more than &amp;quot;add &lt;code&gt;...restProps&lt;/code&gt;&amp;quot;. Three decisions shaped it:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;aria-label&lt;/code&gt; and &lt;code&gt;aria-labelledby&lt;/code&gt; land on the &lt;code&gt;&amp;lt;ul role=&amp;quot;tree&amp;quot;&amp;gt;&lt;/code&gt; itself, not the wrapping &lt;code&gt;&amp;lt;div&amp;gt;&lt;/code&gt;. A tree is named where the tree role is, not on a layout node that does nothing semantically.&lt;/li&gt;
+&lt;li&gt;A visible header keeps naming the tree. When &lt;code&gt;header&lt;/code&gt; is rendered, the generated header id wins over any caller &lt;code&gt;aria-labelledby&lt;/code&gt;, so assistive tech hears the same name the user sees. A caller label only applies on the headerless path.&lt;/li&gt;
+&lt;li&gt;The contract &lt;code&gt;role=&amp;quot;tree&amp;quot;&lt;/code&gt; is written after the rest spread. A consumer passing &lt;code&gt;role=&amp;quot;listbox&amp;quot;&lt;/code&gt; can no longer clobber the semantic role that makes the tree a tree.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;The review process was the sharpest part: three rounds, and each one caught a real gap. First the wrong target element, then the precedence rule I had gotten backwards. Getting an accessible name right is genuinely harder than it looks, because it is about who you label and when the visible label should win.&lt;/p&gt;
+&lt;p&gt;Five regression tests, 81 passing. And the &lt;code&gt;List&lt;/code&gt; half is handled separately by the maintainers, no duplicated work.&lt;/p&gt;
+&lt;p&gt;PR: &lt;a href=&quot;https://github.com/facebook/astryx/pull/5493&quot;&gt;https://github.com/facebook/astryx/pull/5493&lt;/a&gt;&lt;/p&gt;
+</content>
+  </entry>
+  <entry>
+    <title>When a HoverCard calls itself a dialog</title>
+    <id>https://gonzoblasco.github.io/a11y-portfolio/writing/hovercard-dialog-semantics.html</id>
+    <link href="https://gonzoblasco.github.io/a11y-portfolio/writing/hovercard-dialog-semantics.html" />
+    <updated>2026-08-25T12:00:00.000Z</updated>
+    <summary>A labelled HoverCard trigger described itself with aria-describedby, so screen reader users heard the dialog&#39;s contents as a description instead of learning that a dialog opens. The fix is the right popup contract.</summary>
+    <content type="html">&lt;p&gt;I just got a PR merged into astryx, Meta&#39;s React component library, that fixes a subtle accessibility bug in &lt;code&gt;HoverCard&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;The problem: when a HoverCard had a label, the trigger used &lt;code&gt;aria-describedby&lt;/code&gt; to point at the dialog. That flattens structured content into a plain-text description, so a screen reader user on the trigger heard the dialog&#39;s contents read as a description instead of being told &amp;quot;this opens a dialog&amp;quot;.&lt;/p&gt;
+&lt;p&gt;The fix uses the correct popup contract when a label is present:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;aria-haspopup=&amp;quot;dialog&amp;quot;&lt;/code&gt; on the trigger&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;aria-controls&lt;/code&gt; pointing at the layer id&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;aria-expanded&lt;/code&gt; synced to the open state&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;I also exposed &lt;code&gt;id&lt;/code&gt; and &lt;code&gt;isOpen&lt;/code&gt; from &lt;code&gt;useHoverCard&lt;/code&gt; so consumers can wire &lt;code&gt;aria-controls&lt;/code&gt; / &lt;code&gt;aria-expanded&lt;/code&gt; themselves, and kept &lt;code&gt;describedBy&lt;/code&gt; as a deprecated alias for backwards compatibility.&lt;/p&gt;
+&lt;p&gt;One decision worth noting: I considered &lt;code&gt;aria-details&lt;/code&gt;, but support across screen readers is still inconsistent. &lt;code&gt;aria-haspopup=&amp;quot;dialog&amp;quot;&lt;/code&gt; plus &lt;code&gt;aria-expanded&lt;/code&gt; is the most broadly supported contract for a non-modal dialog opener.&lt;/p&gt;
+&lt;p&gt;38 tests passing. Typecheck and build green. The review process was solid: three inline comments, all addressed.&lt;/p&gt;
+&lt;p&gt;PR: &lt;a href=&quot;https://github.com/facebook/astryx/pull/5419&quot;&gt;https://github.com/facebook/astryx/pull/5419&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;I have a follow-up in review fixing the same class of dropped accessibility attributes in &lt;code&gt;List&lt;/code&gt; and &lt;code&gt;TreeList&lt;/code&gt;.&lt;/p&gt;
+</content>
+  </entry>
+  <entry>
+    <title>aria-orientation belongs to the role owner</title>
+    <id>https://gonzoblasco.github.io/a11y-portfolio/writing/aria-orientation-role-owners.html</id>
+    <link href="https://gonzoblasco.github.io/a11y-portfolio/writing/aria-orientation-role-owners.html" />
+    <updated>2026-08-24T12:00:00.000Z</updated>
+    <summary>A Combobox grid carried aria-orientation, an attribute the grid role does not support, so screen readers got contradictory navigation cues. Moving it to the elements that own the role fixed it.</summary>
+    <content type="html">&lt;p&gt;The hardest accessibility bug to spot is not the one that breaks the screen reader. It is the one that confuses it with invalid information.&lt;/p&gt;
+&lt;p&gt;A few days ago I merged a fix in MUI Base UI that illustrates the point: a misplaced &lt;code&gt;aria-orientation&lt;/code&gt;.&lt;/p&gt;
+&lt;h2 id=&quot;the-problem&quot;&gt;The problem&lt;/h2&gt;
+&lt;p&gt;In a Combobox with a grid, the component emitted &lt;code&gt;aria-orientation=&amp;quot;horizontal&amp;quot;&lt;/code&gt; directly on the element with &lt;code&gt;role=&amp;quot;grid&amp;quot;&lt;/code&gt;. The problem: the &lt;code&gt;grid&lt;/code&gt; role does not support &lt;code&gt;aria-orientation&lt;/code&gt;. It is a valid attribute in HTML, but invalid for that ARIA role.&lt;/p&gt;
+&lt;p&gt;The result was not a crash or a visible error. It was something worse: screen readers received contradictory information about how to navigate the component, silently degrading the experience for assistive technology users.&lt;/p&gt;
+&lt;h2 id=&quot;the-fix&quot;&gt;The fix&lt;/h2&gt;
+&lt;p&gt;The fix moved &lt;code&gt;aria-orientation&lt;/code&gt; to the elements that actually own the role, the ones that do support the attribute, and omitted it on &lt;code&gt;grid&lt;/code&gt; and &lt;code&gt;presentation&lt;/code&gt;. Seven files, 69 lines added, 4 removed, with regression tests to make sure keyboard navigation was preserved.&lt;/p&gt;
+&lt;h2 id=&quot;why-it-matters&quot;&gt;Why it matters&lt;/h2&gt;
+&lt;p&gt;Accessibility is not just adding an &lt;code&gt;aria-label&lt;/code&gt;. It is understanding the ARIA contract: which attributes are valid for each role, and how screen readers interpret that information. An invalid attribute does not always break the app, but it always degrades someone&#39;s experience.&lt;/p&gt;
+&lt;p&gt;When accessibility is treated as an engineering discipline, with regression tests, role validation and peer review, subtle bugs like this one get caught before they reach production.&lt;/p&gt;
+&lt;p&gt;PR: &lt;a href=&quot;https://github.com/mui/base-ui/pull/5551&quot;&gt;https://github.com/mui/base-ui/pull/5551&lt;/a&gt;&lt;/p&gt;
+</content>
+  </entry>
+  <entry>
+    <title>A breadcrumb that does not rely on color</title>
+    <id>https://gonzoblasco.github.io/a11y-portfolio/writing/breadcrumb-without-color.html</id>
+    <link href="https://gonzoblasco.github.io/a11y-portfolio/writing/breadcrumb-without-color.html" />
+    <updated>2026-08-24T12:00:00.000Z</updated>
+    <summary>Astryx told the current page in its breadcrumb from the links only by color, failing WCAG 1.4.1. The fix was one line of font weight, three weeks and a cleanup rebase away from merge.</summary>
+    <content type="html">&lt;p&gt;Some fixes are invisible. This one is a single line of CSS that took three weeks to land, and it is the kind of change that makes the web a little more usable for people who do not see color the way most of us do.&lt;/p&gt;
+&lt;p&gt;A few weeks ago I opened an issue on astryx (Facebook&#39;s open-source React component library): the current page in the breadcrumb trail was distinguished from the links &lt;em&gt;only by color&lt;/em&gt;. A link is &lt;code&gt;--color-text-secondary&lt;/code&gt;, the current page is &lt;code&gt;--color-text-primary&lt;/code&gt;. If you cannot perceive that color difference (color blindness, low vision, a high-contrast display), the breadcrumb silently fails WCAG 2.1 SC 1.4.1 (Use of Color). You would have no idea where you are in the site.&lt;/p&gt;
+&lt;p&gt;The fix sounds trivial: add &lt;code&gt;font-weight: var(--font-weight-semibold)&lt;/code&gt; to the current item&#39;s style, on top of the &lt;code&gt;aria-current=&amp;quot;page&amp;quot;&lt;/code&gt; that was already there for screen readers. Now the current page reads as current by weight, not just by color.&lt;/p&gt;
+&lt;p&gt;But the interesting part is what happened between the issue and the merge.&lt;/p&gt;
+&lt;p&gt;My first version of the PR was a mess. I had accidentally let unrelated commits from a color-contrast branch leak into it. A reviewer would have been right to close it. So I rebased onto &lt;code&gt;main&lt;/code&gt;, cleaned the scope down to exactly one change, and re-verified everything: 25/25 tests, lint clean, package boundaries clean.&lt;/p&gt;
+&lt;p&gt;Then something genuinely cool happened. astryx runs a nightly &amp;quot;component auditor&amp;quot; that found the same bug I had filed, and explicitly deferred it to my PR rather than landing a color-only patch that would have conflicted with the proper fix. The audit cited my open PR as the right way to solve it.&lt;/p&gt;
+&lt;p&gt;That is the part I love about open source: the system itself pointed at the correct fix. The maintainer who reviewed it said it was &amp;quot;the fix the Breadcrumbs audit pointed at.&amp;quot;&lt;/p&gt;
+&lt;p&gt;Merged the same day: one line of CSS, three weeks of patience, and a breadcrumb that now tells you where you are, even if you cannot see the difference between two grays.&lt;/p&gt;
+&lt;p&gt;If you build UI, go check your breadcrumbs. If the current item is only distinguished by color, you have the same bug I had.&lt;/p&gt;
+</content>
+  </entry>
+</feed>

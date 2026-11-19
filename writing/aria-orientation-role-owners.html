@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>aria-orientation belongs to the role owner — Gonzalo Blasco</title>
+  <meta name="description" content="A Combobox grid carried aria-orientation, an attribute the grid role does not support, so screen readers got contradictory navigation cues. Moving it to the elements that own the role fixed it." />
+  <meta name="author" content="Gonzalo Blasco" />
+  <link rel="canonical" href="https://gonzoblasco.github.io/a11y-portfolio/writing/aria-orientation-role-owners.html" />
+  <meta property="og:site_name" content="Gonzalo Blasco" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="aria-orientation belongs to the role owner — Gonzalo Blasco" />
+  <meta property="og:description" content="A Combobox grid carried aria-orientation, an attribute the grid role does not support, so screen readers got contradictory navigation cues. Moving it to the elements that own the role fixed it." />
+  <meta property="og:url" content="https://gonzoblasco.github.io/a11y-portfolio/writing/aria-orientation-role-owners.html" />
+  <meta name="twitter:card" content="summary" />
+  <link rel="alternate" type="application/atom+xml" href="../feed.xml" title="Gonzalo Blasco" />
+  <link rel="stylesheet" href="../style.css" />
+  <link rel="preload" href="../assets/fonts/fraunces-normal.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="../assets/fonts/newsreader-normal.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="../assets/fonts/ibm-plex-mono-400.woff2" as="font" type="font/woff2" crossorigin />
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site">
+  <div class="wrap head">
+    <a class="wordmark" href="../">Gonzalo Blasco</a>
+    <nav aria-label="Sections"><ul><li><a href="../writing/" aria-current="page">Writing</a></li><li><a href="../preflight/">Work</a></li><li><a href="../about/">About</a></li></ul></nav>
+  </div>
+</header>
+<main id="main">
+  <article class="article wrap">
+    <header class="article-head">
+      <p class="kicker"><a href="./">Writing</a> <span aria-hidden="true">/</span> <time datetime="2026-08-24">Aug 2026</time></p>
+      <h1>aria-orientation belongs to the role owner</h1>
+      <p class="lede">A Combobox grid carried aria-orientation, an attribute the grid role does not support, so screen readers got contradictory navigation cues. Moving it to the elements that own the role fixed it.</p>
+      <p class="article-meta">
+        <span>Note</span>
+        <span>1 min read</span>
+        <span><time datetime="2026-08-24">August 24, 2026</time></span>
+        <span>Originally published on LinkedIn</span>
+      </p>
+    </header>
+    <div class="prose">
+<p>The hardest accessibility bug to spot is not the one that breaks the screen reader. It is the one that confuses it with invalid information.</p>
+<p>A few days ago I merged a fix in MUI Base UI that illustrates the point: a misplaced <code>aria-orientation</code>.</p>
+<h2 id="the-problem">The problem</h2>
+<p>In a Combobox with a grid, the component emitted <code>aria-orientation=&quot;horizontal&quot;</code> directly on the element with <code>role=&quot;grid&quot;</code>. The problem: the <code>grid</code> role does not support <code>aria-orientation</code>. It is a valid attribute in HTML, but invalid for that ARIA role.</p>
+<p>The result was not a crash or a visible error. It was something worse: screen readers received contradictory information about how to navigate the component, silently degrading the experience for assistive technology users.</p>
+<h2 id="the-fix">The fix</h2>
+<p>The fix moved <code>aria-orientation</code> to the elements that actually own the role, the ones that do support the attribute, and omitted it on <code>grid</code> and <code>presentation</code>. Seven files, 69 lines added, 4 removed, with regression tests to make sure keyboard navigation was preserved.</p>
+<h2 id="why-it-matters">Why it matters</h2>
+<p>Accessibility is not just adding an <code>aria-label</code>. It is understanding the ARIA contract: which attributes are valid for each role, and how screen readers interpret that information. An invalid attribute does not always break the app, but it always degrades someone's experience.</p>
+<p>When accessibility is treated as an engineering discipline, with regression tests, role validation and peer review, subtle bugs like this one get caught before they reach production.</p>
+<p>PR: <a href="https://github.com/mui/base-ui/pull/5551">https://github.com/mui/base-ui/pull/5551</a></p>
+
+    </div>
+    <footer class="article-foot">
+      <span>PR <a href="https://github.com/mui/base-ui/pull/5551">mui/base-ui#5551</a></span>
+      <a href="./">Back to all notes</a>
+    </footer>
+  </article>
+</main>
+<footer class="site">
+  <div class="wrap">
+    <span>Gonzalo Blasco · Buenos Aires</span>
+    <span><a href="mailto:gonzoblasco@icloud.com">gonzoblasco@icloud.com</a> · <a href="https://github.com/gonzoblasco">GitHub</a> · <a href="https://www.linkedin.com/in/gonzalo-blasco">LinkedIn</a></span>
+  </div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>The dialog description that never arrived — Gonzalo Blasco</title>
+  <meta name="description" content="Carbon&#39;s ComposedModal forwarded only aria-labelledby, so screen reader users got a title and nothing about what the modal was for. The PR adds aria-describedby, and review caught a test that proved nothing." />
+  <meta name="author" content="Gonzalo Blasco" />
+  <link rel="canonical" href="https://gonzoblasco.github.io/a11y-portfolio/writing/dialog-description.html" />
+  <meta property="og:site_name" content="Gonzalo Blasco" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The dialog description that never arrived — Gonzalo Blasco" />
+  <meta property="og:description" content="Carbon&#39;s ComposedModal forwarded only aria-labelledby, so screen reader users got a title and nothing about what the modal was for. The PR adds aria-describedby, and review caught a test that proved nothing." />
+  <meta property="og:url" content="https://gonzoblasco.github.io/a11y-portfolio/writing/dialog-description.html" />
+  <meta name="twitter:card" content="summary" />
+  <link rel="alternate" type="application/atom+xml" href="../feed.xml" title="Gonzalo Blasco" />
+  <link rel="stylesheet" href="../style.css" />
+  <link rel="preload" href="../assets/fonts/fraunces-normal.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="../assets/fonts/newsreader-normal.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="../assets/fonts/ibm-plex-mono-400.woff2" as="font" type="font/woff2" crossorigin />
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site">
+  <div class="wrap head">
+    <a class="wordmark" href="../">Gonzalo Blasco</a>
+    <nav aria-label="Sections"><ul><li><a href="../writing/" aria-current="page">Writing</a></li><li><a href="../preflight/">Work</a></li><li><a href="../about/">About</a></li></ul></nav>
+  </div>
+</header>
+<main id="main">
+  <article class="article wrap">
+    <header class="article-head">
+      <p class="kicker"><a href="./">Writing</a> <span aria-hidden="true">/</span> <time datetime="2026-10-22">Oct 2026</time></p>
+      <h1>The dialog description that never arrived</h1>
+      <p class="lede">Carbon&#39;s ComposedModal forwarded only aria-labelledby, so screen reader users got a title and nothing about what the modal was for. The PR adds aria-describedby, and review caught a test that proved nothing.</p>
+      <p class="article-meta">
+        <span>Note</span>
+        <span>1 min read</span>
+        <span><time datetime="2026-10-22">October 22, 2026</time></span>
+        <span>Originally published on <a href="https://www.linkedin.com/posts/gonzalo-blasco_accessibility-a11y-carbon-share-7519182890929160192-QjBO/">LinkedIn</a></span>
+      </p>
+    </header>
+    <div class="prose">
+<p>I just merged a PR into Carbon Design System that adds native support for the <code>aria-describedby</code> prop on the <code>ComposedModal</code> component. The change closes #21342, a known accessibility gap where screen reader users could not programmatically associate a description with a modal dialog.</p>
+<p>What was missing? The modal only forwarded <code>aria-labelledby</code>. Without <code>aria-describedby</code>, developers could not give the dialog a concise, contextual description, and assistive technology users got the title with nothing about what the modal was for.</p>
+<p>How we fixed it: a new optional <code>aria-describedby</code> prop, wired through so that when the <code>enable-dialog-element</code> feature flag is on the attribute lands on the native <code>&lt;dialog&gt;</code> element, and otherwise falls back to the <code>div[role=&quot;dialog&quot;]</code> container.</p>
+<p>The review process was the interesting part. The maintainer pushed back on three things, and the first one is the one I keep coming back to: my first test referenced a <code>description-modal-id</code> element without rendering it, so it asserted the attribute was present on the dialog but proved nothing about whether the description actually existed in the page. The fix was to render the element alongside the modal. The other two were about not leaking implementation details: a reference to the internal <code>cds--modal-container</code> class in a comment, and documenting the new prop properly instead of leaving it implicit.</p>
+<p>And then the maintainer asked whether the review comments had actually been addressed, when some of them had not. That was worth hearing.</p>
+<p>The PR landed with a test that renders the description element and asserts the attribute reaches the native <code>&lt;dialog&gt;</code> when the flag is on, plus the <code>div[role=&quot;dialog&quot;]</code> fallback.</p>
+<p>If your dialog has a title but no description, that is a gap your users cannot see either.</p>
+<p>PR: <a href="https://github.com/carbon-design-system/carbon/pull/22887">https://github.com/carbon-design-system/carbon/pull/22887</a></p>
+
+    </div>
+    <footer class="article-foot">
+      <span>PR <a href="https://github.com/carbon-design-system/carbon/pull/22887">carbon-design-system/carbon#22887</a></span>
+      <a href="./">Back to all notes</a>
+    </footer>
+  </article>
+</main>
+<footer class="site">
+  <div class="wrap">
+    <span>Gonzalo Blasco · Buenos Aires</span>
+    <span><a href="mailto:gonzoblasco@icloud.com">gonzoblasco@icloud.com</a> · <a href="https://github.com/gonzoblasco">GitHub</a> · <a href="https://www.linkedin.com/in/gonzalo-blasco">LinkedIn</a></span>
+  </div>
+</footer>
+</body>
+</html>

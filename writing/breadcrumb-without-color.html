@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>A breadcrumb that does not rely on color — Gonzalo Blasco</title>
+  <meta name="description" content="Astryx told the current page in its breadcrumb from the links only by color, failing WCAG 1.4.1. The fix was one line of font weight, three weeks and a cleanup rebase away from merge." />
+  <meta name="author" content="Gonzalo Blasco" />
+  <link rel="canonical" href="https://gonzoblasco.github.io/a11y-portfolio/writing/breadcrumb-without-color.html" />
+  <meta property="og:site_name" content="Gonzalo Blasco" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="A breadcrumb that does not rely on color — Gonzalo Blasco" />
+  <meta property="og:description" content="Astryx told the current page in its breadcrumb from the links only by color, failing WCAG 1.4.1. The fix was one line of font weight, three weeks and a cleanup rebase away from merge." />
+  <meta property="og:url" content="https://gonzoblasco.github.io/a11y-portfolio/writing/breadcrumb-without-color.html" />
+  <meta name="twitter:card" content="summary" />
+  <link rel="alternate" type="application/atom+xml" href="../feed.xml" title="Gonzalo Blasco" />
+  <link rel="stylesheet" href="../style.css" />
+  <link rel="preload" href="../assets/fonts/fraunces-normal.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="../assets/fonts/newsreader-normal.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="../assets/fonts/ibm-plex-mono-400.woff2" as="font" type="font/woff2" crossorigin />
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site">
+  <div class="wrap head">
+    <a class="wordmark" href="../">Gonzalo Blasco</a>
+    <nav aria-label="Sections"><ul><li><a href="../writing/" aria-current="page">Writing</a></li><li><a href="../preflight/">Work</a></li><li><a href="../about/">About</a></li></ul></nav>
+  </div>
+</header>
+<main id="main">
+  <article class="article wrap">
+    <header class="article-head">
+      <p class="kicker"><a href="./">Writing</a> <span aria-hidden="true">/</span> <time datetime="2026-08-24">Aug 2026</time></p>
+      <h1>A breadcrumb that does not rely on color</h1>
+      <p class="lede">Astryx told the current page in its breadcrumb from the links only by color, failing WCAG 1.4.1. The fix was one line of font weight, three weeks and a cleanup rebase away from merge.</p>
+      <p class="article-meta">
+        <span>Note</span>
+        <span>2 min read</span>
+        <span><time datetime="2026-08-24">August 24, 2026</time></span>
+        <span>Originally published on LinkedIn</span>
+      </p>
+    </header>
+    <div class="prose">
+<p>Some fixes are invisible. This one is a single line of CSS that took three weeks to land, and it is the kind of change that makes the web a little more usable for people who do not see color the way most of us do.</p>
+<p>A few weeks ago I opened an issue on astryx (Facebook's open-source React component library): the current page in the breadcrumb trail was distinguished from the links <em>only by color</em>. A link is <code>--color-text-secondary</code>, the current page is <code>--color-text-primary</code>. If you cannot perceive that color difference (color blindness, low vision, a high-contrast display), the breadcrumb silently fails WCAG 2.1 SC 1.4.1 (Use of Color). You would have no idea where you are in the site.</p>
+<p>The fix sounds trivial: add <code>font-weight: var(--font-weight-semibold)</code> to the current item's style, on top of the <code>aria-current=&quot;page&quot;</code> that was already there for screen readers. Now the current page reads as current by weight, not just by color.</p>
+<p>But the interesting part is what happened between the issue and the merge.</p>
+<p>My first version of the PR was a mess. I had accidentally let unrelated commits from a color-contrast branch leak into it. A reviewer would have been right to close it. So I rebased onto <code>main</code>, cleaned the scope down to exactly one change, and re-verified everything: 25/25 tests, lint clean, package boundaries clean.</p>
+<p>Then something genuinely cool happened. astryx runs a nightly &quot;component auditor&quot; that found the same bug I had filed, and explicitly deferred it to my PR rather than landing a color-only patch that would have conflicted with the proper fix. The audit cited my open PR as the right way to solve it.</p>
+<p>That is the part I love about open source: the system itself pointed at the correct fix. The maintainer who reviewed it said it was &quot;the fix the Breadcrumbs audit pointed at.&quot;</p>
+<p>Merged the same day: one line of CSS, three weeks of patience, and a breadcrumb that now tells you where you are, even if you cannot see the difference between two grays.</p>
+<p>If you build UI, go check your breadcrumbs. If the current item is only distinguished by color, you have the same bug I had.</p>
+
+    </div>
+    <footer class="article-foot">
+      <span>PR <a href="https://github.com/facebook/astryx/pull/4605">facebook/astryx#4605</a></span>
+      <a href="./">Back to all notes</a>
+    </footer>
+  </article>
+</main>
+<footer class="site">
+  <div class="wrap">
+    <span>Gonzalo Blasco · Buenos Aires</span>
+    <span><a href="mailto:gonzoblasco@icloud.com">gonzoblasco@icloud.com</a> · <a href="https://github.com/gonzoblasco">GitHub</a> · <a href="https://www.linkedin.com/in/gonzalo-blasco">LinkedIn</a></span>
+  </div>
+</footer>
+</body>
+</html>

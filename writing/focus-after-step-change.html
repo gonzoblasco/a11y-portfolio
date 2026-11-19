@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Focus after the step changed — Gonzalo Blasco</title>
+  <meta name="description" content="After Next in CreateFullPage, focus jumped to the skip link because the helper inferred visibility from an attribute the component never sets. One querySelector on the real class fixed it." />
+  <meta name="author" content="Gonzalo Blasco" />
+  <link rel="canonical" href="https://gonzoblasco.github.io/a11y-portfolio/writing/focus-after-step-change.html" />
+  <meta property="og:site_name" content="Gonzalo Blasco" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Focus after the step changed — Gonzalo Blasco" />
+  <meta property="og:description" content="After Next in CreateFullPage, focus jumped to the skip link because the helper inferred visibility from an attribute the component never sets. One querySelector on the real class fixed it." />
+  <meta property="og:url" content="https://gonzoblasco.github.io/a11y-portfolio/writing/focus-after-step-change.html" />
+  <meta name="twitter:card" content="summary" />
+  <link rel="alternate" type="application/atom+xml" href="../feed.xml" title="Gonzalo Blasco" />
+  <link rel="stylesheet" href="../style.css" />
+  <link rel="preload" href="../assets/fonts/fraunces-normal.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="../assets/fonts/newsreader-normal.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="../assets/fonts/ibm-plex-mono-400.woff2" as="font" type="font/woff2" crossorigin />
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site">
+  <div class="wrap head">
+    <a class="wordmark" href="../">Gonzalo Blasco</a>
+    <nav aria-label="Sections"><ul><li><a href="../writing/" aria-current="page">Writing</a></li><li><a href="../preflight/">Work</a></li><li><a href="../about/">About</a></li></ul></nav>
+  </div>
+</header>
+<main id="main">
+  <article class="article wrap">
+    <header class="article-head">
+      <p class="kicker"><a href="./">Writing</a> <span aria-hidden="true">/</span> <time datetime="2026-09-14">Sep 2026</time></p>
+      <h1>Focus after the step changed</h1>
+      <p class="lede">After Next in CreateFullPage, focus jumped to the skip link because the helper inferred visibility from an attribute the component never sets. One querySelector on the real class fixed it.</p>
+      <p class="article-meta">
+        <span>Note</span>
+        <span>2 min read</span>
+        <span><time datetime="2026-09-14">September 14, 2026</time></span>
+        <span>Originally published on LinkedIn</span>
+      </p>
+    </header>
+    <div class="prose">
+<p>The bug report said focus was lost. It was not lost. It went somewhere specific: the &quot;Skip to main content&quot; link at the top of the page.</p>
+<p>In a multi-step <code>CreateFullPage</code>, a keyboard user presses Next and expects focus to land on the first interactive element of the newly visible step. Instead it jumped to the skip link, a nasty regression for anyone navigating with a keyboard, introduced between v2.43 and v2.44.</p>
+<p>The root cause was an inference. A helper called <code>getActiveStep()</code> walked every step in the DOM and returned the first one whose ancestor chain had no <code>[inert]</code> attribute. The idea: &quot;the visible step is the one that is not inert.&quot;</p>
+<p>But <code>CreateFullPageStep</code> never sets <code>inert</code>. It hides non-active steps with <code>display: none</code>, through a CSS modifier class. So the walk always returned the first step in DOM order, no matter which step was actually active.</p>
+<p>Then the hook did the reasonable thing with that wrong step: it found inputs inside it and called <code>.focus()</code>. Calling <code>.focus()</code> on an element inside a <code>display: none</code> subtree is a browser no-op. Focus never moved to the new step, stayed on the Next button or drifted to <code>&lt;body&gt;</code>, and the next tab stop picked it up: the skip link.</p>
+<p>The fix was to stop inferring visibility from an attribute that was never set, and query the class the component already applies to the visible step. One <code>querySelector</code>, O(1), unambiguous.</p>
+<p>The regression test renders two steps with real inputs, activates Next, and asserts that <code>document.activeElement</code> is the input of the visible step, and not the skip link, and not the body. It fails on <code>main</code> (the <code>waitFor</code> times out) and passes with the fix.</p>
+<p>Two things I took from this one:</p>
+<ul>
+<li>&quot;Hidden&quot; has more than one meaning in the DOM. <code>inert</code>, <code>display: none</code>, <code>aria-hidden</code> and <code>visibility</code> each remove an element from a different surface: focus, layout, the accessibility tree, paint. Code that assumes one and gets another fails silently. No error, no exception, just wrong behavior.</li>
+<li>The blast radius was worth spelling out. The same hook is used by <code>CreateTearsheet</code>, whose steps do set <code>inert</code>. Both paths had to keep resolving correctly, so that went into the PR description before review, not after.</li>
+</ul>
+<p>One note on the process: the maintainer flagged the component as heading toward deprecation, with an example pattern as the replacement. I kept the fix anyway. It is one line in a shared hook plus a test, no new API surface, and the bug is live for anyone on the published package today. Two maintainers approved it and it merged.</p>
+<p>If you have a focus helper that decides &quot;which container is visible&quot; by looking for a marker attribute, check that the component actually sets that marker. That unverified assumption is the whole bug.</p>
+<p>PR: <a href="https://github.com/carbon-design-system/ibm-products/pull/9878">https://github.com/carbon-design-system/ibm-products/pull/9878</a></p>
+
+    </div>
+    <footer class="article-foot">
+      <span>PR <a href="https://github.com/carbon-design-system/ibm-products/pull/9878">carbon-design-system/ibm-products#9878</a></span>
+      <a href="./">Back to all notes</a>
+    </footer>
+  </article>
+</main>
+<footer class="site">
+  <div class="wrap">
+    <span>Gonzalo Blasco · Buenos Aires</span>
+    <span><a href="mailto:gonzoblasco@icloud.com">gonzoblasco@icloud.com</a> · <a href="https://github.com/gonzoblasco">GitHub</a> · <a href="https://www.linkedin.com/in/gonzalo-blasco">LinkedIn</a></span>
+  </div>
+</footer>
+</body>
+</html>
