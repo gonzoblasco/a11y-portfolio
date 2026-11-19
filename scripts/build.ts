@@ -342,6 +342,7 @@ ${alternateTags}
   <meta property="og:description" content="${escapeHtml(description)}" />${ogUrl}
   <meta name="twitter:card" content="summary" />
   <link rel="alternate" type="application/atom+xml" href="${root}feed.xml" title="Gonzalo Blasco" />
+  <link rel="icon" href="${root}favicon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="${root}style.css?v=${STYLE_VERSION}" />
   <link rel="preload" href="${root}assets/fonts/fraunces-normal.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="preload" href="${root}assets/fonts/newsreader-normal.woff2" as="font" type="font/woff2" crossorigin />
@@ -827,6 +828,7 @@ writeFile(
   <meta name="robots" content="noindex" />
   <link rel="canonical" href="${BASE}/writing/preflight.html" />
   <meta http-equiv="refresh" content="0; url=../writing/preflight.html" />
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="../style.css?v=${STYLE_VERSION}" />
 </head>
 <body>
