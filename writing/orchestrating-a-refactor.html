@@ -4,13 +4,13 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Orchestrating a 10,000-line refactor — Gonzalo Blasco</title>
-  <meta name="description" content="A 10,000-line monolith became a modular app through a staged agent pipeline: planning, execution, cross-review by a different model, and verification. The public API did not change." />
+  <meta name="description" content="A 10,000-line macOS app spread across three giant files became a modular structure through four stages kept apart: planning, execution, cross-review by a different model, and verification. The public API never moved." />
   <meta name="author" content="Gonzalo Blasco" />
   <link rel="canonical" href="https://gonzoblasco.github.io/a11y-portfolio/writing/orchestrating-a-refactor.html" />
   <meta property="og:site_name" content="Gonzalo Blasco" />
   <meta property="og:type" content="article" />
   <meta property="og:title" content="Orchestrating a 10,000-line refactor — Gonzalo Blasco" />
-  <meta property="og:description" content="A 10,000-line monolith became a modular app through a staged agent pipeline: planning, execution, cross-review by a different model, and verification. The public API did not change." />
+  <meta property="og:description" content="A 10,000-line macOS app spread across three giant files became a modular structure through four stages kept apart: planning, execution, cross-review by a different model, and verification. The public API never moved." />
   <meta property="og:url" content="https://gonzoblasco.github.io/a11y-portfolio/writing/orchestrating-a-refactor.html" />
   <meta name="twitter:card" content="summary" />
   <link rel="alternate" type="application/atom+xml" href="../feed.xml" title="Gonzalo Blasco" />
@@ -32,36 +32,41 @@
     <header class="article-head">
       <p class="kicker"><a href="./">Writing</a> <span aria-hidden="true">/</span> <time datetime="2026-08-28">Aug 2026</time></p>
       <h1>Orchestrating a 10,000-line refactor</h1>
-      <p class="lede">A 10,000-line monolith became a modular app through a staged agent pipeline: planning, execution, cross-review by a different model, and verification. The public API did not change.</p>
+      <p class="lede">A 10,000-line macOS app spread across three giant files became a modular structure through four stages kept apart: planning, execution, cross-review by a different model, and verification. The public API never moved.</p>
       <p class="article-meta">
         <span>Engineering</span>
         <span>Note</span>
-        <span>1 min read</span>
+        <span>4 min read</span>
         <span><time datetime="2026-08-28">August 28, 2026</time></span>
         <span>Originally published on LinkedIn</span>
       </p>
     </header>
     <div class="prose">
-<p>Refactoring 10,000 lines of monolithic code is not a writing problem, it is an orchestration problem.</p>
-<p>I recently finished the modular restructuring of a macOS cleaning app. The challenge was not just moving files, but guaranteeing the original behavior stayed intact while the architecture became something maintainable and testable.</p>
-<h2 id="the-process-an-a-b-pipeline-and-differentiated-reasoning">The process: an A/B pipeline and differentiated reasoning</h2>
-<p>Instead of using AI as an autocomplete chat, I used an orchestrated agent system:</p>
-<ol>
-<li>Planning (Kanam, MAX): analysis of the monolithic structure and design of the route and module map. The orchestrator defines the strategy before a single line is written.</li>
-<li>Execution (Agent A, HIGH): implementation of the modularization, separating routes, utility libraries and business logic.</li>
-<li>Cross-review (Agent B, HIGH): a second agent, running a different model, reviews the first agent's code. This step is critical. It catches scope hallucinations and syntax errors that the first agent ignores because of tunnel vision.</li>
-<li>Final verification: endpoint validation and unit tests over the most critical modules, security and paths.</li>
-</ol>
-<h2 id="the-why-system-over-tool">The why: system over tool</h2>
-<p>Many developers use AI to generate functions. Here we used it to manage complexity.</p>
-<p>Separating the thinking phase (MAX) from the execution phase (HIGH), and adding a cross-review layer on top, sharply lowers the risk of introducing bugs during a massive refactor. It is not about writing faster. It is about reducing the error rate on deep structural changes.</p>
-<p>Result:</p>
-<ul>
-<li>From 3 giant files to a professional modular structure.</li>
-<li>27 unit tests proving the security rules did not change.</li>
-<li>Zero changes to the public API, keeping full compatibility with the frontend.</li>
-</ul>
-<p>AI does not replace the engineer, but it redefines the scale of what a single engineer can refactor in one session.</p>
+<p>Refactoring 10,000 lines of monolithic code is not a writing problem. It is an orchestration problem.</p>
+<p>The code did not need to be smarter. It needed to move without breaking anything that depended on it.</p>
+<h2 id="three-files-one-surface">Three files, one surface</h2>
+<p>The app was a macOS cleaner. Ten thousand lines lived in three giant files, with routes, utility code and business logic interleaved. A change to a path rule meant scrolling past the route table to find it, and the route table was the thing most likely to break.</p>
+<p>The hard constraint was external. The frontend called the app through a public API, and that API could not move. A modular structure that renamed a response field would have forced a second refactor on the client. So the job had one non-negotiable: the surface stays identical while the inside is rebuilt.</p>
+<p>That constraint changed the shape of the work. The task was not &quot;improve this code&quot;. It was &quot;prove the behavior did not change while the code around it did&quot;. Those are different jobs, and the second one is mostly verification.</p>
+<h2 id="separating-the-plan-from-the-typing">Separating the plan from the typing</h2>
+<p>I ran this as a pipeline instead of a chat. Four stages, each with a different job and a different amount of room to improvise.</p>
+<p>Planning ran at MAX. The output was not code. It was a map: which routes exist, which utilities they share, where the business logic belongs, and in what order to move things so the app never sat in a half state. Writing that map first is the step I would have skipped working alone in an editor. In a chat, the plan lives in the conversation and evaporates when the context does.</p>
+<p>Execution ran at HIGH, against the map. Agent A moved the routes out, pulled the utility libraries apart from the business logic, and kept the public handlers pointing at the same shapes. Its mandate was narrow: follow the plan, do not redesign.</p>
+<p>That narrowness matters. An executor allowed to improve things while it moves them is doing two refactors at once, and only one of them is being checked.</p>
+<h2 id="the-reviewer-that-did-not-write-the-code">The reviewer that did not write the code</h2>
+<p>The third stage is the one I would keep if I could keep only one. A second agent, on a different model, read Agent A's output.</p>
+<p>Different model is the point, not a detail. An agent reviewing its own work grades its own assumptions. It re-reads the plan it just followed and finds the plan reasonable. A model that never saw the reasoning has to reconstruct intent from the diff, and that is exactly where the gaps show.</p>
+<p>The review caught two kinds of problem. Scope hallucination: code that solved a problem nobody assigned, or a piece that moved when the plan had deliberately left it alone. And syntax-level errors the executor had stopped seeing, the way a typo disappears in a paragraph you have read too many times.</p>
+<p>None of it is magic. A reviewer without the plan can also invent objections. What it reliably does is read the code as a stranger, and a stranger does not inherit your tunnel vision.</p>
+<h2 id="what-the-numbers-prove">What the numbers prove</h2>
+<p>The last stage was verification, and it was narrower than the review. Endpoint validation, plus unit tests over the modules carrying the security rules and the path handling. The final count was 27 tests.</p>
+<p>I want to be precise about what 27 means. It is not coverage. It is 27 assertions that the security rules behave as they did before the split, written against the modules where a silent change would have been expensive. The tests prove what they assert. They do not prove the refactor is correct everywhere, and I would not claim that from a number.</p>
+<p>The result I care about more is that the public API did not change. Routes, payload shapes and responses stayed where the frontend expected them. That is not a metric. It is a constraint that held for the whole job.</p>
+<p>Three files became modules separated by responsibility: routes apart from utilities, utilities apart from business logic. Smaller files are the visible part. The useful part is that the next change has an obvious place to go.</p>
+<h2 id="the-rule">The rule</h2>
+<p>A refactor is not finished when the files are smaller. It is finished when the contract is unchanged and something can prove it.</p>
+<p>The pipeline is how I got there, not the story. Plan at high reasoning, execute against a written map, review with a model that did not write the code, then verify the part where a mistake would cost the most. Each stage catches a different failure, which is why collapsing them into one long conversation undoes the point.</p>
+<p>What changed for me is scale, not speed. I did not type 10,000 lines faster. I could hold a structure that size long enough to finish it, because the thinking, the moving and the checking were in separate hands.</p>
 
     </div>
     <footer class="article-foot">

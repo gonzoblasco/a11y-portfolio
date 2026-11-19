@@ -5,11 +5,45 @@
   <id>https://gonzoblasco.github.io/a11y-portfolio/</id>
   <link href="https://gonzoblasco.github.io/a11y-portfolio/writing/" />
   <link rel="self" href="https://gonzoblasco.github.io/a11y-portfolio/feed.xml" />
-  <updated>2026-11-17T12:00:00.000Z</updated>
+  <updated>2026-11-18T12:00:00.000Z</updated>
   <author>
     <name>Gonzalo Blasco</name>
     <uri>https://gonzoblasco.github.io/a11y-portfolio/</uri>
   </author>
+  <entry>
+    <title>The challenge was closed before we started</title>
+    <id>https://gonzoblasco.github.io/a11y-portfolio/writing/the-challenge-was-already-over.html</id>
+    <link href="https://gonzoblasco.github.io/a11y-portfolio/writing/the-challenge-was-already-over.html" />
+    <category term="field-notes" />
+    <updated>2026-11-18T12:00:00.000Z</updated>
+    <summary>I had a five-phase plan for a 72-hour challenge before I read the entry window. It had closed 44 days earlier, and the plan was a table of contents rather than a decision.</summary>
+    <content type="html">&lt;p&gt;The challenge closed forty-four days before I read the rules.&lt;/p&gt;
+&lt;p&gt;Not after I built something. Before I opened the editor. I had the idea, the stack, and a five-phase plan on the table, and the first line of the contest page said the entry period ended on October 5. It was November 18.&lt;/p&gt;
+&lt;h2 id=&quot;the-calendar-is-part-of-the-brief&quot;&gt;The calendar is part of the brief&lt;/h2&gt;
+&lt;p&gt;The challenge was &amp;quot;Hacktoberfest Weekend: Build for a Friend&amp;quot;. Entries ran from October 2 to October 5, 2026. Winners were announced on October 9. By the time we sat down, the prize had an owner, the repository window had closed, and the only honest verdict was &amp;quot;not eligible&amp;quot;.&lt;/p&gt;
+&lt;p&gt;That is not a detail you discover in review. It is the first constraint, and it was the one nobody checked. A challenge is a calendar with a theme attached. The theme is the part everyone reads. The calendar is the part that decides whether there is a submission at all.&lt;/p&gt;
+&lt;h2 id=&quot;the-second-gate&quot;&gt;The second gate&lt;/h2&gt;
+&lt;p&gt;Even with the window open, the post would not have competed. The rules said that non-English submissions were eligible for a completion badge, not for prizes. The draft was in Spanish, written for a local audience. The audience was right and the submission was wrong.&lt;/p&gt;
+&lt;p&gt;Two gates, both outside the code. Neither one was in the plan. We had spent the thinking on models, embeddings and a local RAG stack, and none of that mattered until those two gates were open.&lt;/p&gt;
+&lt;h2 id=&quot;the-plan-was-a-table-of-contents&quot;&gt;The plan was a table of contents&lt;/h2&gt;
+&lt;p&gt;The audit scored the plan 9 out of 25. Not because the idea was bad. Because the plan had not made a decision.&lt;/p&gt;
+&lt;p&gt;&amp;quot;Choose a friend with a private information problem&amp;quot; is a segment, not a person. &amp;quot;A local RAG agent&amp;quot; is the most repeated demo of the last two years. &amp;quot;A lightweight framework&amp;quot; is a placeholder. &amp;quot;Docker or a script&amp;quot; is a fork in the road left open. There were five phases, three data modalities, no cut lines, and one paragraph for writing quality, the criterion weighted most heavily.&lt;/p&gt;
+&lt;p&gt;The scope was three to four weeks of work in a 72-hour window. PDFs, voice notes, CSVs, embeddings, an agent, verification, Docker, a UI and a handover. Without cut lines, the predictable outcome is that 80 percent is half-built and the post is written at the end, tired, from memory.&lt;/p&gt;
+&lt;p&gt;A plan that does not choose cannot be executed. It can be improvised, which is a different activity.&lt;/p&gt;
+&lt;h2 id=&quot;what-the-audit-changed&quot;&gt;What the audit changed&lt;/h2&gt;
+&lt;p&gt;It named the person: Lucía, a freelance photographer with a decade of contracts and invoices she cannot upload. It named one task, one action, one twist: the button that deletes everything, with proof. It put the post in English and gave it 30 to 40 percent of the time. It cut voice notes, CSV and Docker before cutting citations, evaluation, or the friend&#39;s reaction.&lt;/p&gt;
+&lt;p&gt;It also read the judging criteria as a product brief. There were 17 winners across an overall prize, six featured categories and ten partner categories. The original plan had not chosen a category, which is leaving value on the table before the first commit. The rules also said the project had to be new during the entry period, so a repo started earlier would not qualify no matter how good it was.&lt;/p&gt;
+&lt;p&gt;The most useful part was not the list of fixes. It was the order: eligibility first, then the person, then the one action, then the cut lines, then the stack. The stack is the last decision, not the first.&lt;/p&gt;
+&lt;h2 id=&quot;the-writing-is-the-deliverable&quot;&gt;The writing is the deliverable&lt;/h2&gt;
+&lt;p&gt;The challenge weighted Writing Quality most heavily. The original plan treated the post as documentation to write after the build. That is backwards for a challenge where judges read the post and may never run the repository.&lt;/p&gt;
+&lt;p&gt;The corrected plan starts the post on the first day, captures screenshots while the thing is being built, and keeps two hours of buffer before the deadline. The post is not a report of the work. It is the work in the form the judge receives it.&lt;/p&gt;
+&lt;p&gt;That changes what you build. A demo that cannot be explained in one screenshot is a demo that will not score. A twist that needs three paragraphs of setup is not a twist. Writing the post first forces the product to have a shape.&lt;/p&gt;
+&lt;h2 id=&quot;the-rule&quot;&gt;The rule&lt;/h2&gt;
+&lt;p&gt;Read the rules before the roadmap. Check the calendar, the language, the eligibility, and the scoring weights. A challenge is not a prompt; it is a contract with a deadline.&lt;/p&gt;
+&lt;p&gt;Then make one decision per phase. Who is the person? What is the single action? What is the twist someone will remember? What gets cut when the clock runs out? If a plan cannot answer those, it is not a plan yet.&lt;/p&gt;
+&lt;p&gt;We did not build for that challenge. We built the audit that stopped us from wasting a weekend, and the corrected plan is still on the shelf for the next window. The cheapest lesson is the one you learn before writing code.&lt;/p&gt;
+</content>
+  </entry>
   <entry>
     <title>The Quieter Announcement</title>
     <id>https://gonzoblasco.github.io/a11y-portfolio/writing/the-quieter-announcement.html</id>
@@ -239,19 +273,39 @@
     <category term="accessibility" />
     <updated>2026-09-09T12:00:00.000Z</updated>
     <summary>A test-only PR locks in that aria-posinset stays global across menu sections. The first version flattened the fixture, went green and tested nothing; the corrected one renders the real sections.</summary>
-    <content type="html">&lt;p&gt;Not every accessibility bug breaks something visibly. Some just disappear from the test suite one day, and nobody notices.&lt;/p&gt;
-&lt;p&gt;A few days ago I got a PR merged in Adobe React Spectrum that illustrates this point: it is a test-only PR, and that is exactly what makes it interesting.&lt;/p&gt;
-&lt;p&gt;&lt;a href=&quot;https://github.com/adobe/react-spectrum/pull/10554&quot;&gt;PR #10554 - adobe/react-spectrum&lt;/a&gt;&lt;/p&gt;
-&lt;h2 id=&quot;the-context&quot;&gt;The context&lt;/h2&gt;
-&lt;p&gt;In a menu with sections (groups of items), the ARIA specification requires &lt;code&gt;aria-posinset&lt;/code&gt; to be global: if there are 4 items spread across 2 sections, the positions run 1 through 4 continuously, consistent with &lt;code&gt;aria-setsize=4&lt;/code&gt;. If a section restarts the count, screen readers announce positions that do not match reality (&amp;quot;item 1 of 2&amp;quot; when it is actually &amp;quot;item 1 of 4&amp;quot;), and navigation becomes confusing.&lt;/p&gt;
-&lt;p&gt;React Spectrum was already producing the correct values. The problem was that nothing guaranteed it: a future refactor of the index computation could silently reintroduce per-section restarts without any test failing.&lt;/p&gt;
-&lt;h2 id=&quot;the-test-trap&quot;&gt;The test trap&lt;/h2&gt;
-&lt;p&gt;Writing the test looked trivial: render a menu with sections and assert the positions are 1, 2, 3, 4. But the first version had a flaw I did not see myself. The helper building the mock flattened the sections into a plain list of items. The resulting DOM never contained the sectioned structure the test claimed to cover.&lt;/p&gt;
-&lt;p&gt;The test passed. But it was not testing what it said it was testing. A maintainer spotted it in seconds, and rightly so: it is exactly the kind of shortcut that gives false confidence.&lt;/p&gt;
-&lt;h2 id=&quot;the-fix&quot;&gt;The fix&lt;/h2&gt;
-&lt;p&gt;The final version renders each section through the real hook (&lt;code&gt;useMenuSection&lt;/code&gt;), including the labelled groups and their headings, and also covers sections without a heading, where the accessible name comes from &lt;code&gt;aria-label&lt;/code&gt;. That way, any future change in section logic, not just the index computation, gets exercised by the test.&lt;/p&gt;
-&lt;h2 id=&quot;why-it-matters&quot;&gt;Why it matters&lt;/h2&gt;
-&lt;p&gt;An accessibility test is only as good as the structure it exercises. If the setup simplifies the DOM down to a flat list, a green test is decoration. The rule I took away: the test must render the real component structure, fail when the behavior breaks, and verify exactly what the PR claims.&lt;/p&gt;
+    <content type="html">&lt;p&gt;A green test is not evidence. It is a claim with a check next to it, and the check only covers the code the fixture actually reaches.&lt;/p&gt;
+&lt;p&gt;Most accessibility work produces that kind of test by accident. The fix is real, the assertion is real, and the fixture quietly walks around the part that was broken.&lt;/p&gt;
+&lt;p&gt;This is the story of one of mine.&lt;/p&gt;
+&lt;h2 id=&quot;first-the-announcement&quot;&gt;First, the announcement&lt;/h2&gt;
+&lt;p&gt;In January, tomsontom filed &lt;a href=&quot;https://github.com/adobe/react-spectrum/issues/9556&quot;&gt;issue #9556&lt;/a&gt; against the Picker sections example. The first item in the popup, Chocolate, reported &lt;code&gt;aria-posinset=2&lt;/code&gt; while the list reported &lt;code&gt;aria-setsize=6&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Two numbers, one object, no agreement. The first option in a menu is item one. A screen reader was saying &amp;quot;2 of 6&amp;quot; before the user had moved.&lt;/p&gt;
+&lt;p&gt;The cause was a mismatch between two attributes computed from different sources. &lt;code&gt;aria-setsize&lt;/code&gt; used the global item count. &lt;code&gt;aria-posinset&lt;/code&gt; came from &lt;code&gt;item.index&lt;/code&gt;, which restarts at zero inside each section. The numbering started over in every group while the total stayed global.&lt;/p&gt;
+&lt;p&gt;What that sounds like is worse than a wrong number. A reader moves into the second group and hears &amp;quot;1 of 6&amp;quot; for an item that is actually item four. The position is the only cue about how far through the list you are, so the list reads as two short lists instead of one long one.&lt;/p&gt;
+&lt;p&gt;The fix landed in &lt;a href=&quot;https://github.com/adobe/react-spectrum/pull/10487&quot;&gt;PR #10487&lt;/a&gt;. A shared helper, &lt;code&gt;getPosInSet&lt;/code&gt;, counts items globally and ignores section headers. It went into both &lt;code&gt;useOption&lt;/code&gt; and &lt;code&gt;useMenuItem&lt;/code&gt;, because the same pattern lived in the listbox and the menu.&lt;/p&gt;
+&lt;p&gt;After that, the values were correct. Nothing kept them correct.&lt;/p&gt;
+&lt;h2 id=&quot;a-test-that-only-guards-what-it-renders&quot;&gt;A test that only guards what it renders&lt;/h2&gt;
+&lt;p&gt;My next PR was test-only: &lt;a href=&quot;https://github.com/adobe/react-spectrum/pull/10554&quot;&gt;test: add regression for global aria-posinset across sections&lt;/a&gt;. One file, 102 lines added, 2 removed. The idea was simple. Render a menu with two sections and four items, assert that the positions are 1, 2, 3 and 4, and assert that &lt;code&gt;aria-setsize&lt;/code&gt; says 4.&lt;/p&gt;
+&lt;p&gt;My first version passed.&lt;/p&gt;
+&lt;p&gt;It also never built a section. The helper I wrote to create the mock flattened the groups into a plain list of items, so the hook received four siblings and no group structure at all. The section code never ran. The section branch that had caused the bug in the first place was not in the test.&lt;/p&gt;
+&lt;p&gt;With a flat list, index and position are the same number. Four items produce 1, 2, 3, 4 whether the logic is right or wrong, because there is no section to restart anything. The test agreed with itself.&lt;/p&gt;
+&lt;p&gt;snowystinger reviewed it and wrote one line: &amp;quot;The test isn&#39;t rendering the sections.&amp;quot; Then, in the same comment, the part that stung: &amp;quot;while that shouldn&#39;t affect the posinset, it&#39;s incomplete.&amp;quot;&lt;/p&gt;
+&lt;p&gt;That is exactly right, and it is the reason the review mattered more than the test. The numbers were correct. The coverage was zero.&lt;/p&gt;
+&lt;h2 id=&quot;what-a-real-fixture-looks-like&quot;&gt;What a real fixture looks like&lt;/h2&gt;
+&lt;p&gt;The corrected helper renders each section the way the component does. A &lt;code&gt;role=&amp;quot;presentation&amp;quot;&lt;/code&gt; wrapper holds a &lt;code&gt;role=&amp;quot;group&amp;quot;&lt;/code&gt; inside it, and the group is labelled by its section heading through &lt;code&gt;aria-labelledby&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;The assertions changed shape too. Before checking any number, the test verifies that both groups exist and that each one is labelled by its own heading. The DOM structure is part of the regression, not a stage set for it.&lt;/p&gt;
+&lt;p&gt;Then the positions are checked, and then &lt;code&gt;aria-setsize&lt;/code&gt;, and then that the two agree. Five assertions in &lt;code&gt;useMenu.test.tsx&lt;/code&gt;, all passing, full lint clean.&lt;/p&gt;
+&lt;p&gt;Asserting the structure first is not ceremony. If the groups disappear, the position check should fail for that reason and not for an unrelated one. The failure message then says which part broke.&lt;/p&gt;
+&lt;p&gt;The difference between the two versions is one helper function. The difference in what they cover is the entire bug.&lt;/p&gt;
+&lt;h2 id=&quot;the-part-i-did-not-fix&quot;&gt;The part I did not fix&lt;/h2&gt;
+&lt;p&gt;The second review asked for two more things. The heading span needed to render &lt;code&gt;node.rendered&lt;/code&gt;, matching the real &lt;code&gt;MenuSection&lt;/code&gt;, so the visible text and the labelling come from the same source. That was a small change.&lt;/p&gt;
+&lt;p&gt;The other request was to move the test up a level, to react-aria-components with a real &lt;code&gt;Virtualizer&lt;/code&gt;. I tried. I found something I did not expect: with the virtualizer in the tree, &lt;code&gt;aria-posinset&lt;/code&gt; resets per section in the rendered output. The second section starts again at 1 instead of continuing at 3.&lt;/p&gt;
+&lt;p&gt;The hook contract holds. The layout path does not carry it through.&lt;/p&gt;
+&lt;p&gt;That is a separate bug with a separate fix, and folding it into a test-only PR would have muddied both. I kept the test at the hook level, where the original contract was verified, and left the virtualizer behavior as a note on the PR. It has no follow-up issue yet, and that is a loose end I am aware of.&lt;/p&gt;
+&lt;h2 id=&quot;how-to-tell-a-test-is-decoration&quot;&gt;How to tell a test is decoration&lt;/h2&gt;
+&lt;p&gt;There is a cheap check, and it takes a minute. Break the thing the test claims to protect, and run it. If the test stays green, the test is describing the fixture, not the behavior.&lt;/p&gt;
+&lt;p&gt;The other check is structural. Read the setup and ask which lines of production code it can reach. A test that builds its own simplified world can only fail when that world breaks, and the real one is usually somewhere else.&lt;/p&gt;
+&lt;p&gt;A number in an assertion is not proof of anything on its own. It is proof when the structure that produces the number is also in the test. Otherwise it is a coincidence with good formatting.&lt;/p&gt;
+&lt;p&gt;The PR is merged. Four items, two sections, positions 1 through 4, matching a set size of 4. That took five assertions and one honest review.&lt;/p&gt;
 </content>
   </entry>
   <entry>
@@ -260,27 +314,32 @@
     <link href="https://gonzoblasco.github.io/a11y-portfolio/writing/orchestrating-a-refactor.html" />
     <category term="engineering" />
     <updated>2026-08-28T12:00:00.000Z</updated>
-    <summary>A 10,000-line monolith became a modular app through a staged agent pipeline: planning, execution, cross-review by a different model, and verification. The public API did not change.</summary>
-    <content type="html">&lt;p&gt;Refactoring 10,000 lines of monolithic code is not a writing problem, it is an orchestration problem.&lt;/p&gt;
-&lt;p&gt;I recently finished the modular restructuring of a macOS cleaning app. The challenge was not just moving files, but guaranteeing the original behavior stayed intact while the architecture became something maintainable and testable.&lt;/p&gt;
-&lt;h2 id=&quot;the-process-an-a-b-pipeline-and-differentiated-reasoning&quot;&gt;The process: an A/B pipeline and differentiated reasoning&lt;/h2&gt;
-&lt;p&gt;Instead of using AI as an autocomplete chat, I used an orchestrated agent system:&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;Planning (Kanam, MAX): analysis of the monolithic structure and design of the route and module map. The orchestrator defines the strategy before a single line is written.&lt;/li&gt;
-&lt;li&gt;Execution (Agent A, HIGH): implementation of the modularization, separating routes, utility libraries and business logic.&lt;/li&gt;
-&lt;li&gt;Cross-review (Agent B, HIGH): a second agent, running a different model, reviews the first agent&#39;s code. This step is critical. It catches scope hallucinations and syntax errors that the first agent ignores because of tunnel vision.&lt;/li&gt;
-&lt;li&gt;Final verification: endpoint validation and unit tests over the most critical modules, security and paths.&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h2 id=&quot;the-why-system-over-tool&quot;&gt;The why: system over tool&lt;/h2&gt;
-&lt;p&gt;Many developers use AI to generate functions. Here we used it to manage complexity.&lt;/p&gt;
-&lt;p&gt;Separating the thinking phase (MAX) from the execution phase (HIGH), and adding a cross-review layer on top, sharply lowers the risk of introducing bugs during a massive refactor. It is not about writing faster. It is about reducing the error rate on deep structural changes.&lt;/p&gt;
-&lt;p&gt;Result:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;From 3 giant files to a professional modular structure.&lt;/li&gt;
-&lt;li&gt;27 unit tests proving the security rules did not change.&lt;/li&gt;
-&lt;li&gt;Zero changes to the public API, keeping full compatibility with the frontend.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;AI does not replace the engineer, but it redefines the scale of what a single engineer can refactor in one session.&lt;/p&gt;
+    <summary>A 10,000-line macOS app spread across three giant files became a modular structure through four stages kept apart: planning, execution, cross-review by a different model, and verification. The public API never moved.</summary>
+    <content type="html">&lt;p&gt;Refactoring 10,000 lines of monolithic code is not a writing problem. It is an orchestration problem.&lt;/p&gt;
+&lt;p&gt;The code did not need to be smarter. It needed to move without breaking anything that depended on it.&lt;/p&gt;
+&lt;h2 id=&quot;three-files-one-surface&quot;&gt;Three files, one surface&lt;/h2&gt;
+&lt;p&gt;The app was a macOS cleaner. Ten thousand lines lived in three giant files, with routes, utility code and business logic interleaved. A change to a path rule meant scrolling past the route table to find it, and the route table was the thing most likely to break.&lt;/p&gt;
+&lt;p&gt;The hard constraint was external. The frontend called the app through a public API, and that API could not move. A modular structure that renamed a response field would have forced a second refactor on the client. So the job had one non-negotiable: the surface stays identical while the inside is rebuilt.&lt;/p&gt;
+&lt;p&gt;That constraint changed the shape of the work. The task was not &amp;quot;improve this code&amp;quot;. It was &amp;quot;prove the behavior did not change while the code around it did&amp;quot;. Those are different jobs, and the second one is mostly verification.&lt;/p&gt;
+&lt;h2 id=&quot;separating-the-plan-from-the-typing&quot;&gt;Separating the plan from the typing&lt;/h2&gt;
+&lt;p&gt;I ran this as a pipeline instead of a chat. Four stages, each with a different job and a different amount of room to improvise.&lt;/p&gt;
+&lt;p&gt;Planning ran at MAX. The output was not code. It was a map: which routes exist, which utilities they share, where the business logic belongs, and in what order to move things so the app never sat in a half state. Writing that map first is the step I would have skipped working alone in an editor. In a chat, the plan lives in the conversation and evaporates when the context does.&lt;/p&gt;
+&lt;p&gt;Execution ran at HIGH, against the map. Agent A moved the routes out, pulled the utility libraries apart from the business logic, and kept the public handlers pointing at the same shapes. Its mandate was narrow: follow the plan, do not redesign.&lt;/p&gt;
+&lt;p&gt;That narrowness matters. An executor allowed to improve things while it moves them is doing two refactors at once, and only one of them is being checked.&lt;/p&gt;
+&lt;h2 id=&quot;the-reviewer-that-did-not-write-the-code&quot;&gt;The reviewer that did not write the code&lt;/h2&gt;
+&lt;p&gt;The third stage is the one I would keep if I could keep only one. A second agent, on a different model, read Agent A&#39;s output.&lt;/p&gt;
+&lt;p&gt;Different model is the point, not a detail. An agent reviewing its own work grades its own assumptions. It re-reads the plan it just followed and finds the plan reasonable. A model that never saw the reasoning has to reconstruct intent from the diff, and that is exactly where the gaps show.&lt;/p&gt;
+&lt;p&gt;The review caught two kinds of problem. Scope hallucination: code that solved a problem nobody assigned, or a piece that moved when the plan had deliberately left it alone. And syntax-level errors the executor had stopped seeing, the way a typo disappears in a paragraph you have read too many times.&lt;/p&gt;
+&lt;p&gt;None of it is magic. A reviewer without the plan can also invent objections. What it reliably does is read the code as a stranger, and a stranger does not inherit your tunnel vision.&lt;/p&gt;
+&lt;h2 id=&quot;what-the-numbers-prove&quot;&gt;What the numbers prove&lt;/h2&gt;
+&lt;p&gt;The last stage was verification, and it was narrower than the review. Endpoint validation, plus unit tests over the modules carrying the security rules and the path handling. The final count was 27 tests.&lt;/p&gt;
+&lt;p&gt;I want to be precise about what 27 means. It is not coverage. It is 27 assertions that the security rules behave as they did before the split, written against the modules where a silent change would have been expensive. The tests prove what they assert. They do not prove the refactor is correct everywhere, and I would not claim that from a number.&lt;/p&gt;
+&lt;p&gt;The result I care about more is that the public API did not change. Routes, payload shapes and responses stayed where the frontend expected them. That is not a metric. It is a constraint that held for the whole job.&lt;/p&gt;
+&lt;p&gt;Three files became modules separated by responsibility: routes apart from utilities, utilities apart from business logic. Smaller files are the visible part. The useful part is that the next change has an obvious place to go.&lt;/p&gt;
+&lt;h2 id=&quot;the-rule&quot;&gt;The rule&lt;/h2&gt;
+&lt;p&gt;A refactor is not finished when the files are smaller. It is finished when the contract is unchanged and something can prove it.&lt;/p&gt;
+&lt;p&gt;The pipeline is how I got there, not the story. Plan at high reasoning, execute against a written map, review with a model that did not write the code, then verify the part where a mistake would cost the most. Each stage catches a different failure, which is why collapsing them into one long conversation undoes the point.&lt;/p&gt;
+&lt;p&gt;What changed for me is scale, not speed. I did not type 10,000 lines faster. I could hold a structure that size long enough to finish it, because the thinking, the moving and the checking were in separate hands.&lt;/p&gt;
 </content>
   </entry>
   <entry>
@@ -379,18 +438,37 @@
     <link href="https://gonzoblasco.github.io/a11y-portfolio/writing/aria-orientation-role-owners.html" />
     <category term="accessibility" />
     <updated>2026-08-24T12:00:00.000Z</updated>
-    <summary>A Combobox grid carried aria-orientation, an attribute the grid role does not support, so screen readers got contradictory navigation cues. Moving it to the elements that own the role fixed it.</summary>
-    <content type="html">&lt;p&gt;The hardest accessibility bug to spot is not the one that breaks the screen reader. It is the one that confuses it with invalid information.&lt;/p&gt;
-&lt;p&gt;A few days ago I merged a fix in MUI Base UI that illustrates the point: a misplaced &lt;code&gt;aria-orientation&lt;/code&gt;.&lt;/p&gt;
-&lt;h2 id=&quot;the-problem&quot;&gt;The problem&lt;/h2&gt;
-&lt;p&gt;In a Combobox with a grid, the component emitted &lt;code&gt;aria-orientation=&amp;quot;horizontal&amp;quot;&lt;/code&gt; directly on the element with &lt;code&gt;role=&amp;quot;grid&amp;quot;&lt;/code&gt;. The problem: the &lt;code&gt;grid&lt;/code&gt; role does not support &lt;code&gt;aria-orientation&lt;/code&gt;. It is a valid attribute in HTML, but invalid for that ARIA role.&lt;/p&gt;
-&lt;p&gt;The result was not a crash or a visible error. It was something worse: screen readers received contradictory information about how to navigate the component, silently degrading the experience for assistive technology users.&lt;/p&gt;
-&lt;h2 id=&quot;the-fix&quot;&gt;The fix&lt;/h2&gt;
-&lt;p&gt;The fix moved &lt;code&gt;aria-orientation&lt;/code&gt; to the elements that actually own the role, the ones that do support the attribute, and omitted it on &lt;code&gt;grid&lt;/code&gt; and &lt;code&gt;presentation&lt;/code&gt;. Seven files, 69 lines added, 4 removed, with regression tests to make sure keyboard navigation was preserved.&lt;/p&gt;
-&lt;h2 id=&quot;why-it-matters&quot;&gt;Why it matters&lt;/h2&gt;
-&lt;p&gt;Accessibility is not just adding an &lt;code&gt;aria-label&lt;/code&gt;. It is understanding the ARIA contract: which attributes are valid for each role, and how screen readers interpret that information. An invalid attribute does not always break the app, but it always degrades someone&#39;s experience.&lt;/p&gt;
-&lt;p&gt;When accessibility is treated as an engineering discipline, with regression tests, role validation and peer review, subtle bugs like this one get caught before they reach production.&lt;/p&gt;
-&lt;p&gt;PR: &lt;a href=&quot;https://github.com/mui/base-ui/pull/5551&quot;&gt;https://github.com/mui/base-ui/pull/5551&lt;/a&gt;&lt;/p&gt;
+    <summary>A Combobox with grid rendered aria-orientation on role=grid, which does not support it. The attribute moved to the components that assign the role; the keyboard hook kept only the behavior.</summary>
+    <content type="html">&lt;p&gt;A missing attribute is easy to catch. Nothing renders, a test fails, someone fills the hole. The expensive bug is the attribute that renders in the wrong place, where it is valid HTML, valid TypeScript, and still a contradiction.&lt;/p&gt;
+&lt;p&gt;In August I merged mui/base-ui #5551 for one of those. A Combobox with &lt;code&gt;grid&lt;/code&gt; enabled rendered this:&lt;/p&gt;
+&lt;pre tabindex=&quot;0&quot; role=&quot;region&quot; aria-label=&quot;Code sample&quot;&gt;&lt;code class=&quot;language-html&quot;&gt;&amp;lt;div role=&amp;quot;grid&amp;quot; aria-orientation=&amp;quot;horizontal&amp;quot;&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Both halves are legal on their own. Together they describe two different widgets.&lt;/p&gt;
+&lt;p&gt;The reproduction was the official emoji picker in the Autocomplete grid example: open the list, inspect the element, find &lt;code&gt;role=&amp;quot;grid&amp;quot;&lt;/code&gt; and &lt;code&gt;aria-orientation=&amp;quot;horizontal&amp;quot;&lt;/code&gt; on the same node, run axe. Nothing looked broken. The picker opened, the arrows moved, the emoji inserted.&lt;/p&gt;
+&lt;h2 id=&quot;two-instructions-at-once&quot;&gt;Two instructions at once&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;role=&amp;quot;grid&amp;quot;&lt;/code&gt; is a two-dimensional structure. It has rows and columns, and arrow keys move through both axes. &lt;code&gt;aria-orientation=&amp;quot;horizontal&amp;quot;&lt;/code&gt; says the widget runs along a single line. A person navigating with a screen reader hears position by row and column, then gets an attribute claiming the thing is a strip.&lt;/p&gt;
+&lt;p&gt;That is the difference between a bug that removes information and one that adds noise. A missing label leaves a silence you can notice. A contradiction leaves a sentence that sounds complete and is wrong, and the person on the other end has no way to tell which half to trust.&lt;/p&gt;
+&lt;p&gt;The spec resolves the conflict by dropping the attribute. WAI-ARIA 1.2 requires user agents to ignore non-global properties on roles that do not support them, so &lt;code&gt;grid&lt;/code&gt; never receives &lt;code&gt;aria-orientation&lt;/code&gt;. That is not a repair. The component published an intent it could not express, the intent vanished at the accessibility tree, and the keyboard kept working because the keyboard logic never read the attribute in the first place.&lt;/p&gt;
+&lt;p&gt;Axe found it as an &lt;code&gt;aria-allowed-attr&lt;/code&gt; violation, reported against the official Autocomplete grid example on v1.7.0, with axe-core 4.10.2. A tool caught it. The component&#39;s own suite did not, because no test asked which element carried the role.&lt;/p&gt;
+&lt;h2 id=&quot;why-the-type-said-yes&quot;&gt;Why the type said yes&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;aria-orientation&lt;/code&gt; is a valid prop on any React element. TypeScript checks the name and the value, &lt;code&gt;&amp;quot;horizontal&amp;quot; | &amp;quot;vertical&amp;quot; | undefined&lt;/code&gt;. It cannot check the role of the node the prop reaches, because at the point of the check there is no node.&lt;/p&gt;
+&lt;p&gt;The attribute was assembled inside &lt;code&gt;useListNavigation&lt;/code&gt;, returned in a props object, and spread later onto whichever element ended up with the role. In the source, the attribute and the role never meet. They only meet in the DOM, and only a tool that inspects the rendered tree sees them together.&lt;/p&gt;
+&lt;p&gt;The type was doing its job. It was checking the wrong contract.&lt;/p&gt;
+&lt;h2 id=&quot;one-variable-two-jobs&quot;&gt;One variable, two jobs&lt;/h2&gt;
+&lt;p&gt;The root cause was a coupling. &lt;code&gt;AriaCombobox&lt;/code&gt; passed &lt;code&gt;orientation: grid ? &#39;horizontal&#39; : undefined&lt;/code&gt; into &lt;code&gt;useListNavigation&lt;/code&gt;, and the hook exposed any orientation other than &lt;code&gt;&#39;both&#39;&lt;/code&gt; as &lt;code&gt;aria-orientation&lt;/code&gt;. The hook genuinely needed &lt;code&gt;horizontal&lt;/code&gt;: it drives ArrowLeft and ArrowRight inside a grid. It then treated that keyboard requirement as a reason to publish ARIA.&lt;/p&gt;
+&lt;p&gt;That is the wrong owner. A navigation hook knows how keys should move. It does not know what role its consumer will render, and it should not guess.&lt;/p&gt;
+&lt;p&gt;Three public components sit on that hook. The Combobox, the Menu and the Select each pass an orientation and each render a different role. One emission, three roles, and only one of them rejects the attribute outright. The other two accept it and do not need it.&lt;/p&gt;
+&lt;p&gt;So the fix took the emission out of the hook, two deleted lines, and moved the attribute to the components that assign the final role. &lt;code&gt;MenuRoot&lt;/code&gt; renders &lt;code&gt;aria-orientation=&amp;quot;horizontal&amp;quot;&lt;/code&gt; only when the menu is horizontal, because &lt;code&gt;menu&lt;/code&gt; is implicitly vertical. &lt;code&gt;SelectPopup&lt;/code&gt; dropped a dead &lt;code&gt;&#39;aria-orientation&#39;: undefined&lt;/code&gt; from its presentation branch. Grid and listbox get nothing: a grid is two-dimensional, a listbox is implicitly vertical, and saying either out loud adds nothing.&lt;/p&gt;
+&lt;p&gt;Seven files, 69 lines added, 4 removed. Three of those additions are production code. The other 66 are tests: the Combobox grid and listbox, the generic hook, a horizontal and a vertical menu, a select listbox.&lt;/p&gt;
+&lt;p&gt;The ratio is the honest one. The change is small and the proof is not.&lt;/p&gt;
+&lt;p&gt;The tests query by role, &lt;code&gt;getByRole(&#39;grid&#39;)&lt;/code&gt; and &lt;code&gt;getByRole(&#39;listbox&#39;)&lt;/code&gt;, then assert the attribute is absent. Not by container, not by test id. That is the check that was missing: an assertion about the node a screen reader will actually read, in place of an assertion about the node the props happened to reach.&lt;/p&gt;
+&lt;h2 id=&quot;the-third-time&quot;&gt;The third time&lt;/h2&gt;
+&lt;p&gt;The issue pointed at two earlier fixes of the same shape: #4355 for Navigation Menu, #4628 for Toggle Group. Same invalid attribute, different component, same hook underneath.&lt;/p&gt;
+&lt;p&gt;That is the part I kept returning to. Each fix was correct where it landed, and the generator stayed. As long as the shared hook emitted the attribute, every new consumer inherited the bug, and every reviewer had to notice it again on a different component. A patch per component is a tax paid forever.&lt;/p&gt;
+&lt;p&gt;What would have prevented the third one is a convention, not a fix: ARIA that depends on a role belongs to the component that assigns the role. Hooks return behavior. Components publish semantics. Once that line is drawn, the question &amp;quot;does this role support this attribute&amp;quot; has an obvious place to be answered.&lt;/p&gt;
+&lt;h2 id=&quot;the-rule&quot;&gt;The rule&lt;/h2&gt;
+&lt;p&gt;An attribute is not valid in the abstract. It is valid for a role, on an element. When the thing that decides the role is not the thing that decides the attribute, the contract has no owner, and no type will tell you.&lt;/p&gt;
+&lt;p&gt;Read the attribute from the element that carries the role, not from the props object that produced it.&lt;/p&gt;
 </content>
   </entry>
   <entry>

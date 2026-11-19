@@ -32,11 +32,18 @@
     <header class="page-head">
       <p class="kicker">Writing</p>
       <h1>Notes on what a screen reader says.</h1>
-      <p class="lede">11 pieces, accessibility first: what a screen reader announces, plus testing and engineering work behind it. Some are also on LinkedIn; this is the canonical copy.</p>
-      <nav class="categories" aria-label="Categories"><ul><li><a href="./" aria-current="page">All <span class="count">11</span></a></li><li><a href="./category/accessibility/">Accessibility <span class="count">9</span></a></li><li><a href="./category/testing/">Testing <span class="count">1</span></a></li><li><a href="./category/engineering/">Engineering <span class="count">1</span></a></li></ul></nav>
+      <p class="lede">12 pieces, accessibility first: what a screen reader announces, plus testing and engineering work behind it. Some are also on LinkedIn; this is the canonical copy.</p>
+      <nav class="categories" aria-label="Categories"><ul><li><a href="./" aria-current="page">All <span class="count">12</span></a></li><li><a href="./category/accessibility/">Accessibility <span class="count">9</span></a></li><li><a href="./category/testing/">Testing <span class="count">1</span></a></li><li><a href="./category/engineering/">Engineering <span class="count">1</span></a></li><li><a href="./category/field-notes/">Field notes <span class="count">1</span></a></li></ul></nav>
     </header>
     <h2 class="year">2026</h2>
 <ul class="index-list">
+<li>
+  <a href="./the-challenge-was-already-over.html" aria-labelledby="entry-the-challenge-was-already-over">
+    <span class="date"><time datetime="2026-11-18">Nov 18</time></span>
+    <span class="title" id="entry-the-challenge-was-already-over">The challenge was closed before we started</span>
+    <span class="excerpt">I had a five-phase plan for a 72-hour challenge before I read the entry window. It had closed 44 days earlier, and the plan was a table of contents rather than a decision.</span>
+  </a>
+</li>
 <li>
   <a href="./the-quieter-announcement.html" aria-labelledby="entry-the-quieter-announcement">
     <span class="date"><time datetime="2026-11-17">Nov 17</time></span>
@@ -83,7 +90,7 @@
   <a href="./orchestrating-a-refactor.html" aria-labelledby="entry-orchestrating-a-refactor">
     <span class="date"><time datetime="2026-08-28">Aug 28</time></span>
     <span class="title" id="entry-orchestrating-a-refactor">Orchestrating a 10,000-line refactor</span>
-    <span class="excerpt">A 10,000-line monolith became a modular app through a staged agent pipeline: planning, execution, cross-review by a different model, and verification. The public API did not change.</span>
+    <span class="excerpt">A 10,000-line macOS app spread across three giant files became a modular structure through four stages kept apart: planning, execution, cross-review by a different model, and verification. The public API never moved.</span>
   </a>
 </li>
 <li>
@@ -104,7 +111,7 @@
   <a href="./aria-orientation-role-owners.html" aria-labelledby="entry-aria-orientation-role-owners">
     <span class="date"><time datetime="2026-08-24">Aug 24</time></span>
     <span class="title" id="entry-aria-orientation-role-owners">aria-orientation belongs to the role owner</span>
-    <span class="excerpt">A Combobox grid carried aria-orientation, an attribute the grid role does not support, so screen readers got contradictory navigation cues. Moving it to the elements that own the role fixed it.</span>
+    <span class="excerpt">A Combobox with grid rendered aria-orientation on role=grid, which does not support it. The attribute moved to the components that assign the role; the keyboard hook kept only the behavior.</span>
   </a>
 </li>
 <li>

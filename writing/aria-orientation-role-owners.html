@@ -4,13 +4,13 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>aria-orientation belongs to the role owner — Gonzalo Blasco</title>
-  <meta name="description" content="A Combobox grid carried aria-orientation, an attribute the grid role does not support, so screen readers got contradictory navigation cues. Moving it to the elements that own the role fixed it." />
+  <meta name="description" content="A Combobox with grid rendered aria-orientation on role=grid, which does not support it. The attribute moved to the components that assign the role; the keyboard hook kept only the behavior." />
   <meta name="author" content="Gonzalo Blasco" />
   <link rel="canonical" href="https://gonzoblasco.github.io/a11y-portfolio/writing/aria-orientation-role-owners.html" />
   <meta property="og:site_name" content="Gonzalo Blasco" />
   <meta property="og:type" content="article" />
   <meta property="og:title" content="aria-orientation belongs to the role owner — Gonzalo Blasco" />
-  <meta property="og:description" content="A Combobox grid carried aria-orientation, an attribute the grid role does not support, so screen readers got contradictory navigation cues. Moving it to the elements that own the role fixed it." />
+  <meta property="og:description" content="A Combobox with grid rendered aria-orientation on role=grid, which does not support it. The attribute moved to the components that assign the role; the keyboard hook kept only the behavior." />
   <meta property="og:url" content="https://gonzoblasco.github.io/a11y-portfolio/writing/aria-orientation-role-owners.html" />
   <meta name="twitter:card" content="summary" />
   <link rel="alternate" type="application/atom+xml" href="../feed.xml" title="Gonzalo Blasco" />
@@ -32,27 +32,46 @@
     <header class="article-head">
       <p class="kicker"><a href="./">Writing</a> <span aria-hidden="true">/</span> <time datetime="2026-08-24">Aug 2026</time></p>
       <h1>aria-orientation belongs to the role owner</h1>
-      <p class="lede">A Combobox grid carried aria-orientation, an attribute the grid role does not support, so screen readers got contradictory navigation cues. Moving it to the elements that own the role fixed it.</p>
+      <p class="lede">A Combobox with grid rendered aria-orientation on role=grid, which does not support it. The attribute moved to the components that assign the role; the keyboard hook kept only the behavior.</p>
       <p class="article-meta">
         <span>Accessibility</span>
         <span>Note</span>
-        <span>1 min read</span>
+        <span>4 min read</span>
         <span><time datetime="2026-08-24">August 24, 2026</time></span>
         <span>Originally published on LinkedIn</span>
       </p>
     </header>
     <div class="prose">
-<p>The hardest accessibility bug to spot is not the one that breaks the screen reader. It is the one that confuses it with invalid information.</p>
-<p>A few days ago I merged a fix in MUI Base UI that illustrates the point: a misplaced <code>aria-orientation</code>.</p>
-<h2 id="the-problem">The problem</h2>
-<p>In a Combobox with a grid, the component emitted <code>aria-orientation=&quot;horizontal&quot;</code> directly on the element with <code>role=&quot;grid&quot;</code>. The problem: the <code>grid</code> role does not support <code>aria-orientation</code>. It is a valid attribute in HTML, but invalid for that ARIA role.</p>
-<p>The result was not a crash or a visible error. It was something worse: screen readers received contradictory information about how to navigate the component, silently degrading the experience for assistive technology users.</p>
-<h2 id="the-fix">The fix</h2>
-<p>The fix moved <code>aria-orientation</code> to the elements that actually own the role, the ones that do support the attribute, and omitted it on <code>grid</code> and <code>presentation</code>. Seven files, 69 lines added, 4 removed, with regression tests to make sure keyboard navigation was preserved.</p>
-<h2 id="why-it-matters">Why it matters</h2>
-<p>Accessibility is not just adding an <code>aria-label</code>. It is understanding the ARIA contract: which attributes are valid for each role, and how screen readers interpret that information. An invalid attribute does not always break the app, but it always degrades someone's experience.</p>
-<p>When accessibility is treated as an engineering discipline, with regression tests, role validation and peer review, subtle bugs like this one get caught before they reach production.</p>
-<p>PR: <a href="https://github.com/mui/base-ui/pull/5551">https://github.com/mui/base-ui/pull/5551</a></p>
+<p>A missing attribute is easy to catch. Nothing renders, a test fails, someone fills the hole. The expensive bug is the attribute that renders in the wrong place, where it is valid HTML, valid TypeScript, and still a contradiction.</p>
+<p>In August I merged mui/base-ui #5551 for one of those. A Combobox with <code>grid</code> enabled rendered this:</p>
+<pre tabindex="0" role="region" aria-label="Code sample"><code class="language-html">&lt;div role=&quot;grid&quot; aria-orientation=&quot;horizontal&quot;&gt;
+</code></pre>
+<p>Both halves are legal on their own. Together they describe two different widgets.</p>
+<p>The reproduction was the official emoji picker in the Autocomplete grid example: open the list, inspect the element, find <code>role=&quot;grid&quot;</code> and <code>aria-orientation=&quot;horizontal&quot;</code> on the same node, run axe. Nothing looked broken. The picker opened, the arrows moved, the emoji inserted.</p>
+<h2 id="two-instructions-at-once">Two instructions at once</h2>
+<p><code>role=&quot;grid&quot;</code> is a two-dimensional structure. It has rows and columns, and arrow keys move through both axes. <code>aria-orientation=&quot;horizontal&quot;</code> says the widget runs along a single line. A person navigating with a screen reader hears position by row and column, then gets an attribute claiming the thing is a strip.</p>
+<p>That is the difference between a bug that removes information and one that adds noise. A missing label leaves a silence you can notice. A contradiction leaves a sentence that sounds complete and is wrong, and the person on the other end has no way to tell which half to trust.</p>
+<p>The spec resolves the conflict by dropping the attribute. WAI-ARIA 1.2 requires user agents to ignore non-global properties on roles that do not support them, so <code>grid</code> never receives <code>aria-orientation</code>. That is not a repair. The component published an intent it could not express, the intent vanished at the accessibility tree, and the keyboard kept working because the keyboard logic never read the attribute in the first place.</p>
+<p>Axe found it as an <code>aria-allowed-attr</code> violation, reported against the official Autocomplete grid example on v1.7.0, with axe-core 4.10.2. A tool caught it. The component's own suite did not, because no test asked which element carried the role.</p>
+<h2 id="why-the-type-said-yes">Why the type said yes</h2>
+<p><code>aria-orientation</code> is a valid prop on any React element. TypeScript checks the name and the value, <code>&quot;horizontal&quot; | &quot;vertical&quot; | undefined</code>. It cannot check the role of the node the prop reaches, because at the point of the check there is no node.</p>
+<p>The attribute was assembled inside <code>useListNavigation</code>, returned in a props object, and spread later onto whichever element ended up with the role. In the source, the attribute and the role never meet. They only meet in the DOM, and only a tool that inspects the rendered tree sees them together.</p>
+<p>The type was doing its job. It was checking the wrong contract.</p>
+<h2 id="one-variable-two-jobs">One variable, two jobs</h2>
+<p>The root cause was a coupling. <code>AriaCombobox</code> passed <code>orientation: grid ? 'horizontal' : undefined</code> into <code>useListNavigation</code>, and the hook exposed any orientation other than <code>'both'</code> as <code>aria-orientation</code>. The hook genuinely needed <code>horizontal</code>: it drives ArrowLeft and ArrowRight inside a grid. It then treated that keyboard requirement as a reason to publish ARIA.</p>
+<p>That is the wrong owner. A navigation hook knows how keys should move. It does not know what role its consumer will render, and it should not guess.</p>
+<p>Three public components sit on that hook. The Combobox, the Menu and the Select each pass an orientation and each render a different role. One emission, three roles, and only one of them rejects the attribute outright. The other two accept it and do not need it.</p>
+<p>So the fix took the emission out of the hook, two deleted lines, and moved the attribute to the components that assign the final role. <code>MenuRoot</code> renders <code>aria-orientation=&quot;horizontal&quot;</code> only when the menu is horizontal, because <code>menu</code> is implicitly vertical. <code>SelectPopup</code> dropped a dead <code>'aria-orientation': undefined</code> from its presentation branch. Grid and listbox get nothing: a grid is two-dimensional, a listbox is implicitly vertical, and saying either out loud adds nothing.</p>
+<p>Seven files, 69 lines added, 4 removed. Three of those additions are production code. The other 66 are tests: the Combobox grid and listbox, the generic hook, a horizontal and a vertical menu, a select listbox.</p>
+<p>The ratio is the honest one. The change is small and the proof is not.</p>
+<p>The tests query by role, <code>getByRole('grid')</code> and <code>getByRole('listbox')</code>, then assert the attribute is absent. Not by container, not by test id. That is the check that was missing: an assertion about the node a screen reader will actually read, in place of an assertion about the node the props happened to reach.</p>
+<h2 id="the-third-time">The third time</h2>
+<p>The issue pointed at two earlier fixes of the same shape: #4355 for Navigation Menu, #4628 for Toggle Group. Same invalid attribute, different component, same hook underneath.</p>
+<p>That is the part I kept returning to. Each fix was correct where it landed, and the generator stayed. As long as the shared hook emitted the attribute, every new consumer inherited the bug, and every reviewer had to notice it again on a different component. A patch per component is a tax paid forever.</p>
+<p>What would have prevented the third one is a convention, not a fix: ARIA that depends on a role belongs to the component that assigns the role. Hooks return behavior. Components publish semantics. Once that line is drawn, the question &quot;does this role support this attribute&quot; has an obvious place to be answered.</p>
+<h2 id="the-rule">The rule</h2>
+<p>An attribute is not valid in the abstract. It is valid for a role, on an element. When the thing that decides the role is not the thing that decides the attribute, the contract has no owner, and no type will tell you.</p>
+<p>Read the attribute from the element that carries the role, not from the props object that produced it.</p>
 
     </div>
     <footer class="article-foot">
