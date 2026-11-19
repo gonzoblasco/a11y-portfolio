@@ -69,20 +69,20 @@
 </content>
   </entry>
   <entry>
-    <title>Los slides ocultos no deberían tener foco</title>
-    <id>https://gonzoblasco.github.io/a11y-portfolio/writing/hidden-slides-focus.html</id>
-    <link href="https://gonzoblasco.github.io/a11y-portfolio/writing/hidden-slides-focus.html" />
+    <title>The bug jsdom could not see</title>
+    <id>https://gonzoblasco.github.io/a11y-portfolio/writing/the-bug-jsdom-could-not-see.html</id>
+    <link href="https://gonzoblasco.github.io/a11y-portfolio/writing/the-bug-jsdom-could-not-see.html" />
     <updated>2026-11-03T12:00:00.000Z</updated>
-    <summary>Un PR en shadcn/ui estuvo tres meses trabado porque los tests corrían en jsdom, que no ve el scroll programático. Los tests en browser encontraron ese bug y dos más en la misma función.</summary>
-    <content type="html">&lt;p&gt;Un PR que abrí en agosto se mergeó ayer. Tres meses. Y lo que lo destrabó no fue el código: fue un test que no podía ver el bug.&lt;/p&gt;
-&lt;p&gt;El bug: en un chat con streaming y scroll anclado, si scrolleás mientras la respuesta se va escribiendo, el espacio reservado debajo del mensaje se rompe. Con autoScroll prendido, la vista salta al fondo aunque la respuesta todavía sea chica. Con autoScroll apagado, te queda un hueco muerto abajo que nunca se resuelve.&lt;/p&gt;
-&lt;p&gt;En los dos casos, una acción completamente normal, scrollear para leer, destruye la vista.&lt;/p&gt;
-&lt;p&gt;El fix tenía dos partes: condicionar el re-armado de follow-mode a que el spacer esté en cero, y drenar ese spacer cuando se suelta el ancla, haciendo que la respuesta lo vaya llenando sin mover al lector.&lt;/p&gt;
-&lt;p&gt;Los tests pasaban. 61 tests, todo verde. Y el PR no era mergeable.&lt;/p&gt;
-&lt;p&gt;El motivo lo dijo shadcn en la review, y fue la mejor review que me hicieron este año: los tests corrían en jsdom, y jsdom no dispara eventos de scroll para scrolls programáticos. Sin eso, el test no puede ver que el drain rompía justo lo que el PR venía a arreglar. En un browser real, cada turno anclado salía disparado al fondo.&lt;/p&gt;
-&lt;p&gt;Verde en CI no significa correcto. Significa que ese entorno no vio el problema.&lt;/p&gt;
-&lt;p&gt;Agregué tests en modo browser. Y ahí salió: además de ese, había dos errores más en la misma función. Uno de ellos era la matemática del drenaje, que acumulaba error en scroll inercial. También contó daltino, que en agosto levantó el caso del stream que corta con el spacer a medio drenar.&lt;/p&gt;
-&lt;p&gt;El aprendizaje no es &amp;quot;testeá mejor&amp;quot;. Es más específico: cuando el bug vive en el scroll, en la geometría o en el timing, el test tiene que correr donde el bug existe. jsdom es excelente para el DOM. Para lo que pasa mientras el navegador hace scroll, es ciego por diseño.&lt;/p&gt;
+    <summary>A shadcn/ui PR sat for three months because its tests ran in jsdom, which does not fire scroll events for programmatic scrolls. Browser tests found that bug and two more in the same function.</summary>
+    <content type="html">&lt;p&gt;A PR I opened in August merged yesterday. Three months. And what unblocked it was not the code: it was a test that could not see the bug.&lt;/p&gt;
+&lt;p&gt;The bug: in a chat with streaming and anchored scroll, if you scroll while the answer is being written, the space reserved below the message breaks. With autoScroll on, the view jumps to the bottom even though the answer is still short. With autoScroll off, you are left with a dead gap at the bottom that never resolves.&lt;/p&gt;
+&lt;p&gt;In both cases, a completely normal action, scrolling to read, destroys the view.&lt;/p&gt;
+&lt;p&gt;The fix had two parts: gate the re-arming of follow mode on the spacer being at zero, and drain that spacer when the anchor is released, so the answer fills it without moving the reader.&lt;/p&gt;
+&lt;p&gt;The tests passed. 61 tests, all green. And the PR was not mergeable.&lt;/p&gt;
+&lt;p&gt;The reason came from shadcn in review, and it was the best review I got this year: the tests ran in jsdom, and jsdom does not fire scroll events for programmatic scrolls. Without that, the test cannot see that the drain broke exactly what the PR was meant to fix. In a real browser, every anchored turn shot to the bottom.&lt;/p&gt;
+&lt;p&gt;Green in CI does not mean correct. It means that environment did not see the problem.&lt;/p&gt;
+&lt;p&gt;I added browser-mode tests. And there it was: besides that one, there were two more bugs in the same function. One was the drain math, which accumulated error under inertial scroll. daltino also counted: in August he raised the case of the stream that cuts out with the spacer half-drained.&lt;/p&gt;
+&lt;p&gt;The lesson is not &amp;quot;test better&amp;quot;. It is more specific: when the bug lives in scroll, geometry or timing, the test has to run where the bug exists. jsdom is excellent for the DOM. For what happens while the browser scrolls, it is blind by design.&lt;/p&gt;
 &lt;p&gt;PR: &lt;a href=&quot;https://github.com/shadcn-ui/ui/pull/11465&quot;&gt;https://github.com/shadcn-ui/ui/pull/11465&lt;/a&gt;&lt;/p&gt;
 </content>
   </entry>

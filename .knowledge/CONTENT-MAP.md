@@ -16,7 +16,7 @@
 | 6 | `dialog-description` | The dialog description that never arrived | 2026-10-22 | en | note | carbon #22887 |
 | 7 | `focus-after-step-change` | Focus after the step changed | 2026-09-14 | en | note | ibm-products #9878 |
 | 8 | `sortable-headers` | Sortable headers are not toggle buttons | 2026-10-07 | en | note | ibm-products #9879 |
-| 9 | `hidden-slides-focus` | Los slides ocultos no deberían tener foco | 2026-11-03 | es | note | shadcn #11465 |
+| 9 | `the-bug-jsdom-could-not-see` | The bug jsdom could not see | 2026-11-03 | en | note | shadcn #11465 |
 | 10 | `orchestrating-a-refactor` | Orchestrating a 10,000-line refactor | 2026-08-28 | en | note | Moderno AI Cleaner Pro |
 | 11 | `posinset-across-sections` | Counting items across sections | 2026-09-09 | en | note | react-spectrum #10554 |
 
@@ -39,6 +39,7 @@
 
 ## Pendientes de contenido
 
-- [ ] Decidir si el post en español de shadcn lleva traducción al inglés o queda solo en `lang="es"`.
+- [x] Traducir al inglés la nota de shadcn. El título original no describía el cuerpo: el PR es de
+  scroll anclado, no de slides.
 - [ ] Escribir la versión dev.to de cada pieza con `canonical_url` al sitio (bloqueado hasta tener API key).
 - [ ] Corregir el `Status:` del longform en `docs/linkedin/`: dice BORRADOR y está publicado.

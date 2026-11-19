@@ -29,8 +29,8 @@ componentes e información, no a reglas puramente decorativas).
 
 - **H1 de la home:** la tesis, no el nombre. El nombre va en el wordmark del header.
 - **El ensayo es la pieza ancla.** Las notas cortas enlazan al sitio; el sitio es la copia canónica.
-- **Nota en español:** `<article lang="es">` y badge visible `En español`. El chrome de la página
-  sigue en inglés.
+- **Idioma:** todas las piezas quedaron en inglés. El generador conserva el soporte para `lang: "es"`
+  (documento y artículo con `lang`, chrome en inglés), pero hoy no hay ninguna nota en español.
 - **Sin JavaScript.** La navegación y el índice funcionan sin JS.
 - **`pre` con `tabindex="0"`:** necesario para que el bloque sea scrolleable por teclado
   (WCAG 2.1.1). `role="region"` + `aria-label` le dan un nombre accesible.
@@ -75,4 +75,5 @@ pendiente de confirmación de Gonzo.
 
 - El `Status:` del longform en `docs/linkedin/` sigue diciendo BORRADOR; el artículo está publicado.
 - dev.to queda como sindicación con `canonical_url` al sitio, bloqueado hasta tener API key.
-- El post en español de shadcn no tiene versión en inglés.
+- La nota de shadcn se tradujo al inglés y se corrigió el título: el original hablaba de slides,
+  pero el cuerpo trata de scroll anclado y del test ciego de jsdom.
