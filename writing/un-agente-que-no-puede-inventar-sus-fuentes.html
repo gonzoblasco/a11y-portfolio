@@ -50,9 +50,9 @@
 <p>Todo demo de recuperación de información se ve igual hasta que se equivoca.</p>
 <p>Subís PDFs, los partís en fragmentos, los convertís en embeddings, buscás por similitud y le pasás los fragmentos al modelo. Funciona. Después el modelo escribe:</p>
 <blockquote>
-<p>«El contrato vence el 15 de diciembre, según la cláusula 4.2, página 3.»</p>
+<p>«El contrato vence el 15 de diciembre, según la cláusula 2, página 3.»</p>
 </blockquote>
-<p>La cláusula 4.2 dice otra cosa. La página 3 no existe. El modelo no mintió a propósito: rellenó un hueco con algo que sonaba probable. Y como nadie verifica, la respuesta incorrecta sale igual.</p>
+<p>La cláusula 2 dice que el plazo es de 12 meses. La página 3 no existe. El modelo no mintió a propósito: rellenó un hueco con algo que sonaba probable. Y como nadie verifica, la respuesta incorrecta sale igual.</p>
 <p>Eso no es un problema de recuperación. Es un problema de <strong>verificación</strong>, y no se arregla con un modelo mejor.</p>
 <h2 id="el-verificador-tiene-que-ser-independiente">El verificador tiene que ser independiente</h2>
 <p>La respuesta vuelve como datos estructurados: un identificador de fragmento y una cita textual. La aplicación no le cree al modelo. Compara la cita contra el fragmento.</p>

@@ -15,9 +15,9 @@ Every retrieval demo looks the same until it is wrong.
 
 You upload PDFs, split them into chunks, embed, search by similarity, and pass the fragments to the model. It works. Then the model writes:
 
-> "The contract expires on December 15, according to clause 4.2, page 3."
+> "The contract expires on December 15, according to clause 2, page 3."
 
-Clause 4.2 says something else. Page 3 does not exist. The model did not lie on purpose — it filled a gap with something that sounded probable. And since nobody checks, the wrong answer ships.
+Clause 2 says the term is 12 months. Page 3 does not exist. The model did not lie on purpose — it filled a gap with something that sounded probable. And since nobody checks, the wrong answer ships.
 
 That is not a retrieval problem. It is a **verification** problem, and you do not fix it with a better model.
 

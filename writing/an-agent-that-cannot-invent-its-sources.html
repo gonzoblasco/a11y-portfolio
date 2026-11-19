@@ -50,9 +50,9 @@
 <p>Every retrieval demo looks the same until it is wrong.</p>
 <p>You upload PDFs, split them into chunks, embed, search by similarity, and pass the fragments to the model. It works. Then the model writes:</p>
 <blockquote>
-<p>&quot;The contract expires on December 15, according to clause 4.2, page 3.&quot;</p>
+<p>&quot;The contract expires on December 15, according to clause 2, page 3.&quot;</p>
 </blockquote>
-<p>Clause 4.2 says something else. Page 3 does not exist. The model did not lie on purpose — it filled a gap with something that sounded probable. And since nobody checks, the wrong answer ships.</p>
+<p>Clause 2 says the term is 12 months. Page 3 does not exist. The model did not lie on purpose — it filled a gap with something that sounded probable. And since nobody checks, the wrong answer ships.</p>
 <p>That is not a retrieval problem. It is a <strong>verification</strong> problem, and you do not fix it with a better model.</p>
 <h2 id="the-verifier-has-to-be-independent">The verifier has to be independent</h2>
 <p>The answer comes back as structured data: a <code>chunk_id</code> and a literal quote. The application does not trust the model. It checks the quote against the chunk.</p>

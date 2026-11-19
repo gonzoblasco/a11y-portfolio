@@ -16,9 +16,9 @@ Todo demo de recuperación de información se ve igual hasta que se equivoca.
 
 Subís PDFs, los partís en fragmentos, los convertís en embeddings, buscás por similitud y le pasás los fragmentos al modelo. Funciona. Después el modelo escribe:
 
-> «El contrato vence el 15 de diciembre, según la cláusula 4.2, página 3.»
+> «El contrato vence el 15 de diciembre, según la cláusula 2, página 3.»
 
-La cláusula 4.2 dice otra cosa. La página 3 no existe. El modelo no mintió a propósito: rellenó un hueco con algo que sonaba probable. Y como nadie verifica, la respuesta incorrecta sale igual.
+La cláusula 2 dice que el plazo es de 12 meses. La página 3 no existe. El modelo no mintió a propósito: rellenó un hueco con algo que sonaba probable. Y como nadie verifica, la respuesta incorrecta sale igual.
 
 Eso no es un problema de recuperación. Es un problema de **verificación**, y no se arregla con un modelo mejor.
 
