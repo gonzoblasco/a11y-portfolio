@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>aria-orientation le pertenece al dueño del rol — Gonzalo Blasco</title>
+  <meta name="description" content="Un Combobox con grid renderizaba aria-orientation sobre role=grid, que no lo admite. El atributo se mudó a los componentes que asignan el rol; el hook de teclado se quedó solo con el comportamiento." />
+  <meta name="author" content="Gonzalo Blasco" />
+  <link rel="canonical" href="https://gonzoblasco.github.io/a11y-portfolio/writing/aria-orientation-le-pertenece-al-dueno-del-rol.html" />
+
+  <link rel="alternate" hreflang="es" href="https://gonzoblasco.github.io/a11y-portfolio/writing/aria-orientation-le-pertenece-al-dueno-del-rol.html" />
+  <link rel="alternate" hreflang="en" href="https://gonzoblasco.github.io/a11y-portfolio/writing/aria-orientation-role-owners.html" />
+  <link rel="alternate" hreflang="x-default" href="https://gonzoblasco.github.io/a11y-portfolio/writing/aria-orientation-role-owners.html" />
+  <meta property="og:site_name" content="Gonzalo Blasco" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="aria-orientation le pertenece al dueño del rol — Gonzalo Blasco" />
+  <meta property="og:description" content="Un Combobox con grid renderizaba aria-orientation sobre role=grid, que no lo admite. El atributo se mudó a los componentes que asignan el rol; el hook de teclado se quedó solo con el comportamiento." />
+  <meta property="og:url" content="https://gonzoblasco.github.io/a11y-portfolio/writing/aria-orientation-le-pertenece-al-dueno-del-rol.html" />
+  <meta name="twitter:card" content="summary" />
+  <link rel="alternate" type="application/atom+xml" href="../feed.xml" title="Gonzalo Blasco" />
+  <link rel="stylesheet" href="../style.css" />
+  <link rel="preload" href="../assets/fonts/fraunces-normal.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="../assets/fonts/newsreader-normal.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="../assets/fonts/ibm-plex-mono-400.woff2" as="font" type="font/woff2" crossorigin />
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site" lang="en">
+  <div class="wrap head">
+    <a class="wordmark" href="../">Gonzalo Blasco</a>
+    <nav aria-label="Sections"><ul><li><a href="../writing/" aria-current="page">Writing</a></li><li><a href="../writing/preflight.html">Work</a></li><li><a href="../about/">About</a></li><li><a href="../profile/">Profile</a></li></ul></nav>
+  </div>
+</header>
+<main id="main">
+  <article class="article wrap">
+    <header class="article-head">
+      <p class="kicker" lang="en"><a href="./">Writing</a> <span aria-hidden="true">/</span> <time datetime="2026-08-24">Aug 2026</time><span class="badge" lang="es">En español</span></p>
+      <h1 lang="es">aria-orientation le pertenece al dueño del rol</h1>
+      <p class="lede" lang="es">Un Combobox con grid renderizaba aria-orientation sobre role=grid, que no lo admite. El atributo se mudó a los componentes que asignan el rol; el hook de teclado se quedó solo con el comportamiento.</p>
+      <p class="article-meta" lang="en">
+        <span>Accessibility</span>
+        <span>Note</span>
+        <span>4 min read</span>
+        <span><time datetime="2026-08-24">August 24, 2026</time></span>
+        
+      </p>
+      <p class="translation"><a class="translation-switch" href="aria-orientation-role-owners.html" hreflang="en" lang="en">Read in English <span aria-hidden="true">→</span></a></p>
+    </header>
+    <div class="prose" lang="es">
+<p>Un atributo que falta se detecta fácil. No renderiza nada, un test falla, alguien tapa el hueco. El bug caro es el atributo que renderiza en el lugar equivocado: ahí es HTML válido, TypeScript válido, y aun así una contradicción.</p>
+<p>En agosto mergeé mui/base-ui #5551 por uno de esos. Un Combobox con <code>grid</code> activado renderizaba esto:</p>
+<pre tabindex="0" role="region" aria-label="Code sample"><code class="language-html">&lt;div role=&quot;grid&quot; aria-orientation=&quot;horizontal&quot;&gt;
+</code></pre>
+<p>Cada mitad es legal por su cuenta. Juntas describen dos widgets distintos.</p>
+<p>La reproducción era el selector de emojis oficial del ejemplo de Autocomplete con grid: abrís la lista, inspeccionás el elemento, encontrás <code>role=&quot;grid&quot;</code> y <code>aria-orientation=&quot;horizontal&quot;</code> en el mismo nodo, corrés axe. Nada parecía roto. El selector abría, las flechas movían, el emoji se insertaba.</p>
+<h2 id="dos-instrucciones-a-la-vez">Dos instrucciones a la vez</h2>
+<p><code>role=&quot;grid&quot;</code> es una estructura de dos dimensiones. Tiene filas y columnas, y las flechas recorren los dos ejes. <code>aria-orientation=&quot;horizontal&quot;</code> dice que el widget corre sobre una sola línea. Una persona que navega con lector de pantalla escucha la posición por fila y columna, y enseguida recibe un atributo que afirma que la cosa es una tira.</p>
+<p>Ahí está la diferencia entre un bug que quita información y uno que agrega ruido. Una etiqueta faltante deja un silencio que se nota. Una contradicción deja una frase que suena completa y está mal, y la persona del otro lado no tiene cómo saber a cuál de las dos mitades creerle.</p>
+<p>La especificación resuelve el conflicto descartando el atributo. WAI-ARIA 1.2 obliga a los agentes de usuario a ignorar propiedades no globales en roles que no las admiten, así que <code>grid</code> nunca recibe <code>aria-orientation</code>. Eso no es un arreglo. El componente publicó una intención que no podía expresar, la intención desapareció en el árbol de accesibilidad, y el teclado siguió funcionando porque la lógica del teclado nunca leyó ese atributo.</p>
+<p>Axe lo encontró como violación <code>aria-allowed-attr</code>, reportada sobre el ejemplo oficial de Autocomplete con grid en la v1.7.0, con axe-core 4.10.2. Una herramienta lo vio. La suite del componente no, porque ningún test preguntaba qué elemento cargaba el rol.</p>
+<h2 id="por-que-el-tipo-decia-que-si">Por qué el tipo decía que sí</h2>
+<p><code>aria-orientation</code> es una prop válida en cualquier elemento React. TypeScript revisa el nombre y el valor, <code>&quot;horizontal&quot; | &quot;vertical&quot; | undefined</code>. No puede revisar el rol del nodo al que llega la prop, porque en el momento del chequeo no hay nodo.</p>
+<p>El atributo se armaba dentro de <code>useListNavigation</code>, volvía en un objeto de props y se esparcía después sobre el elemento que terminara con el rol. En el código fuente, el atributo y el rol nunca se cruzan. Se cruzan en el DOM, y solo una herramienta que inspecciona el árbol renderizado los ve juntos.</p>
+<p>El tipo estaba haciendo su trabajo. Estaba revisando el contrato equivocado.</p>
+<h2 id="una-variable-dos-trabajos">Una variable, dos trabajos</h2>
+<p>La causa raíz era un acoplamiento. <code>AriaCombobox</code> pasaba <code>orientation: grid ? 'horizontal' : undefined</code> a <code>useListNavigation</code>, y el hook exponía cualquier orientación distinta de <code>'both'</code> como <code>aria-orientation</code>. El hook necesitaba <code>horizontal</code> de verdad: maneja ArrowLeft y ArrowRight dentro de un grid. Y después tomó esa necesidad de teclado como motivo para publicar ARIA.</p>
+<p>Ahí está el dueño equivocado. Un hook de navegación sabe cómo tienen que moverse las teclas. No sabe qué rol va a renderizar quien lo consume, y no debería adivinarlo.</p>
+<p>Tres componentes públicos se apoyan en ese hook. El Combobox, el Menu y el Select pasan una orientación cada uno y renderizan un rol distinto cada uno. Una emisión, tres roles, y solo uno rechaza el atributo de plano. Los otros dos lo aceptan y no lo necesitan.</p>
+<p>Así que el arreglo sacó la emisión del hook, dos líneas borradas, y mudó el atributo a los componentes que asignan el rol final. <code>MenuRoot</code> renderiza <code>aria-orientation=&quot;horizontal&quot;</code> solo cuando el menú es horizontal, porque <code>menu</code> es implícitamente vertical. <code>SelectPopup</code> perdió un <code>'aria-orientation': undefined</code> muerto en su rama de presentación. Grid y listbox no reciben nada: un grid es bidimensional, un listbox es implícitamente vertical, y decir cualquiera de las dos cosas en voz alta no agrega nada.</p>
+<p>Siete archivos, 69 líneas agregadas, 4 borradas. Tres de esas adiciones son código de producción. Las otras 66 son tests: el Combobox con grid y con listbox, el hook genérico, un menú horizontal, uno vertical, un select listbox.</p>
+<p>La proporción es la honesta. El cambio es chico y la prueba no.</p>
+<p>Los tests buscan por rol, <code>getByRole('grid')</code> y <code>getByRole('listbox')</code>, y después afirman que el atributo está ausente. No por contenedor, no por test id. Ese es el chequeo que faltaba: una afirmación sobre el nodo que el lector de pantalla va a leer de verdad, en lugar de una afirmación sobre el nodo al que llegaron las props.</p>
+<h2 id="la-tercera-vez">La tercera vez</h2>
+<p>El issue apuntaba a dos arreglos anteriores de la misma forma: #4355 para Navigation Menu, #4628 para Toggle Group. El mismo atributo inválido, otro componente, el mismo hook abajo.</p>
+<p>Ahí está la parte a la que volví varias veces. Cada arreglo era correcto donde caía, y el generador seguía. Mientras el hook compartido emitiera el atributo, cada consumidor nuevo heredaba el bug, y cada revisor tenía que notarlo otra vez en otro componente. Un parche por componente es un impuesto que se paga para siempre.</p>
+<p>Lo que habría evitado el tercero es una convención, no un arreglo: el ARIA que depende de un rol le pertenece al componente que asigna el rol. Los hooks devuelven comportamiento. Los componentes publican semántica. Con esa línea trazada, la pregunta «este rol admite este atributo» tiene un lugar obvio donde responderse.</p>
+<h2 id="la-regla">La regla</h2>
+<p>Un atributo no es válido en abstracto. Es válido para un rol, sobre un elemento. Cuando lo que decide el rol no es lo que decide el atributo, el contrato no tiene dueño, y ningún tipo te lo va a decir.</p>
+<p>Leé el atributo desde el elemento que carga el rol, no desde el objeto de props que lo produjo.</p>
+
+    </div>
+    <footer class="article-foot" lang="en">
+      <span>PR <a href="https://github.com/mui/base-ui/pull/5551">mui/base-ui#5551</a></span>
+      <a href="./">Back to all notes</a>
+    </footer>
+  </article>
+</main>
+<footer class="site" lang="en">
+  <div class="wrap">
+    <span>Gonzalo Blasco · Buenos Aires</span>
+    <span><a href="mailto:gonzoblasco@icloud.com">gonzoblasco@icloud.com</a> · <a href="https://github.com/gonzoblasco">GitHub</a> · <a href="https://www.linkedin.com/in/gonzalo-blasco">LinkedIn</a></span>
+  </div>
+</footer>
+</body>
+</html>

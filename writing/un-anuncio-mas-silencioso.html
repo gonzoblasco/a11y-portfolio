@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Un anuncio más silencioso — Gonzalo Blasco</title>
+  <meta name="description" content="Arreglé un bug de lector de pantalla borrando un anuncio. La live region de React Spectrum pisaba lo que VoiceOver ya decía solo, y ningún linter podía ver esa colisión." />
+  <meta name="author" content="Gonzalo Blasco" />
+  <link rel="canonical" href="https://gonzoblasco.github.io/a11y-portfolio/writing/un-anuncio-mas-silencioso.html" />
+
+  <link rel="alternate" hreflang="es" href="https://gonzoblasco.github.io/a11y-portfolio/writing/un-anuncio-mas-silencioso.html" />
+  <link rel="alternate" hreflang="en" href="https://gonzoblasco.github.io/a11y-portfolio/writing/the-quieter-announcement.html" />
+  <link rel="alternate" hreflang="x-default" href="https://gonzoblasco.github.io/a11y-portfolio/writing/the-quieter-announcement.html" />
+  <meta property="og:site_name" content="Gonzalo Blasco" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Un anuncio más silencioso — Gonzalo Blasco" />
+  <meta property="og:description" content="Arreglé un bug de lector de pantalla borrando un anuncio. La live region de React Spectrum pisaba lo que VoiceOver ya decía solo, y ningún linter podía ver esa colisión." />
+  <meta property="og:url" content="https://gonzoblasco.github.io/a11y-portfolio/writing/un-anuncio-mas-silencioso.html" />
+  <meta name="twitter:card" content="summary" />
+  <link rel="alternate" type="application/atom+xml" href="../feed.xml" title="Gonzalo Blasco" />
+  <link rel="stylesheet" href="../style.css" />
+  <link rel="preload" href="../assets/fonts/fraunces-normal.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="../assets/fonts/newsreader-normal.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="../assets/fonts/ibm-plex-mono-400.woff2" as="font" type="font/woff2" crossorigin />
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site" lang="en">
+  <div class="wrap head">
+    <a class="wordmark" href="../">Gonzalo Blasco</a>
+    <nav aria-label="Sections"><ul><li><a href="../writing/" aria-current="page">Writing</a></li><li><a href="../writing/preflight.html">Work</a></li><li><a href="../about/">About</a></li><li><a href="../profile/">Profile</a></li></ul></nav>
+  </div>
+</header>
+<main id="main">
+  <article class="article wrap">
+    <header class="article-head">
+      <p class="kicker" lang="en"><a href="./">Writing</a> <span aria-hidden="true">/</span> <time datetime="2026-11-17">Nov 2026</time><span class="badge" lang="es">En español</span></p>
+      <h1 lang="es">Un anuncio más silencioso</h1>
+      <p class="lede" lang="es">Arreglé un bug de lector de pantalla borrando un anuncio. La live region de React Spectrum pisaba lo que VoiceOver ya decía solo, y ningún linter podía ver esa colisión.</p>
+      <p class="article-meta" lang="en">
+        <span>Accessibility</span>
+        <span>Essay</span>
+        <span>5 min read</span>
+        <span><time datetime="2026-11-17">November 17, 2026</time></span>
+        
+      </p>
+      <p class="translation"><a class="translation-switch" href="the-quieter-announcement.html" hreflang="en" lang="en">Read in English <span aria-hidden="true">→</span></a></p>
+    </header>
+    <div class="prose" lang="es">
+<p>Una vez arreglé un bug de lector de pantalla borrando un anuncio.</p>
+<p>Suena al revés, y ese es el punto. En la superficie el cambio era chico: 41 líneas agregadas, 80 borradas, un hook, dos archivos de test, mergeado en React Spectrum de Adobe en octubre. Lo que quedó a la vista es más incómodo: casi todo el trabajo de accesibilidad apunta al blanco equivocado.</p>
+<h2 id="lo-que-escuchaba-la-persona">Lo que escuchaba la persona</h2>
+<p>Un ComboBox con secciones. Lo abrís y bajás con las flechas. VoiceOver, en macOS y en iOS, dice cada ítem mientras te movés: la etiqueta, el rol, la posición, si está seleccionado.</p>
+<p>Es un anuncio completo. Y es, en el sentido más literal, un regalo: el navegador y el lector de pantalla se pusieron de acuerdo para producirlo.</p>
+<p>React Spectrum lo pisó.</p>
+<p>El hook <code>useComboBox</code> traía un parche, y el comentario de arriba explicaba por qué existía:</p>
+<pre tabindex="0" role="region" aria-label="Code sample"><code class="language-js">// VoiceOver has issues with announcing aria-activedescendant properly on change
+// (especially on iOS). We use a live region announcer to announce focus changes
+// manually.
+</code></pre>
+<p>Un patrón <code>aria-activedescendant</code> mueve el foco dentro del árbol de accesibilidad sin mover el foco real. Varios lectores de pantalla no seguían ese movimiento con confianza, así que la librería anunciaba cada cambio a mano, con una live region, por las dudas.</p>
+<p>El parche era correcto cuando se escribió. Dejó de serlo cuando VoiceOver empezó a anunciar el detalle de cada ítem por su cuenta. Y en el momento en que las dos cosas pasaron a la vez, no se sumaron: compitieron.</p>
+<p>La live region disparaba en cada cambio de ítem enfocado y reemplazaba el habla nativa por una sola cadena: el nombre. En lugar de escuchar «Precios, elemento de menú, 3 de 12, seleccionado», la persona escuchaba «Precios» y seguía.</p>
+<p>Menos información, entregada con más urgencia. Eso es la definición de una regresión que se esconde.</p>
+<h2 id="por-que-nada-lo-detecto">Por qué nada lo detectó</h2>
+<p>Pasá esa página por axe. Todo en verde.</p>
+<p>El combobox tiene el rol correcto. <code>aria-expanded</code> está sincronizado. <code>aria-controls</code> apunta al listbox que corresponde. Las opciones llevan <code>aria-selected</code> y <code>aria-posinset</code>, y el <code>aria-setsize</code> coincide. La live region existe, no está oculta y no está vacía. Cada atributo que un linter sabe revisar está presente o no aplica.</p>
+<p>El bug vivía donde ningún linter mira: en la colisión entre dos cosas que, cada una por separado, estaban bien.</p>
+<p>Ahí la accesibilidad no es una propiedad del marcado. Es una propiedad del runtime, y más precisamente de lo que una persona escucha. El marcado es la entrada. No es la cosa.</p>
+<h2 id="el-arreglo">El arreglo</h2>
+<p>El anuncio todavía hacía falta en un caso angosto: entrar a una sección nueva, donde VoiceOver se queda callado y se perderían el título de la sección y la cantidad de opciones. Así que la condición pasó a ser el cambio de sección, no el ítem.</p>
+<pre tabindex="0" role="region" aria-label="Code sample 2"><code class="language-js">if (isGroupChange) {
+  const announcement = stringFormatter.format('focusAnnouncement', {
+    isGroupChange: true,
+    groupTitle: sectionTitle,
+    groupCount: section ? [...getChildNodes(section, state.collection)].length : 0,
+    optionText: focusedItem['aria-label'] || focusedItem.textValue || '',
+    isSelected
+  });
+
+  announce(announcement);
+}
+</code></pre>
+<p>Todo lo demás se calla y deja hablar a la plataforma. Recorrer una sección: voz nativa, intacta. Llegar al ítem seleccionado: voz nativa, intacta. Entrar a una sección: un anuncio manual con el título y la cantidad, y después a un costado.</p>
+<p>La revisión fue la parte difícil, y también la interesante. Yo había actualizado los tests del combobox para afirmar que navegar ítem por ítem ya no dispara un anuncio manual. El maintainer me frenó dos veces. La primera versión, según su lectura, era un <code>not.toHaveBeenCalled</code> disfrazado. La segunda ronda preguntó qué cubrían esos tests que no cubriera nada más. La respuesta, al final, era nada. Cuando el anuncio se mudó al cambio de sección, los tests se quedaron sin qué afirmar, y se fueron. La suite cerró con 259 tests en dos paquetes.</p>
+<p>Entregué un diff más chico del que abrí, y el PR quedó mejor por eso. No es el instinto que tenemos la mayoría.</p>
+<h2 id="el-segundo-error-que-fue-mio">El segundo error, que fue mío</h2>
+<p>Un mes antes había mergeado un PR solo de tests en el mismo repo, para fijar que <code>aria-posinset</code> sigue siendo global entre secciones de un menú. Cuatro ítems en dos secciones tienen que contar 1 a 4, igual que <code>aria-setsize=4</code>. Si una sección reinicia la cuenta, el lector anuncia «ítem 1 de 2» cuando la verdad es «ítem 1 de 4».</p>
+<p>React Spectrum ya lo hacía bien. Nada lo garantizaba. El test estaba para que un refactor futuro no lo rompiera en silencio.</p>
+<p>Mi primera versión de ese test no servía para nada.</p>
+<p>El helper que usé para armar el fixture aplanaba las secciones en una lista de ítems. El DOM que el test renderizaba nunca tuvo la estructura con secciones que el test decía cubrir. Daba verde. Era decoración. Un maintainer lo vio en segundos.</p>
+<p>La versión corregida renderiza cada sección a través del hook real, con grupos etiquetados y sus encabezados, y cubre además la sección sin encabezado, donde el nombre accesible sale de <code>aria-label</code>.</p>
+<p>Dos PRs, dos errores distintos, la misma raíz: estaba razonando sobre el modelo que tenía en la cabeza y no sobre el artefacto que sale. En el primer caso le creí al atributo antes que al anuncio. En el segundo le creí al fixture antes que al DOM.</p>
+<h2 id="la-regla-que-me-quedo">La regla que me quedó</h2>
+<p>Si querés saber si un componente es accesible, no preguntes qué atributos tiene. Preguntá qué dice el lector de pantalla cuando una persona lo usa. Son dos preguntas distintas, y solo una es el producto.</p>
+<p>Casi toda la herramienta contesta la primera, porque la primera es barata: se responde parseando HTML, y parsear escala. La segunda exige correr la cosa, en un navegador, con una tecnología asistiva enganchada, y leer la salida. No escala ni parecido. También resulta ser la única que anticipa lo que vive un usuario ciego.</p>
+<p>Ese hueco es el que terminé rodeando con una herramienta. Preflight carga una página en un navegador, lee su salida de accesibilidad como la consume un lector de pantalla, y reporta lo que se anuncia en vez de lo que se declara.</p>
+<p>La página de demo de su README tiene todos los atributos en su lugar, dos imágenes sin nombre y un botón sin nombre. HTML válido, lint limpio, inusable.</p>
+<p>PRs: <a href="https://github.com/adobe/react-spectrum/pull/10503">adobe/react-spectrum#10503</a> y <a href="https://github.com/adobe/react-spectrum/pull/10554">#10554</a>.</p>
+
+    </div>
+    <footer class="article-foot" lang="en">
+      <span></span>
+      <a href="./">Back to all notes</a>
+    </footer>
+  </article>
+</main>
+<footer class="site" lang="en">
+  <div class="wrap">
+    <span>Gonzalo Blasco · Buenos Aires</span>
+    <span><a href="mailto:gonzoblasco@icloud.com">gonzoblasco@icloud.com</a> · <a href="https://github.com/gonzoblasco">GitHub</a> · <a href="https://www.linkedin.com/in/gonzalo-blasco">LinkedIn</a></span>
+  </div>
+</footer>
+</body>
+</html>

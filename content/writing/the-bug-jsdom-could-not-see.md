@@ -5,6 +5,7 @@ date: "2026-11-03"
 lang: "en"
 kind: "note"
 category: "testing"
+pair: "bug-jsdom-could-not-see"
 summary: "A shadcn/ui PR sat for three months while 61 jsdom tests passed. jsdom does not fire scroll events for programmatic scrolls, so it could not see the spacer collapse the fix introduced. Browser tests found that and two more bugs."
 tags: ["accessibility", "focus", "testing", "react", "open-source"]
 repo: "shadcn-ui/ui"

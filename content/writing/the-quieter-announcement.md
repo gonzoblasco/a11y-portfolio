@@ -5,6 +5,7 @@ date: "2026-11-17"
 lang: "en"
 kind: "essay"
 category: "accessibility"
+pair: "quieter-announcement"
 summary: "I fixed a screen reader bug by deleting an announcement. React Spectrum's live region was overwriting what VoiceOver already said natively, and no linter could see the collision."
 tags: ["accessibility", "screen-readers", "voiceover", "react-spectrum", "aria"]
 canonical: "https://gonzoblasco.github.io/a11y-portfolio/writing/the-quieter-announcement.html"

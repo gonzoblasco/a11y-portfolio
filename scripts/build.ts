@@ -247,6 +247,27 @@ for (const article of articles) {
 }
 articles.sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
 
+// Index translations by pair key before rendering: the index needs to know
+// whether an entry has a counterpart, not only the article page itself.
+const pairs = new Map<string, Article[]>();
+for (const article of articles) {
+  if (!article.pair) continue;
+  const list = pairs.get(article.pair) || [];
+  list.push(article);
+  pairs.set(article.pair, list);
+}
+for (const [key, list] of pairs) {
+  if (list.length > 2) fail(`pair "${key}" has ${list.length} articles; expected at most 2`);
+  if (new Set(list.map((a) => a.lang)).size !== list.length) {
+    fail(`pair "${key}" has two articles in the same language`);
+  }
+}
+
+function spanishCounterpart(article: Article): Article | undefined {
+  if (!article.pair) return undefined;
+  return (pairs.get(article.pair) || []).find((a) => a.lang === "es");
+}
+
 /* ---------- layout ---------- */
 
 function nav(root: string, current: string): string {
@@ -329,8 +350,14 @@ ${footer(root, lang)}
 
 /* ---------- fragments ---------- */
 
+function langBadge(article: Article): string {
+  if (article.lang === "es") return '<span class="badge" lang="es">En español</span>';
+  if (spanishCounterpart(article)) return '<span class="badge" lang="es">También en español</span>';
+  return "";
+}
+
 function entryRow(article: Article, root: string): string {
-  const badge = article.lang === "es" ? '<span class="badge" lang="es">En español</span>' : "";
+  const badge = langBadge(article);
   return `<li>
   <a href="${root}writing/${article.slug}.html" aria-labelledby="entry-${article.slug}">
     <span class="date"><time datetime="${article.date}">${formatMonthYear(article.date)}</time></span>
@@ -341,7 +368,7 @@ function entryRow(article: Article, root: string): string {
 }
 
 function indexRow(article: Article, hrefPrefix: string): string {
-  const badge = article.lang === "es" ? '<span class="badge" lang="es">En español</span>' : "";
+  const badge = langBadge(article);
   return `<li>
   <a href="${hrefPrefix}${article.slug}.html" aria-labelledby="entry-${article.slug}">
     <span class="date"><time datetime="${article.date}">${formatShortDate(article.date)}</time></span>
@@ -506,24 +533,17 @@ ${rows}
 
 /* articles */
 
-// Index translations by pair key so each article can link to its counterpart.
-const pairs = new Map<string, Article[]>();
-for (const article of articles) {
-  if (!article.pair) continue;
-  const list = pairs.get(article.pair) || [];
-  list.push(article);
-  pairs.set(article.pair, list);
-}
-for (const [key, list] of pairs) {
-  if (list.length > 2) fail(`pair "${key}" has ${list.length} articles; expected at most 2`);
-  if (new Set(list.map((a) => a.lang)).size !== list.length) {
-    fail(`pair "${key}" has two articles in the same language`);
-  }
-}
-
 function counterpart(article: Article): Article | undefined {
   if (!article.pair) return undefined;
   return (pairs.get(article.pair) || []).find((a) => a.slug !== article.slug);
+}
+
+// A translation whose pair key does not resolve would silently lose its
+// hreflang and its switch, and the build would stay green. Fail instead.
+for (const article of articles) {
+  if (article.pair && !counterpart(article)) {
+    fail(`pair "${article.pair}" has only one article; "${article.slug}" points at nothing`);
+  }
 }
 
 function alternatesFor(article: Article): Array<{ lang: string; href: string }> {
@@ -830,8 +850,9 @@ writeFile(
 
 /* feed */
 
-const feedUpdated = new Date(`${articles[0].date}T12:00:00Z`).toISOString();
-const feedEntries = articles
+const feedOriginals = articles.filter((a) => !a.original_lang);
+const feedUpdated = new Date(`${feedOriginals[0].date}T12:00:00Z`).toISOString();
+const feedEntries = feedOriginals
   .map(
     (article) => `  <entry>
     <title>${escapeHtml(article.title)}</title>

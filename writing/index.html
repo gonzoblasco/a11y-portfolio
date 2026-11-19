@@ -33,15 +33,15 @@
     <header class="page-head">
       <p class="kicker">Writing</p>
       <h1>Notes on what a screen reader says.</h1>
-      <p class="lede">16 pieces, accessibility first: what a screen reader announces, plus testing and engineering work behind it. Some are also on LinkedIn; this is the canonical copy.</p>
-      <nav class="categories" aria-label="Categories"><ul><li><a href="./" aria-current="page">All <span class="count">16</span></a></li><li><a href="./category/accessibility/">Accessibility <span class="count">9</span></a></li><li><a href="./category/testing/">Testing <span class="count">1</span></a></li><li><a href="./category/engineering/">Engineering <span class="count">5</span></a></li><li><a href="./category/field-notes/">Field notes <span class="count">1</span></a></li></ul></nav>
+      <p class="lede">19 pieces, accessibility first: what a screen reader announces, plus testing and engineering work behind it. Some are also on LinkedIn; this is the canonical copy.</p>
+      <nav class="categories" aria-label="Categories"><ul><li><a href="./" aria-current="page">All <span class="count">19</span></a></li><li><a href="./category/accessibility/">Accessibility <span class="count">11</span></a></li><li><a href="./category/testing/">Testing <span class="count">2</span></a></li><li><a href="./category/engineering/">Engineering <span class="count">5</span></a></li><li><a href="./category/field-notes/">Field notes <span class="count">1</span></a></li></ul></nav>
     </header>
     <h2 class="year">2026</h2>
 <ul class="index-list">
 <li>
   <a href="./an-agent-that-cannot-invent-its-sources.html" aria-labelledby="entry-an-agent-that-cannot-invent-its-sources">
     <span class="date"><time datetime="2026-11-18">Nov 18</time></span>
-    <span class="title" id="entry-an-agent-that-cannot-invent-its-sources">An agent that cannot invent its sources</span>
+    <span class="title" id="entry-an-agent-that-cannot-invent-its-sources">An agent that cannot invent its sources<span class="badge" lang="es">También en español</span></span>
     <span class="excerpt">Most retrieval demos fall apart the first time the model invents a page number. The fix is not a better model — it is a verifier the model cannot talk its way past.</span>
   </a>
 </li>
@@ -74,17 +74,31 @@
   </a>
 </li>
 <li>
+  <a href="./un-anuncio-mas-silencioso.html" aria-labelledby="entry-un-anuncio-mas-silencioso">
+    <span class="date"><time datetime="2026-11-17">Nov 17</time></span>
+    <span class="title" id="entry-un-anuncio-mas-silencioso">Un anuncio más silencioso<span class="badge" lang="es">En español</span></span>
+    <span class="excerpt">Arreglé un bug de lector de pantalla borrando un anuncio. La live region de React Spectrum pisaba lo que VoiceOver ya decía solo, y ningún linter podía ver esa colisión.</span>
+  </a>
+</li>
+<li>
   <a href="./the-quieter-announcement.html" aria-labelledby="entry-the-quieter-announcement">
     <span class="date"><time datetime="2026-11-17">Nov 17</time></span>
-    <span class="title" id="entry-the-quieter-announcement">The Quieter Announcement</span>
+    <span class="title" id="entry-the-quieter-announcement">The Quieter Announcement<span class="badge" lang="es">También en español</span></span>
     <span class="excerpt">I fixed a screen reader bug by deleting an announcement. React Spectrum&#39;s live region was overwriting what VoiceOver already said natively, and no linter could see the collision.</span>
   </a>
 </li>
 <li>
   <a href="./the-bug-jsdom-could-not-see.html" aria-labelledby="entry-the-bug-jsdom-could-not-see">
     <span class="date"><time datetime="2026-11-03">Nov 3</time></span>
-    <span class="title" id="entry-the-bug-jsdom-could-not-see">The bug jsdom could not see</span>
+    <span class="title" id="entry-the-bug-jsdom-could-not-see">The bug jsdom could not see<span class="badge" lang="es">También en español</span></span>
     <span class="excerpt">A shadcn/ui PR sat for three months while 61 jsdom tests passed. jsdom does not fire scroll events for programmatic scrolls, so it could not see the spacer collapse the fix introduced. Browser tests found that and two more bugs.</span>
+  </a>
+</li>
+<li>
+  <a href="./el-bug-que-jsdom-no-podia-ver.html" aria-labelledby="entry-el-bug-que-jsdom-no-podia-ver">
+    <span class="date"><time datetime="2026-11-03">Nov 3</time></span>
+    <span class="title" id="entry-el-bug-que-jsdom-no-podia-ver">El bug que jsdom no podía ver<span class="badge" lang="es">En español</span></span>
+    <span class="excerpt">Un PR a shadcn/ui estuvo tres meses quieto mientras 61 tests de jsdom pasaban. jsdom no dispara eventos de scroll en scrolls programáticos, así que no podía ver el colapso del spacer que introducía el arreglo. Los tests de navegador encontraron ese y otros dos bugs.</span>
   </a>
 </li>
 <li>
@@ -139,8 +153,15 @@
 <li>
   <a href="./aria-orientation-role-owners.html" aria-labelledby="entry-aria-orientation-role-owners">
     <span class="date"><time datetime="2026-08-24">Aug 24</time></span>
-    <span class="title" id="entry-aria-orientation-role-owners">aria-orientation belongs to the role owner</span>
+    <span class="title" id="entry-aria-orientation-role-owners">aria-orientation belongs to the role owner<span class="badge" lang="es">También en español</span></span>
     <span class="excerpt">A Combobox with grid rendered aria-orientation on role=grid, which does not support it. The attribute moved to the components that assign the role; the keyboard hook kept only the behavior.</span>
+  </a>
+</li>
+<li>
+  <a href="./aria-orientation-le-pertenece-al-dueno-del-rol.html" aria-labelledby="entry-aria-orientation-le-pertenece-al-dueno-del-rol">
+    <span class="date"><time datetime="2026-08-24">Aug 24</time></span>
+    <span class="title" id="entry-aria-orientation-le-pertenece-al-dueno-del-rol">aria-orientation le pertenece al dueño del rol<span class="badge" lang="es">En español</span></span>
+    <span class="excerpt">Un Combobox con grid renderizaba aria-orientation sobre role=grid, que no lo admite. El atributo se mudó a los componentes que asignan el rol; el hook de teclado se quedó solo con el comportamiento.</span>
   </a>
 </li>
 <li>

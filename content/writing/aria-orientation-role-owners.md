@@ -5,6 +5,7 @@ date: "2026-08-24"
 lang: "en"
 kind: "note"
 category: "accessibility"
+pair: "aria-orientation-role-owners"
 summary: "A Combobox with grid rendered aria-orientation on role=grid, which does not support it. The attribute moved to the components that assign the role; the keyboard hook kept only the behavior."
 tags: ["accessibility", "aria", "aria-orientation", "combobox", "open-source"]
 repo: "mui/base-ui"
