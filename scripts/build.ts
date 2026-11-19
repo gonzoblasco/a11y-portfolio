@@ -12,6 +12,16 @@
  * Run: bun scripts/build.ts
  */
 
+import { createHash } from "node:crypto";
+import { readFileSync } from "node:fs";
+
+// A CSS-only change is invisible to anyone with the file cached (Pages sets
+// max-age=600). Versioning the URL makes every deploy self-invalidating.
+const STYLE_VERSION = createHash("sha1")
+  .update(readFileSync(new URL("../style.css", import.meta.url)))
+  .digest("hex")
+  .slice(0, 10);
+
 import { readdirSync, readFileSync, writeFileSync, mkdirSync, existsSync } from "fs";
 import { join, dirname } from "path";
 
@@ -332,7 +342,7 @@ ${alternateTags}
   <meta property="og:description" content="${escapeHtml(description)}" />${ogUrl}
   <meta name="twitter:card" content="summary" />
   <link rel="alternate" type="application/atom+xml" href="${root}feed.xml" title="Gonzalo Blasco" />
-  <link rel="stylesheet" href="${root}style.css" />
+  <link rel="stylesheet" href="${root}style.css?v=${STYLE_VERSION}" />
   <link rel="preload" href="${root}assets/fonts/fraunces-normal.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="preload" href="${root}assets/fonts/newsreader-normal.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="preload" href="${root}assets/fonts/ibm-plex-mono-400.woff2" as="font" type="font/woff2" crossorigin />
@@ -817,7 +827,7 @@ writeFile(
   <meta name="robots" content="noindex" />
   <link rel="canonical" href="${BASE}/writing/preflight.html" />
   <meta http-equiv="refresh" content="0; url=../writing/preflight.html" />
-  <link rel="stylesheet" href="../style.css" />
+  <link rel="stylesheet" href="../style.css?v=${STYLE_VERSION}" />
 </head>
 <body>
   <main id="main" class="wrap redirect">
