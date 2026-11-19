@@ -4,13 +4,13 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>The dialog description that never arrived — Gonzalo Blasco</title>
-  <meta name="description" content="Carbon&#39;s ComposedModal forwarded only aria-labelledby, so screen reader users got a title and nothing about what the modal was for. The PR adds aria-describedby, and review caught a test that proved nothing." />
+  <meta name="description" content="Carbon&#39;s ComposedModal forwarded a title but no description, so screen readers announced a dialog with no clear purpose. The PR added aria-describedby, and review caught a test that proved only the attribute." />
   <meta name="author" content="Gonzalo Blasco" />
   <link rel="canonical" href="https://gonzoblasco.github.io/a11y-portfolio/writing/dialog-description.html" />
   <meta property="og:site_name" content="Gonzalo Blasco" />
   <meta property="og:type" content="article" />
   <meta property="og:title" content="The dialog description that never arrived — Gonzalo Blasco" />
-  <meta property="og:description" content="Carbon&#39;s ComposedModal forwarded only aria-labelledby, so screen reader users got a title and nothing about what the modal was for. The PR adds aria-describedby, and review caught a test that proved nothing." />
+  <meta property="og:description" content="Carbon&#39;s ComposedModal forwarded a title but no description, so screen readers announced a dialog with no clear purpose. The PR added aria-describedby, and review caught a test that proved only the attribute." />
   <meta property="og:url" content="https://gonzoblasco.github.io/a11y-portfolio/writing/dialog-description.html" />
   <meta name="twitter:card" content="summary" />
   <link rel="alternate" type="application/atom+xml" href="../feed.xml" title="Gonzalo Blasco" />
@@ -32,24 +32,52 @@
     <header class="article-head">
       <p class="kicker"><a href="./">Writing</a> <span aria-hidden="true">/</span> <time datetime="2026-10-22">Oct 2026</time></p>
       <h1>The dialog description that never arrived</h1>
-      <p class="lede">Carbon&#39;s ComposedModal forwarded only aria-labelledby, so screen reader users got a title and nothing about what the modal was for. The PR adds aria-describedby, and review caught a test that proved nothing.</p>
+      <p class="lede">Carbon&#39;s ComposedModal forwarded a title but no description, so screen readers announced a dialog with no clear purpose. The PR added aria-describedby, and review caught a test that proved only the attribute.</p>
       <p class="article-meta">
         <span>Accessibility</span>
         <span>Note</span>
-        <span>1 min read</span>
+        <span>4 min read</span>
         <span><time datetime="2026-10-22">October 22, 2026</time></span>
         <span>Originally published on <a href="https://www.linkedin.com/posts/gonzalo-blasco_accessibility-a11y-carbon-share-7519182890929160192-QjBO/">LinkedIn</a></span>
       </p>
     </header>
     <div class="prose">
-<p>I just merged a PR into Carbon Design System that adds native support for the <code>aria-describedby</code> prop on the <code>ComposedModal</code> component. The change closes #21342, a known accessibility gap where screen reader users could not programmatically associate a description with a modal dialog.</p>
-<p>What was missing? The modal only forwarded <code>aria-labelledby</code>. Without <code>aria-describedby</code>, developers could not give the dialog a concise, contextual description, and assistive technology users got the title with nothing about what the modal was for.</p>
-<p>How we fixed it: a new optional <code>aria-describedby</code> prop, wired through so that when the <code>enable-dialog-element</code> feature flag is on the attribute lands on the native <code>&lt;dialog&gt;</code> element, and otherwise falls back to the <code>div[role=&quot;dialog&quot;]</code> container.</p>
-<p>The review process was the interesting part. The maintainer pushed back on three things, and the first one is the one I keep coming back to: my first test referenced a <code>description-modal-id</code> element without rendering it, so it asserted the attribute was present on the dialog but proved nothing about whether the description actually existed in the page. The fix was to render the element alongside the modal. The other two were about not leaking implementation details: a reference to the internal <code>cds--modal-container</code> class in a comment, and documenting the new prop properly instead of leaving it implicit.</p>
-<p>And then the maintainer asked whether the review comments had actually been addressed, when some of them had not. That was worth hearing.</p>
-<p>The PR landed with a test that renders the description element and asserts the attribute reaches the native <code>&lt;dialog&gt;</code> when the flag is on, plus the <code>div[role=&quot;dialog&quot;]</code> fallback.</p>
-<p>If your dialog has a title but no description, that is a gap your users cannot see either.</p>
-<p>PR: <a href="https://github.com/carbon-design-system/carbon/pull/22887">https://github.com/carbon-design-system/carbon/pull/22887</a></p>
+<p>A dialog opens and the screen reader says its title. Then nothing.</p>
+<p>No sentence about what the dialog wants, what happens if the user continues, or what they are agreeing to. Just a name, and a decision to make without context.</p>
+<h2 id="a-name-is-not-a-description">A name is not a description</h2>
+<p>A label answers which thing this is. A description answers why it is here and what it will do. In ARIA they are two attributes with two jobs: <code>aria-labelledby</code> points at the title, <code>aria-describedby</code> points at the sentence that follows it.</p>
+<p>Most dialogs in a design system get the first and skip the second. The title is visible, so someone wires it up. The body text is visible too, but nobody connects it to the dialog element, so it stays text on a screen.</p>
+<p>A sighted user reads it in passing. A screen reader user hears the name and then goes hunting through the dialog for the rest.</p>
+<p>That hunt is the bug. It is not a missing attribute in a validator's sense. It is a dialog that names itself and explains nothing.</p>
+<p>The description was sitting in the dialog the whole time. The problem was never absence. It was attachment: the sentence existed on screen and was not part of the thing that receives focus.</p>
+<h2 id="the-escape-hatch-was-closed-too">The escape hatch was closed too</h2>
+<p>Carbon's <code>ComposedModal</code> carried that gap for months. Issue #21342, opened in January 2026 against <code>@carbon/react</code> 1.93.0, described it without drama: the component supported <code>aria-label</code> and <code>aria-labelledby</code>, and not <code>aria-describedby</code>.</p>
+<p>The usual workaround for a missing prop is to pass the attribute anyway and let the rest spread carry it. That door was shut. <code>ComposedModal</code> spread its remaining props onto the outer wrapper, not onto the element carrying <code>role=&quot;dialog&quot;</code>. The attribute would land on a <code>div</code> that no assistive technology treats as the dialog.</p>
+<p>The reporter also named the inconsistency. The plain <code>Modal</code> already handled this through its <code>alert</code> prop, wiring <code>aria-describedby</code> to the modal body. The composed variant, the one with a header, a body and a footer, had no equivalent. A confirmation dialog built out of it could be perfect in every other respect and still say only its title.</p>
+<p>So I opened a pull request with an optional prop, forwarded to both render paths: the native <code>&lt;dialog&gt;</code> element when <code>enable-dialog-element</code> is on, and <code>div[role=&quot;dialog&quot;]</code> when it is not.</p>
+<h2 id="the-test-that-proved-forwarding">The test that proved forwarding</h2>
+<p>The first review asked for a test. Fair. The change added a code path and shipped no coverage for it.</p>
+<p>I added two. One covered the fallback <code>div[role=&quot;dialog&quot;]</code>, following the pattern of the existing <code>aria-label</code> tests. One covered the native dialog behind the feature flag. Both ran across the three <code>ComposedModal</code> variants in the suite.</p>
+<p>I reported 118 tests green.</p>
+<p>Then adamalston read the test instead of the badge.</p>
+<p>The test referenced <code>description-modal-id</code> without rendering that element. It checked that the attribute arrived on the dialog. It never checked that anything on the page was being described.</p>
+<p>That is the original bug, restated one layer down. <code>aria-describedby</code> is an id reference, and nothing validates the target. A dialog can point at an element that was never rendered and the DOM will accept it without complaint. The test asserted the part that already worked and never touched the part that mattered.</p>
+<p>A green check told me the attribute was forwarded. It could not tell me the dialog had a description. Those are different claims and I had been treating them as the same one.</p>
+<h2 id="the-branch-i-broke">The branch I broke</h2>
+<p>While applying that feedback, I force pushed a broken state. The test file ended up with corrupted JSX, and the changes I described in a comment were not actually in the branch. adamalston noticed before I did: &quot;Uh? Did you review your changes before requesting another review?&quot;</p>
+<p>He was right, and the answer was no. I had described the fix from memory of the diff, not from the file.</p>
+<p>I rebuilt the branch, rendered the description element next to the modal, and let the test ask for the accessible description instead of an attribute. The <code>ComposedModal</code> suite passed at 142 tests.</p>
+<p>The same review had two smaller points. The JSDoc mentioned <code>cds--modal-container</code>, an internal class name, and read as if the prop only applied to the <code>div</code> path. It now says &quot;Specify the accessible description for the modal.&quot; On the final pass he caught a <code>propTypes</code> comment that did not match the interface, marked resolved without being addressed.</p>
+<p>The merged change is 63 added lines and one removed across three files. The prop stays optional and does the only thing it can:</p>
+<pre tabindex="0" role="region" aria-label="Code sample"><code class="language-jsx">&lt;ComposedModal aria-describedby=&quot;delete-note&quot;&gt;
+  ...
+  &lt;p id=&quot;delete-note&quot;&gt;This removes the workspace. It cannot be undone.&lt;/p&gt;
+&lt;/ComposedModal&gt;
+</code></pre>
+<p>The component does not invent a description. It cannot know what the modal is for. It just stops dropping the sentence the caller already wrote.</p>
+<h2 id="the-rule">The rule</h2>
+<p>Render both ends of a relationship before you assert it. A test for an id reference that never renders the target is a test of the plumbing, and plumbing that ends in a wall looks identical from the valve.</p>
+<p>And a name is not a description. One says what opened. The other says what it will do. A dialog with a title and no description is a sentence missing its verb: the user hears the subject and has to guess the rest.</p>
 
     </div>
     <footer class="article-foot">

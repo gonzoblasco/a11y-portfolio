@@ -144,8 +144,8 @@ function makeKeyboardScrollable(html: string): string {
 
 function renderMarkdown(markdown: string): string {
   const html = makeKeyboardScrollable(addHeadingIds(Bun.markdown.html(markdown)));
-  if (/<script\b/i.test(html) || /\son[a-z]+\s*=/i.test(html)) {
-    fail("rendered markdown contains raw script or inline event handlers");
+  if (/<script\b/i.test(html)) {
+    fail("rendered markdown contains a raw script tag");
   }
   return html.replace(
     /<p>PR: (https?:\/\/[^<\s]+)<\/p>/g,

@@ -4,13 +4,13 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>When a HoverCard calls itself a dialog — Gonzalo Blasco</title>
-  <meta name="description" content="A labelled HoverCard trigger described itself with aria-describedby, so screen reader users heard the dialog&#39;s contents as a description instead of learning that a dialog opens. The fix is the right popup contract." />
+  <meta name="description" content="A labelled HoverCard trigger described itself with aria-describedby, so screen reader users heard the card&#39;s contents as a description instead of learning that a dialog opens. The fix is the popup contract, with two review catches along the way." />
   <meta name="author" content="Gonzalo Blasco" />
   <link rel="canonical" href="https://gonzoblasco.github.io/a11y-portfolio/writing/hovercard-dialog-semantics.html" />
   <meta property="og:site_name" content="Gonzalo Blasco" />
   <meta property="og:type" content="article" />
   <meta property="og:title" content="When a HoverCard calls itself a dialog — Gonzalo Blasco" />
-  <meta property="og:description" content="A labelled HoverCard trigger described itself with aria-describedby, so screen reader users heard the dialog&#39;s contents as a description instead of learning that a dialog opens. The fix is the right popup contract." />
+  <meta property="og:description" content="A labelled HoverCard trigger described itself with aria-describedby, so screen reader users heard the card&#39;s contents as a description instead of learning that a dialog opens. The fix is the popup contract, with two review catches along the way." />
   <meta property="og:url" content="https://gonzoblasco.github.io/a11y-portfolio/writing/hovercard-dialog-semantics.html" />
   <meta name="twitter:card" content="summary" />
   <link rel="alternate" type="application/atom+xml" href="../feed.xml" title="Gonzalo Blasco" />
@@ -32,29 +32,60 @@
     <header class="article-head">
       <p class="kicker"><a href="./">Writing</a> <span aria-hidden="true">/</span> <time datetime="2026-08-25">Aug 2026</time></p>
       <h1>When a HoverCard calls itself a dialog</h1>
-      <p class="lede">A labelled HoverCard trigger described itself with aria-describedby, so screen reader users heard the dialog&#39;s contents as a description instead of learning that a dialog opens. The fix is the right popup contract.</p>
+      <p class="lede">A labelled HoverCard trigger described itself with aria-describedby, so screen reader users heard the card&#39;s contents as a description instead of learning that a dialog opens. The fix is the popup contract, with two review catches along the way.</p>
       <p class="article-meta">
         <span>Accessibility</span>
         <span>Note</span>
-        <span>1 min read</span>
+        <span>5 min read</span>
         <span><time datetime="2026-08-25">August 25, 2026</time></span>
         <span>Originally published on LinkedIn</span>
       </p>
     </header>
     <div class="prose">
-<p>I just got a PR merged into astryx, Meta's React component library, that fixes a subtle accessibility bug in <code>HoverCard</code>.</p>
-<p>The problem: when a HoverCard had a label, the trigger used <code>aria-describedby</code> to point at the dialog. That flattens structured content into a plain-text description, so a screen reader user on the trigger heard the dialog's contents read as a description instead of being told &quot;this opens a dialog&quot;.</p>
-<p>The fix uses the correct popup contract when a label is present:</p>
+<p>A HoverCard with a label was a dialog that never said so. The trigger pointed at it with <code>aria-describedby</code>, so the first thing a screen reader user heard about the card was its contents, flattened into a description of the button.</p>
+<p>The report was issue 5049, and the fix is PR 5419, merged in August. One component, four files. The interesting part is not the list of attributes. It is the difference between describing a thing and opening one.</p>
+<h2 id="the-trigger-that-described-the-card">The trigger that described the card</h2>
+<p>The reproduction in the issue is short:</p>
+<pre tabindex="0" role="region" aria-label="Code sample"><code class="language-tsx">&lt;HoverCard
+  label=&quot;Profile actions&quot;
+  content={&lt;Button onClick={handleFollow}&gt;Follow&lt;/Button&gt;}&gt;
+  &lt;button type=&quot;button&quot;&gt;Jane Doe&lt;/button&gt;
+&lt;/HoverCard&gt;
+</code></pre>
+<p>Focus the trigger, &quot;Jane Doe&quot;. The card renders <code>role=&quot;dialog&quot;</code> with <code>aria-label=&quot;Profile actions&quot;</code>. The trigger carries <code>aria-describedby</code> pointing at that layer.</p>
+<p>So the screen reader reads the button's name, then reads the dialog's content as its description. Structure collapses into a string. What the person does not hear is that a dialog opens.</p>
+<p>Two costs follow. The user cannot tell there is anything to open, because a description does not invite interaction. And the content they did hear arrives before they asked for it, with no region to navigate, no boundary, no way to move inside it. The card can contain a button, links, anything focusable. A non-modal dialog is the right model for that. A description is the model for one supplementary sentence.</p>
+<p>The lazy context layer work made it worse. While the card is closed, the layer is not in the DOM at all, only an inert <code>&lt;template&gt;</code> marker carrying the id. The trigger's <code>aria-describedby</code> pointed there too. Closed, the trigger referenced an empty sentinel. Open, the same attribute pointed at a dialog with focusable content. One attribute, two meanings, and neither of them &quot;a popup opens here&quot;.</p>
+<h2 id="why-nothing-caught-it">Why nothing caught it</h2>
+<p>Every check passed. The attribute is valid, the id resolves, the props type accepts the value, React renders what the component asked for.</p>
+<p>The automated accessibility audit on the pull request reported no violations. That is the gap worth naming. Audits check that relationships exist and attributes are allowed in a role. A trigger correctly described by a dialog breaks no rule. It is a wrong model written in legal ARIA.</p>
+<p>A diff review does not catch it either unless the reviewer holds the screen reader model in their head. The new markup looks more complete than the old one: there is a describedby, a role, a label. Complete and wrong are compatible. That is why the fix needed an argument about semantics, not a lint rule.</p>
+<h2 id="the-contract">The contract</h2>
+<p>Two relationships, two jobs.</p>
+<p><code>aria-describedby</code> says: here is more text about this control. It is a string, flattened, read in place, before the person decides to go anywhere.</p>
+<p><code>aria-haspopup=&quot;dialog&quot;</code> says: this control opens a dialog. <code>aria-expanded</code> says whether it is open now. <code>aria-controls</code> points at the element being controlled, and only while that element exists.</p>
+<p>The fix applies the second contract when there is a label:</p>
 <ul>
 <li><code>aria-haspopup=&quot;dialog&quot;</code> on the trigger</li>
-<li><code>aria-controls</code> pointing at the layer id</li>
 <li><code>aria-expanded</code> synced to the open state</li>
+<li><code>aria-controls</code> set to the layer id only while the card is open, cleared or restored when it closes</li>
 </ul>
-<p>I also exposed <code>id</code> and <code>isOpen</code> from <code>useHoverCard</code> so consumers can wire <code>aria-controls</code> / <code>aria-expanded</code> themselves, and kept <code>describedBy</code> as a deprecated alias for backwards compatibility.</p>
-<p>One decision worth noting: I considered <code>aria-details</code>, but support across screen readers is still inconsistent. <code>aria-haspopup=&quot;dialog&quot;</code> plus <code>aria-expanded</code> is the most broadly supported contract for a non-modal dialog opener.</p>
-<p>38 tests passing. Typecheck and build green. The review process was solid: three inline comments, all addressed.</p>
-<p>PR: <a href="https://github.com/facebook/astryx/pull/5419">https://github.com/facebook/astryx/pull/5419</a></p>
-<p>I have a follow-up in review fixing the same class of dropped accessibility attributes in <code>List</code> and <code>TreeList</code>.</p>
+<p>That last condition came from matching what <code>DateInput</code> already does in the same library. An <code>aria-controls</code> that names an id missing from the DOM is a reference to nothing. Nothing crashes, no audit flags it, and assistive technology gets an unreliable map of the page.</p>
+<p>I also exposed <code>id</code> and <code>isOpen</code> from <code>useHoverCard</code>, so a consumer driving the hook directly can wire the same contract, and kept <code>describedBy</code> as a deprecated alias of <code>id</code> so existing call sites keep working.</p>
+<p>Then the case the fix does not cover. With no label, the card renders <code>role=&quot;group&quot;</code> and the trigger keeps <code>aria-describedby</code>. <code>aria-haspopup=&quot;dialog&quot;</code> over an unnamed group would promise a dialog and deliver something else. The naming decision for unlabelled rich cards is still open in 5049. I left it there rather than guess a default.</p>
+<p><code>aria-details</code> was the other candidate and I did not use it. Screen reader support is still uneven, and the attribute is built for pointing at a larger body of content, not at an interactive surface that opens and closes. <code>aria-haspopup</code> plus <code>aria-expanded</code> is the contract more assistive technology actually implements for a non-modal dialog opener.</p>
+<h2 id="the-review-and-the-third-bug">The review, and the third bug</h2>
+<p>cixzhang's first review requested changes, and both objections were correct.</p>
+<p>The hook example in the docs put <code>aria-haspopup=&quot;dialog&quot;</code> on a trigger whose card had no label. In Chrome the button announced &quot;has dialog popup&quot; and then opened an unnamed group. My own change had produced the exact mismatch I was fixing, inside the code I wrote to demonstrate it. Passing <code>label: 'Alex Morgan'</code> in the example closed that hole.</p>
+<p>The second was worse. On the labelled path I wrote the trigger's <code>aria-haspopup</code>, <code>aria-controls</code> and <code>aria-expanded</code>, then removed them on cleanup. Wrap a menu button in a labelled HoverCard and its menu semantics disappear, silently, with nothing left to say they were there. Fifteen lines below, the no-label branch merged with existing values and restored them. One branch had the right pattern and I did not carry it across.</p>
+<p>The rewrite reads the trigger's existing attributes, merges <code>aria-controls</code> with the layer id, and restores all three on cleanup. I added a test that wraps a menu button, with its own popup attributes, inside a labelled HoverCard.</p>
+<p>There was a third problem I found while fixing those two. <code>aria-controls</code> pointed at the layer id even when the layer was not in the DOM. I gated it on the open state, the way <code>DateInput</code> does.</p>
+<p>The final diff is 168 additions and 10 deletions across four files, with 38 tests in <code>HoverCard.test.tsx</code>, typecheck and build passing. The reviewer verified in Chrome that a menu trigger keeps its own semantics and gets them back after cleanup, then merged.</p>
+<h2 id="the-rule">The rule</h2>
+<p>A control that opens something has to say that before it says what is inside.</p>
+<p>Describing and opening are different promises and one attribute cannot carry both. If the thing on the other side is a navigable region, the trigger owes the user a relationship and a state, not a paragraph of somebody else's content read out of turn.</p>
+<p>And when two branches of the same effect touch the same attributes, both merge and restore. One branch that overwrites is enough to make the component own semantics it did not create.</p>
+<p>The follow-up went after a different version of the same problem in <code>List</code> and <code>TreeList</code>: attributes that never reached the DOM at all.</p>
 
     </div>
     <footer class="article-foot">

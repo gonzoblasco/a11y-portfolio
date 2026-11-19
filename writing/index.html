@@ -48,14 +48,14 @@
   <a href="./the-bug-jsdom-could-not-see.html" aria-labelledby="entry-the-bug-jsdom-could-not-see">
     <span class="date"><time datetime="2026-11-03">Nov 3</time></span>
     <span class="title" id="entry-the-bug-jsdom-could-not-see">The bug jsdom could not see</span>
-    <span class="excerpt">A shadcn/ui PR sat for three months because its tests ran in jsdom, which does not fire scroll events for programmatic scrolls. Browser tests found that bug and two more in the same function.</span>
+    <span class="excerpt">A shadcn/ui PR sat for three months while 61 jsdom tests passed. jsdom does not fire scroll events for programmatic scrolls, so it could not see the spacer collapse the fix introduced. Browser tests found that and two more bugs.</span>
   </a>
 </li>
 <li>
   <a href="./dialog-description.html" aria-labelledby="entry-dialog-description">
     <span class="date"><time datetime="2026-10-22">Oct 22</time></span>
     <span class="title" id="entry-dialog-description">The dialog description that never arrived</span>
-    <span class="excerpt">Carbon&#39;s ComposedModal forwarded only aria-labelledby, so screen reader users got a title and nothing about what the modal was for. The PR adds aria-describedby, and review caught a test that proved nothing.</span>
+    <span class="excerpt">Carbon&#39;s ComposedModal forwarded a title but no description, so screen readers announced a dialog with no clear purpose. The PR added aria-describedby, and review caught a test that proved only the attribute.</span>
   </a>
 </li>
 <li>
@@ -97,7 +97,7 @@
   <a href="./hovercard-dialog-semantics.html" aria-labelledby="entry-hovercard-dialog-semantics">
     <span class="date"><time datetime="2026-08-25">Aug 25</time></span>
     <span class="title" id="entry-hovercard-dialog-semantics">When a HoverCard calls itself a dialog</span>
-    <span class="excerpt">A labelled HoverCard trigger described itself with aria-describedby, so screen reader users heard the dialog&#39;s contents as a description instead of learning that a dialog opens. The fix is the right popup contract.</span>
+    <span class="excerpt">A labelled HoverCard trigger described itself with aria-describedby, so screen reader users heard the card&#39;s contents as a description instead of learning that a dialog opens. The fix is the popup contract, with two review catches along the way.</span>
   </a>
 </li>
 <li>
