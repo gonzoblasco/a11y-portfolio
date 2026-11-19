@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>The review that invented a bug — Gonzalo Blasco</title>
+  <meta name="description" content="A review of my own work found five real defects and one that did not exist. The sixth is the useful one: a failing command confirmed the story I had already written instead of challenging it." />
+  <meta name="author" content="Gonzalo Blasco" />
+  <link rel="canonical" href="https://gonzoblasco.github.io/a11y-portfolio/writing/the-review-that-invented-a-bug.html" />
+
+  <link rel="alternate" hreflang="en" href="https://gonzoblasco.github.io/a11y-portfolio/writing/the-review-that-invented-a-bug.html" />
+  <link rel="alternate" hreflang="es" href="https://gonzoblasco.github.io/a11y-portfolio/writing/la-revision-que-invento-un-bug.html" />
+  <link rel="alternate" hreflang="x-default" href="https://gonzoblasco.github.io/a11y-portfolio/writing/the-review-that-invented-a-bug.html" />
+  <meta property="og:site_name" content="Gonzalo Blasco" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="The review that invented a bug — Gonzalo Blasco" />
+  <meta property="og:description" content="A review of my own work found five real defects and one that did not exist. The sixth is the useful one: a failing command confirmed the story I had already written instead of challenging it." />
+  <meta property="og:url" content="https://gonzoblasco.github.io/a11y-portfolio/writing/the-review-that-invented-a-bug.html" />
+  <meta name="twitter:card" content="summary" />
+  <link rel="alternate" type="application/atom+xml" href="../feed.xml" title="Gonzalo Blasco" />
+  <link rel="stylesheet" href="../style.css" />
+  <link rel="preload" href="../assets/fonts/fraunces-normal.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="../assets/fonts/newsreader-normal.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="../assets/fonts/ibm-plex-mono-400.woff2" as="font" type="font/woff2" crossorigin />
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site">
+  <div class="wrap head">
+    <a class="wordmark" href="../">Gonzalo Blasco</a>
+    <nav aria-label="Sections"><ul><li><a href="../writing/" aria-current="page">Writing</a></li><li><a href="../writing/preflight.html">Work</a></li><li><a href="../about/">About</a></li><li><a href="../profile/">Profile</a></li></ul></nav>
+  </div>
+</header>
+<main id="main">
+  <article class="article wrap">
+    <header class="article-head">
+      <p class="kicker"><a href="./">Writing</a> <span aria-hidden="true">/</span> <time datetime="2026-11-19">Nov 2026</time></p>
+      <h1>The review that invented a bug</h1>
+      <p class="lede">A review of my own work found five real defects and one that did not exist. The sixth is the useful one: a failing command confirmed the story I had already written instead of challenging it.</p>
+      <p class="article-meta">
+        <span>Engineering</span>
+        <span>Essay</span>
+        <span>7 min read</span>
+        <span><time datetime="2026-11-19">November 19, 2026</time></span>
+        
+      </p>
+      <p class="translation"><a class="translation-switch" href="la-revision-que-invento-un-bug.html" hreflang="es" lang="es">Leer en español <span aria-hidden="true">→</span></a></p>
+    </header>
+    <div class="prose">
+<p>A review of my own work found five real defects and one that did not exist.</p>
+<p>The five were mechanical. A package name that still said the old project. A lockfile repeating it. A program identifier that disagreed with its own filename. A test count written as 10 in two different files while the suite ran 25. A virtualenv whose prompt still printed the name from before the rename.</p>
+<p>All five were green. All five shipped. All five were fixable in an afternoon.</p>
+<p>The sixth is the one I keep.</p>
+<h2 id="the-number-nobody-measured">The number nobody measured</h2>
+<p>The rule is simple: a file that gets loaded on every boot has a size limit. Mine said 20,000 characters.</p>
+<p>The task list said the file was at 19,997. Comfortable. Three characters of margin, which is a strange thing to be proud of, but there it was.</p>
+<p>I measured it instead of reading the number. 20,131.</p>
+<pre tabindex="0" role="region" aria-label="Code sample"><code>last commit:  19,889
+working tree: 20,131
+cap:          20,000
+</code></pre>
+<p>The repository was 111 characters under. The disk was 131 over. The loader reads the disk.</p>
+<p>That gap is the whole article in miniature. The file was not &quot;slightly over budget&quot;. It was <strong>quietly truncated every single time it loaded</strong>, and the only artifact that would have shown it was a number nobody had recomputed since it was written.</p>
+<p>A budget you check once is a wish. The reason it drifted is more interesting than the number.</p>
+<h2 id="the-audit-behind-the-number">The audit behind the number</h2>
+<p>When I opened the file to trim it, the content explained itself. Two sections were describing a world that no longer existed.</p>
+<p>One was a procedure for publishing a public skills repository. That repository had been archived months earlier. The procedure was correct, detailed, and completely inert: nobody could follow it, because the thing it operated on was gone.</p>
+<p>The other documented a three-layer project layout with an intermediate aggregate repository. That layer had been retired in a decision record. The file still described it as current, complete with a debt list whose four items had all been paid.</p>
+<p>So the file was over budget for a reason worse than verbosity: it was accurate about the past. Every line was true when written, and the file kept its authority after the truth expired.</p>
+<p>I removed about a third of it and the operational rules survived intact. That is the tell. Content that cannot be deleted without consequence is load-bearing. Content that evaporates in an afternoon was archaeology.</p>
+<h2 id="renaming-is-not-mv">Renaming is not <code>mv</code></h2>
+<p>The same week I renamed a project. The repository, the directory, the docs. I called it done and moved on.</p>
+<p>Then I reviewed my own work the way I would review a stranger's, and found that a rename has about seven layers:</p>
+<ol>
+<li>the directory</li>
+<li>the git remote</li>
+<li>the distribution name in <code>pyproject.toml</code></li>
+<li>the lockfile that repeats it</li>
+<li>the state files keyed by the old identifier</li>
+<li>the environment artifacts created before the rename</li>
+<li>the prose</li>
+</ol>
+<p>I had done four. The package still called itself <code>agente-local-amigo</code> while living in <code>localdoc-agent</code>. The lockfile agreed with the package. The planner's program file was named after the new project and declared the old identifier inside, so the tooling could find it but reported the wrong name back. And the virtualenv prompt still printed the old one, because I had created it three commands before the rename.</p>
+<p>None of that breaks a test. All of it breaks a reader.</p>
+<p>Two of the five defects were also copies. &quot;10 tests&quot; appeared in a project map and in a curated memory file, and the true count was 25. Fixing one would have left the other lying, and the next person would have found the stale one first.</p>
+<h2 id="the-sixth-defect">The sixth defect</h2>
+<p>Here is where the review went wrong.</p>
+<p>The planner program had been called <code>agente-local-lucia</code>. I renamed the file to <code>localdoc-agent.json</code> and left the identifier inside untouched, so the command that looks programs up by name failed:</p>
+<pre tabindex="0" role="region" aria-label="Code sample 2"><code>status agente-local-lucia  -&gt;  No existe el programa
+</code></pre>
+<p>I wrote that into the review as proof of a &quot;naming debt between the repository and the product&quot;. It read well. It had a terminal transcript. It matched the pattern of the other five.</p>
+<p>It was wrong. Lucía is a persona from the exercise brief, not a client, and that identifier never named the product at all. The command failed for a perfectly ordinary reason — the file had been renamed and the key had not — and I attached a story to it that the evidence did not support.</p>
+<p>The failure was real. The diagnosis was invented.</p>
+<p>That is the failure mode I had been writing about for weeks without noticing I was inside it. A red output confirms that something is broken. It does not confirm your explanation of what. The transcript felt like proof because it was concrete, and concrete is not the same as correct.</p>
+<h2 id="the-test-that-hung">The test that hung</h2>
+<p>The next task was to turn a privacy promise into something that can fail. Both projects claim that nothing leaves the machine. The old evidence was <code>lsof</code> sampled nine times on one laptop at one moment.</p>
+<p>So I wrote a probe: run the real code paths in a subprocess under Python's audit hook, record every <code>socket.connect</code>, <code>socket.getaddrinfo</code> and <code>socket.gethostbyname</code>, and fail on anything that is not loopback. DNS counts. Resolving a name is already traffic.</p>
+<p>Then I added the piece that makes it a test instead of a sticker: a positive control. One workload deliberately connects to <code>example.com</code>, and the suite fails if the hook does <strong>not</strong> catch it.</p>
+<pre tabindex="0" role="region" aria-label="Code sample 3"><code>{&quot;violations&quot;: [{&quot;event&quot;: &quot;socket.getaddrinfo&quot;, &quot;target&quot;: &quot;'example.com'&quot;},
+                {&quot;event&quot;: &quot;socket.connect&quot;, &quot;target&quot;: &quot;('2606:4700:10::6814:179a', 80, 0, 0)&quot;}],
+ &quot;clean&quot;: false}
+</code></pre>
+<p>A real Cloudflare IPv6 address, caught by name and by destination.</p>
+<p>Then the suite hung.</p>
+<p>The Ollama workload called <code>chat</code> with a model that was not downloaded. The Python client stayed on loopback, as designed — but the Ollama daemon, on the other end of that loopback connection, went to the registry to fetch the model. That traffic is real, it left the machine, and the hook could not see it, because it happened in a different process.</p>
+<p>The instrument I had built to prove that nothing leaves the machine could not see the one thing that left.</p>
+<p>I removed the model call from the probe and wrote the limitation into both READMEs: the hook audits Python sockets, subprocesses are outside it, and a missing model makes the daemon fetch. The honest claim is narrower than the one I wanted. It is also the only one that survives being checked.</p>
+<p>The same task turned up a worse defect than the one I had predicted. I expected the delete endpoint to leave SQLite's <code>-wal</code> and <code>-shm</code> files behind. It did. It also left <code>data/private/</code>, the directory where every uploaded original gets copied before parsing. A button labelled &quot;Delete everything&quot; was deleting the index and keeping the contracts.</p>
+<h2 id="what-green-means">What green means</h2>
+<p>The bilingual work had the same shape. Three essays needed Spanish versions, and the generator already supported pairs: a shared key, <code>hreflang</code> alternates, <code>x-default</code> pointing at the original.</p>
+<p>The build passed. Then:</p>
+<ul>
+<li>the feed emitted one entry per page, so every translation appeared twice;</li>
+<li>the index showed an &quot;In Spanish&quot; badge on translations, so an English reader never learned a Spanish version existed;</li>
+<li>and a pair key that matched nothing failed silently, deleting both the <code>hreflang</code> and the visible switch while the build stayed green.</li>
+</ul>
+<p>That last one is the same bug as the invented diagnosis, wearing different clothes. I had written in my own plan that broken pairs already failed the build. They did — two articles in the same language, or three in one pair. Not one. A pair with a single half was invisible, and the plan said it was covered, so nobody looked.</p>
+<p>Now the build fails with the identifier and the slug:</p>
+<pre tabindex="0" role="region" aria-label="Code sample 4"><code>build: pair &quot;bogus-test&quot; has only one article; &quot;un-anuncio-mas-silencioso&quot; points at nothing
+</code></pre>
+<p>I tested it by breaking a pair on purpose and restoring it. The check that matters is the one you have watched fail.</p>
+<h2 id="the-rule">The rule</h2>
+<p>Two rules, and they are the same rule.</p>
+<p><strong>Measure the owner, not the copy.</strong> The committed size, not the remembered one. The element that carries the role, not the props object that produced it. The program identifier the tool actually reads, not the filename that looks right. Every one of the five mechanical defects was a copy that had drifted from its owner.</p>
+<p><strong>Evidence confirms the symptom, not the explanation.</strong> A failing command proves that something is wrong. It does not prove that you know what. The invented defect survived because it had a transcript, and a transcript is not a diagnosis.</p>
+<p>The two defects that cost the most this week were not on my risk list. One was a delete button that kept the originals. The other was a test that could not see the process it was testing. Both were found by running the thing and reading the output, not by predicting what could go wrong.</p>
+<p>A plan's list of known risks is a list of guesses with good formatting. It feels like preparation because it is specific. The specificity is the problem: it tells you where to look, and the defect is usually somewhere else.</p>
+<p>Ask what the artifact does. Not what the document says it does.</p>
+
+    </div>
+    <footer class="article-foot">
+      <span></span>
+      <a href="./">Back to all notes</a>
+    </footer>
+  </article>
+</main>
+<footer class="site">
+  <div class="wrap">
+    <span>Gonzalo Blasco · Buenos Aires</span>
+    <span><a href="mailto:gonzoblasco@icloud.com">gonzoblasco@icloud.com</a> · <a href="https://github.com/gonzoblasco">GitHub</a> · <a href="https://www.linkedin.com/in/gonzalo-blasco">LinkedIn</a></span>
+  </div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>La revisión que inventó un bug — Gonzalo Blasco</title>
+  <meta name="description" content="Una revisión de mi propio trabajo encontró cinco defectos reales y uno que no existía. El sexto es el útil: un comando en rojo confirmó la historia que yo ya había escrito en vez de discutirla." />
+  <meta name="author" content="Gonzalo Blasco" />
+  <link rel="canonical" href="https://gonzoblasco.github.io/a11y-portfolio/writing/la-revision-que-invento-un-bug.html" />
+
+  <link rel="alternate" hreflang="es" href="https://gonzoblasco.github.io/a11y-portfolio/writing/la-revision-que-invento-un-bug.html" />
+  <link rel="alternate" hreflang="en" href="https://gonzoblasco.github.io/a11y-portfolio/writing/the-review-that-invented-a-bug.html" />
+  <link rel="alternate" hreflang="x-default" href="https://gonzoblasco.github.io/a11y-portfolio/writing/the-review-that-invented-a-bug.html" />
+  <meta property="og:site_name" content="Gonzalo Blasco" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="La revisión que inventó un bug — Gonzalo Blasco" />
+  <meta property="og:description" content="Una revisión de mi propio trabajo encontró cinco defectos reales y uno que no existía. El sexto es el útil: un comando en rojo confirmó la historia que yo ya había escrito en vez de discutirla." />
+  <meta property="og:url" content="https://gonzoblasco.github.io/a11y-portfolio/writing/la-revision-que-invento-un-bug.html" />
+  <meta name="twitter:card" content="summary" />
+  <link rel="alternate" type="application/atom+xml" href="../feed.xml" title="Gonzalo Blasco" />
+  <link rel="stylesheet" href="../style.css" />
+  <link rel="preload" href="../assets/fonts/fraunces-normal.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="../assets/fonts/newsreader-normal.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="../assets/fonts/ibm-plex-mono-400.woff2" as="font" type="font/woff2" crossorigin />
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site" lang="en">
+  <div class="wrap head">
+    <a class="wordmark" href="../">Gonzalo Blasco</a>
+    <nav aria-label="Sections"><ul><li><a href="../writing/" aria-current="page">Writing</a></li><li><a href="../writing/preflight.html">Work</a></li><li><a href="../about/">About</a></li><li><a href="../profile/">Profile</a></li></ul></nav>
+  </div>
+</header>
+<main id="main">
+  <article class="article wrap">
+    <header class="article-head">
+      <p class="kicker" lang="en"><a href="./">Writing</a> <span aria-hidden="true">/</span> <time datetime="2026-11-19">Nov 2026</time><span class="badge" lang="es">En español</span></p>
+      <h1 lang="es">La revisión que inventó un bug</h1>
+      <p class="lede" lang="es">Una revisión de mi propio trabajo encontró cinco defectos reales y uno que no existía. El sexto es el útil: un comando en rojo confirmó la historia que yo ya había escrito en vez de discutirla.</p>
+      <p class="article-meta" lang="en">
+        <span>Engineering</span>
+        <span>Essay</span>
+        <span>7 min read</span>
+        <span><time datetime="2026-11-19">November 19, 2026</time></span>
+        
+      </p>
+      <p class="translation"><a class="translation-switch" href="the-review-that-invented-a-bug.html" hreflang="en" lang="en">Read in English <span aria-hidden="true">→</span></a></p>
+    </header>
+    <div class="prose" lang="es">
+<p>Una revisión de mi propio trabajo encontró cinco defectos reales y uno que no existía.</p>
+<p>Los cinco eran mecánicos. Un paquete que todavía se llamaba como el proyecto anterior. Un lockfile que lo repetía. Un identificador de programa que no coincidía con el nombre de su archivo. Un conteo de tests escrito como 10 en dos archivos distintos mientras la suite corría 25. Un entorno virtual cuyo prompt seguía imprimiendo el nombre de antes del renombre.</p>
+<p>Los cinco estaban en verde. Los cinco salieron a producción. Los cinco se arreglaban en una tarde.</p>
+<p>El sexto es el que me llevo.</p>
+<h2 id="el-numero-que-nadie-media">El número que nadie medía</h2>
+<p>La regla es simple: un archivo que se carga en cada arranque tiene un límite de tamaño. El mío decía 20.000 caracteres.</p>
+<p>La lista de tareas decía que el archivo estaba en 19.997. Cómodo. Tres caracteres de margen, que es una cosa rara de la que sentirse orgulloso, pero ahí estaba.</p>
+<p>Lo medí en vez de leer el número. 20.131.</p>
+<pre tabindex="0" role="region" aria-label="Code sample"><code>último commit:  19.889
+árbol de trabajo: 20.131
+límite:           20.000
+</code></pre>
+<p>El repositorio estaba 111 caracteres por debajo. El disco estaba 131 por encima. El cargador lee el disco.</p>
+<p>Ese hueco es el artículo entero en miniatura. El archivo no estaba «apenas pasado de presupuesto». Estaba <strong>truncado en silencio cada vez que se cargaba</strong>, y el único artefacto que lo habría mostrado era un número que nadie había recalculado desde que se escribió.</p>
+<p>Un presupuesto que se revisa una vez es un deseo. La razón por la que se había corrido es más interesante que el número.</p>
+<h2 id="la-auditoria-detras-del-numero">La auditoría detrás del número</h2>
+<p>Cuando abrí el archivo para recortarlo, el contenido se explicaba solo. Dos secciones describían un mundo que ya no existía.</p>
+<p>Una era un procedimiento para publicar un repositorio público de skills. Ese repositorio estaba archivado desde hacía meses. El procedimiento era correcto, detallado y completamente inerte: nadie podía seguirlo, porque la cosa sobre la que operaba ya no estaba.</p>
+<p>La otra documentaba una estructura de proyectos en tres capas con un repositorio agregador intermedio. Esa capa se había retirado en un registro de decisión. El archivo la seguía describiendo como vigente, con una lista de deuda cuyos cuatro ítems ya estaban pagos.</p>
+<p>Así que el archivo estaba por encima del presupuesto por una razón peor que la verborragia: era exacto sobre el pasado. Cada línea había sido verdad al escribirse, y el archivo conservó su autoridad después de que la verdad venciera.</p>
+<p>Saqué cerca de un tercio y las reglas operativas sobrevivieron intactas. Ahí está la señal. El contenido que no se puede borrar sin consecuencias sostiene algo. El contenido que se evapora en una tarde era arqueología.</p>
+<h2 id="renombrar-no-es-mv">Renombrar no es <code>mv</code></h2>
+<p>Esa misma semana renombré un proyecto. El repositorio, el directorio, los documentos. Lo di por cerrado y seguí.</p>
+<p>Después revisé mi propio trabajo como revisaría el de un desconocido, y encontré que un renombre tiene unas siete capas:</p>
+<ol>
+<li>el directorio</li>
+<li>el remoto de git</li>
+<li>el nombre de distribución en <code>pyproject.toml</code></li>
+<li>el lockfile que lo repite</li>
+<li>los archivos de estado indexados por el identificador viejo</li>
+<li>los artefactos de entorno creados antes del renombre</li>
+<li>la prosa</li>
+</ol>
+<p>Había hecho cuatro. El paquete seguía llamándose <code>agente-local-amigo</code> mientras vivía en <code>localdoc-agent</code>. El lockfile le daba la razón. El archivo del programa del planner tenía el nombre del proyecto nuevo y declaraba el identificador viejo adentro, así que la herramienta lo encontraba pero devolvía el nombre equivocado. Y el prompt del entorno virtual seguía imprimiendo el viejo, porque lo había creado tres comandos antes del renombre.</p>
+<p>Nada de eso rompe un test. Todo eso rompe un lector.</p>
+<p>Dos de los cinco defectos además eran copias. «10 tests» aparecía en un mapa de proyectos y en un archivo de memoria curada, y el conteo real era 25. Arreglar uno dejaba el otro mintiendo, y la próxima persona iba a encontrar primero el viejo.</p>
+<h2 id="el-sexto-defecto">El sexto defecto</h2>
+<p>Acá es donde la revisión se equivocó.</p>
+<p>El programa del planner se llamaba <code>agente-local-lucia</code>. Renombré el archivo a <code>localdoc-agent.json</code> y dejé el identificador de adentro sin tocar, así que el comando que busca programas por nombre falló:</p>
+<pre tabindex="0" role="region" aria-label="Code sample 2"><code>status agente-local-lucia  -&gt;  No existe el programa
+</code></pre>
+<p>Escribí eso en la revisión como prueba de una «deuda de nombres entre el repositorio y el producto». Se leía bien. Tenía una transcripción de terminal. Encajaba con el patrón de los otros cinco.</p>
+<p>Estaba mal. Lucía es una persona del enunciado del ejercicio, no una clienta, y ese identificador nunca nombró al producto. El comando falló por una razón perfectamente ordinaria —el archivo se había renombrado y la clave no— y yo le colgué una historia que la evidencia no sostenía.</p>
+<p>La falla era real. El diagnóstico era inventado.</p>
+<p>Ese es el modo de falla sobre el que venía escribiendo desde hacía semanas sin darme cuenta de que estaba adentro. Una salida en rojo confirma que algo está roto. No confirma tu explicación de qué. La transcripción se sentía como prueba porque era concreta, y concreto no es lo mismo que correcto.</p>
+<h2 id="el-test-que-se-colgo">El test que se colgó</h2>
+<p>La tarea siguiente era convertir una promesa de privacidad en algo que pueda fallar. Los dos proyectos afirman que nada sale de la máquina. La evidencia anterior era <code>lsof</code> muestreado nueve veces en una laptop, en un momento.</p>
+<p>Así que escribí un probe: correr los caminos reales en un subproceso bajo el audit hook de Python, registrar cada <code>socket.connect</code>, <code>socket.getaddrinfo</code> y <code>socket.gethostbyname</code>, y fallar ante cualquier destino que no sea loopback. DNS cuenta. Resolver un nombre ya es tráfico.</p>
+<p>Después agregué la pieza que lo convierte en test y no en calcomanía: un control positivo. Un workload se conecta a <code>example.com</code> a propósito, y la suite falla si el hook <strong>no</strong> lo atrapa.</p>
+<pre tabindex="0" role="region" aria-label="Code sample 3"><code>{&quot;violations&quot;: [{&quot;event&quot;: &quot;socket.getaddrinfo&quot;, &quot;target&quot;: &quot;'example.com'&quot;},
+                {&quot;event&quot;: &quot;socket.connect&quot;, &quot;target&quot;: &quot;('2606:4700:10::6814:179a', 80, 0, 0)&quot;}],
+ &quot;clean&quot;: false}
+</code></pre>
+<p>Una dirección IPv6 real de Cloudflare, atrapada por nombre y por destino.</p>
+<p>Después la suite se colgó.</p>
+<p>El workload de Ollama llamaba a <code>chat</code> con un modelo que no estaba descargado. El cliente de Python se quedó en loopback, como estaba diseñado, pero el demonio de Ollama, del otro lado de esa conexión loopback, fue al registry a buscar el modelo. Ese tráfico es real, salió de la máquina, y el hook no lo podía ver, porque pasó en otro proceso.</p>
+<p>El instrumento que había construido para probar que nada sale de la máquina no podía ver la única cosa que salía.</p>
+<p>Saqué la llamada al modelo del probe y escribí la limitación en los dos READMEs: el hook audita sockets de Python, los subprocesos quedan afuera, y un modelo faltante hace que el demonio vaya a buscar. La afirmación honesta es más angosta que la que yo quería. También es la única que sobrevive a que la revisen.</p>
+<p>La misma tarea encontró un defecto peor que el que yo había previsto. Esperaba que el endpoint de borrado dejara atrás los archivos <code>-wal</code> y <code>-shm</code> de SQLite. Los dejaba. También dejaba <code>data/private/</code>, el directorio donde se copia cada original subido antes de parsearlo. Un botón que decía «Delete everything» borraba el índice y conservaba los contratos.</p>
+<h2 id="que-significa-el-verde">Qué significa el verde</h2>
+<p>El trabajo bilingüe tuvo la misma forma. Tres ensayos necesitaban versión en español, y el generador ya soportaba pares: una clave compartida, alternates <code>hreflang</code>, <code>x-default</code> apuntando al original.</p>
+<p>El build pasó. Después:</p>
+<ul>
+<li>el feed emitía una entrada por página, así que cada traducción aparecía dos veces;</li>
+<li>el índice mostraba la etiqueta «En español» en las traducciones, así que un lector en inglés nunca se enteraba de que existía una versión en español;</li>
+<li>y una clave de par que no coincidía con nada fallaba en silencio, borrando el <code>hreflang</code> y el switch visible mientras el build seguía verde.</li>
+</ul>
+<p>Ese último es el mismo bug que el diagnóstico inventado, con otra ropa. Yo había escrito en mi propio plan que los pares rotos ya rompían el build. Lo rompían: dos artículos en el mismo idioma, o tres en un par. Uno no. Un par con una sola mitad era invisible, y el plan decía que estaba cubierto, así que nadie miró.</p>
+<p>Ahora el build falla con el identificador y el slug:</p>
+<pre tabindex="0" role="region" aria-label="Code sample 4"><code>build: pair &quot;bogus-test&quot; has only one article; &quot;un-anuncio-mas-silencioso&quot; points at nothing
+</code></pre>
+<p>Lo probé rompiendo un par a propósito y restaurándolo. El chequeo que importa es el que viste fallar.</p>
+<h2 id="la-regla">La regla</h2>
+<p>Dos reglas, y son la misma regla.</p>
+<p><strong>Medí al dueño, no a la copia.</strong> El tamaño commiteado, no el recordado. El elemento que carga el rol, no el objeto de props que lo produjo. El identificador que la herramienta lee de verdad, no el nombre de archivo que parece correcto. Cada uno de los cinco defectos mecánicos era una copia que se había separado de su dueño.</p>
+<p><strong>La evidencia confirma el síntoma, no la explicación.</strong> Un comando que falla prueba que algo está mal. No prueba que sepas qué. El defecto inventado sobrevivió porque tenía una transcripción, y una transcripción no es un diagnóstico.</p>
+<p>Los dos defectos que más costaron esta semana no estaban en mi lista de riesgos. Uno era un botón de borrado que conservaba los originales. El otro era un test que no podía ver el proceso que estaba probando. Los dos aparecieron corriendo la cosa y leyendo la salida, no prediciendo qué podía salir mal.</p>
+<p>La lista de riesgos conocidos de un plan es una lista de conjeturas bien formateadas. Se siente como preparación porque es específica. La especificidad es el problema: te dice dónde mirar, y el defecto suele estar en otro lado.</p>
+<p>Preguntá qué hace el artefacto. No qué dice el documento que hace.</p>
+
+    </div>
+    <footer class="article-foot" lang="en">
+      <span></span>
+      <a href="./">Back to all notes</a>
+    </footer>
+  </article>
+</main>
+<footer class="site" lang="en">
+  <div class="wrap">
+    <span>Gonzalo Blasco · Buenos Aires</span>
+    <span><a href="mailto:gonzoblasco@icloud.com">gonzoblasco@icloud.com</a> · <a href="https://github.com/gonzoblasco">GitHub</a> · <a href="https://www.linkedin.com/in/gonzalo-blasco">LinkedIn</a></span>
+  </div>
+</footer>
+</body>
+</html>

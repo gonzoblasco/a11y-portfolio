@@ -5,11 +5,99 @@
   <id>https://gonzoblasco.github.io/a11y-portfolio/</id>
   <link href="https://gonzoblasco.github.io/a11y-portfolio/writing/" />
   <link rel="self" href="https://gonzoblasco.github.io/a11y-portfolio/feed.xml" />
-  <updated>2026-11-18T12:00:00.000Z</updated>
+  <updated>2026-11-19T12:00:00.000Z</updated>
   <author>
     <name>Gonzalo Blasco</name>
     <uri>https://gonzoblasco.github.io/a11y-portfolio/</uri>
   </author>
+  <entry>
+    <title>The review that invented a bug</title>
+    <id>https://gonzoblasco.github.io/a11y-portfolio/writing/the-review-that-invented-a-bug.html</id>
+    <link href="https://gonzoblasco.github.io/a11y-portfolio/writing/the-review-that-invented-a-bug.html" />
+    <category term="engineering" />
+    <updated>2026-11-19T12:00:00.000Z</updated>
+    <summary>A review of my own work found five real defects and one that did not exist. The sixth is the useful one: a failing command confirmed the story I had already written instead of challenging it.</summary>
+    <content type="html">&lt;p&gt;A review of my own work found five real defects and one that did not exist.&lt;/p&gt;
+&lt;p&gt;The five were mechanical. A package name that still said the old project. A lockfile repeating it. A program identifier that disagreed with its own filename. A test count written as 10 in two different files while the suite ran 25. A virtualenv whose prompt still printed the name from before the rename.&lt;/p&gt;
+&lt;p&gt;All five were green. All five shipped. All five were fixable in an afternoon.&lt;/p&gt;
+&lt;p&gt;The sixth is the one I keep.&lt;/p&gt;
+&lt;h2 id=&quot;the-number-nobody-measured&quot;&gt;The number nobody measured&lt;/h2&gt;
+&lt;p&gt;The rule is simple: a file that gets loaded on every boot has a size limit. Mine said 20,000 characters.&lt;/p&gt;
+&lt;p&gt;The task list said the file was at 19,997. Comfortable. Three characters of margin, which is a strange thing to be proud of, but there it was.&lt;/p&gt;
+&lt;p&gt;I measured it instead of reading the number. 20,131.&lt;/p&gt;
+&lt;pre tabindex=&quot;0&quot; role=&quot;region&quot; aria-label=&quot;Code sample&quot;&gt;&lt;code&gt;last commit:  19,889
+working tree: 20,131
+cap:          20,000
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The repository was 111 characters under. The disk was 131 over. The loader reads the disk.&lt;/p&gt;
+&lt;p&gt;That gap is the whole article in miniature. The file was not &amp;quot;slightly over budget&amp;quot;. It was &lt;strong&gt;quietly truncated every single time it loaded&lt;/strong&gt;, and the only artifact that would have shown it was a number nobody had recomputed since it was written.&lt;/p&gt;
+&lt;p&gt;A budget you check once is a wish. The reason it drifted is more interesting than the number.&lt;/p&gt;
+&lt;h2 id=&quot;the-audit-behind-the-number&quot;&gt;The audit behind the number&lt;/h2&gt;
+&lt;p&gt;When I opened the file to trim it, the content explained itself. Two sections were describing a world that no longer existed.&lt;/p&gt;
+&lt;p&gt;One was a procedure for publishing a public skills repository. That repository had been archived months earlier. The procedure was correct, detailed, and completely inert: nobody could follow it, because the thing it operated on was gone.&lt;/p&gt;
+&lt;p&gt;The other documented a three-layer project layout with an intermediate aggregate repository. That layer had been retired in a decision record. The file still described it as current, complete with a debt list whose four items had all been paid.&lt;/p&gt;
+&lt;p&gt;So the file was over budget for a reason worse than verbosity: it was accurate about the past. Every line was true when written, and the file kept its authority after the truth expired.&lt;/p&gt;
+&lt;p&gt;I removed about a third of it and the operational rules survived intact. That is the tell. Content that cannot be deleted without consequence is load-bearing. Content that evaporates in an afternoon was archaeology.&lt;/p&gt;
+&lt;h2 id=&quot;renaming-is-not-mv&quot;&gt;Renaming is not &lt;code&gt;mv&lt;/code&gt;&lt;/h2&gt;
+&lt;p&gt;The same week I renamed a project. The repository, the directory, the docs. I called it done and moved on.&lt;/p&gt;
+&lt;p&gt;Then I reviewed my own work the way I would review a stranger&#39;s, and found that a rename has about seven layers:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;the directory&lt;/li&gt;
+&lt;li&gt;the git remote&lt;/li&gt;
+&lt;li&gt;the distribution name in &lt;code&gt;pyproject.toml&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;the lockfile that repeats it&lt;/li&gt;
+&lt;li&gt;the state files keyed by the old identifier&lt;/li&gt;
+&lt;li&gt;the environment artifacts created before the rename&lt;/li&gt;
+&lt;li&gt;the prose&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;I had done four. The package still called itself &lt;code&gt;agente-local-amigo&lt;/code&gt; while living in &lt;code&gt;localdoc-agent&lt;/code&gt;. The lockfile agreed with the package. The planner&#39;s program file was named after the new project and declared the old identifier inside, so the tooling could find it but reported the wrong name back. And the virtualenv prompt still printed the old one, because I had created it three commands before the rename.&lt;/p&gt;
+&lt;p&gt;None of that breaks a test. All of it breaks a reader.&lt;/p&gt;
+&lt;p&gt;Two of the five defects were also copies. &amp;quot;10 tests&amp;quot; appeared in a project map and in a curated memory file, and the true count was 25. Fixing one would have left the other lying, and the next person would have found the stale one first.&lt;/p&gt;
+&lt;h2 id=&quot;the-sixth-defect&quot;&gt;The sixth defect&lt;/h2&gt;
+&lt;p&gt;Here is where the review went wrong.&lt;/p&gt;
+&lt;p&gt;The planner program had been called &lt;code&gt;agente-local-lucia&lt;/code&gt;. I renamed the file to &lt;code&gt;localdoc-agent.json&lt;/code&gt; and left the identifier inside untouched, so the command that looks programs up by name failed:&lt;/p&gt;
+&lt;pre tabindex=&quot;0&quot; role=&quot;region&quot; aria-label=&quot;Code sample 2&quot;&gt;&lt;code&gt;status agente-local-lucia  -&amp;gt;  No existe el programa
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;I wrote that into the review as proof of a &amp;quot;naming debt between the repository and the product&amp;quot;. It read well. It had a terminal transcript. It matched the pattern of the other five.&lt;/p&gt;
+&lt;p&gt;It was wrong. Lucía is a persona from the exercise brief, not a client, and that identifier never named the product at all. The command failed for a perfectly ordinary reason — the file had been renamed and the key had not — and I attached a story to it that the evidence did not support.&lt;/p&gt;
+&lt;p&gt;The failure was real. The diagnosis was invented.&lt;/p&gt;
+&lt;p&gt;That is the failure mode I had been writing about for weeks without noticing I was inside it. A red output confirms that something is broken. It does not confirm your explanation of what. The transcript felt like proof because it was concrete, and concrete is not the same as correct.&lt;/p&gt;
+&lt;h2 id=&quot;the-test-that-hung&quot;&gt;The test that hung&lt;/h2&gt;
+&lt;p&gt;The next task was to turn a privacy promise into something that can fail. Both projects claim that nothing leaves the machine. The old evidence was &lt;code&gt;lsof&lt;/code&gt; sampled nine times on one laptop at one moment.&lt;/p&gt;
+&lt;p&gt;So I wrote a probe: run the real code paths in a subprocess under Python&#39;s audit hook, record every &lt;code&gt;socket.connect&lt;/code&gt;, &lt;code&gt;socket.getaddrinfo&lt;/code&gt; and &lt;code&gt;socket.gethostbyname&lt;/code&gt;, and fail on anything that is not loopback. DNS counts. Resolving a name is already traffic.&lt;/p&gt;
+&lt;p&gt;Then I added the piece that makes it a test instead of a sticker: a positive control. One workload deliberately connects to &lt;code&gt;example.com&lt;/code&gt;, and the suite fails if the hook does &lt;strong&gt;not&lt;/strong&gt; catch it.&lt;/p&gt;
+&lt;pre tabindex=&quot;0&quot; role=&quot;region&quot; aria-label=&quot;Code sample 3&quot;&gt;&lt;code&gt;{&amp;quot;violations&amp;quot;: [{&amp;quot;event&amp;quot;: &amp;quot;socket.getaddrinfo&amp;quot;, &amp;quot;target&amp;quot;: &amp;quot;&#39;example.com&#39;&amp;quot;},
+                {&amp;quot;event&amp;quot;: &amp;quot;socket.connect&amp;quot;, &amp;quot;target&amp;quot;: &amp;quot;(&#39;2606:4700:10::6814:179a&#39;, 80, 0, 0)&amp;quot;}],
+ &amp;quot;clean&amp;quot;: false}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;A real Cloudflare IPv6 address, caught by name and by destination.&lt;/p&gt;
+&lt;p&gt;Then the suite hung.&lt;/p&gt;
+&lt;p&gt;The Ollama workload called &lt;code&gt;chat&lt;/code&gt; with a model that was not downloaded. The Python client stayed on loopback, as designed — but the Ollama daemon, on the other end of that loopback connection, went to the registry to fetch the model. That traffic is real, it left the machine, and the hook could not see it, because it happened in a different process.&lt;/p&gt;
+&lt;p&gt;The instrument I had built to prove that nothing leaves the machine could not see the one thing that left.&lt;/p&gt;
+&lt;p&gt;I removed the model call from the probe and wrote the limitation into both READMEs: the hook audits Python sockets, subprocesses are outside it, and a missing model makes the daemon fetch. The honest claim is narrower than the one I wanted. It is also the only one that survives being checked.&lt;/p&gt;
+&lt;p&gt;The same task turned up a worse defect than the one I had predicted. I expected the delete endpoint to leave SQLite&#39;s &lt;code&gt;-wal&lt;/code&gt; and &lt;code&gt;-shm&lt;/code&gt; files behind. It did. It also left &lt;code&gt;data/private/&lt;/code&gt;, the directory where every uploaded original gets copied before parsing. A button labelled &amp;quot;Delete everything&amp;quot; was deleting the index and keeping the contracts.&lt;/p&gt;
+&lt;h2 id=&quot;what-green-means&quot;&gt;What green means&lt;/h2&gt;
+&lt;p&gt;The bilingual work had the same shape. Three essays needed Spanish versions, and the generator already supported pairs: a shared key, &lt;code&gt;hreflang&lt;/code&gt; alternates, &lt;code&gt;x-default&lt;/code&gt; pointing at the original.&lt;/p&gt;
+&lt;p&gt;The build passed. Then:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;the feed emitted one entry per page, so every translation appeared twice;&lt;/li&gt;
+&lt;li&gt;the index showed an &amp;quot;In Spanish&amp;quot; badge on translations, so an English reader never learned a Spanish version existed;&lt;/li&gt;
+&lt;li&gt;and a pair key that matched nothing failed silently, deleting both the &lt;code&gt;hreflang&lt;/code&gt; and the visible switch while the build stayed green.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;That last one is the same bug as the invented diagnosis, wearing different clothes. I had written in my own plan that broken pairs already failed the build. They did — two articles in the same language, or three in one pair. Not one. A pair with a single half was invisible, and the plan said it was covered, so nobody looked.&lt;/p&gt;
+&lt;p&gt;Now the build fails with the identifier and the slug:&lt;/p&gt;
+&lt;pre tabindex=&quot;0&quot; role=&quot;region&quot; aria-label=&quot;Code sample 4&quot;&gt;&lt;code&gt;build: pair &amp;quot;bogus-test&amp;quot; has only one article; &amp;quot;un-anuncio-mas-silencioso&amp;quot; points at nothing
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;I tested it by breaking a pair on purpose and restoring it. The check that matters is the one you have watched fail.&lt;/p&gt;
+&lt;h2 id=&quot;the-rule&quot;&gt;The rule&lt;/h2&gt;
+&lt;p&gt;Two rules, and they are the same rule.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Measure the owner, not the copy.&lt;/strong&gt; The committed size, not the remembered one. The element that carries the role, not the props object that produced it. The program identifier the tool actually reads, not the filename that looks right. Every one of the five mechanical defects was a copy that had drifted from its owner.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Evidence confirms the symptom, not the explanation.&lt;/strong&gt; A failing command proves that something is wrong. It does not prove that you know what. The invented defect survived because it had a transcript, and a transcript is not a diagnosis.&lt;/p&gt;
+&lt;p&gt;The two defects that cost the most this week were not on my risk list. One was a delete button that kept the originals. The other was a test that could not see the process it was testing. Both were found by running the thing and reading the output, not by predicting what could go wrong.&lt;/p&gt;
+&lt;p&gt;A plan&#39;s list of known risks is a list of guesses with good formatting. It feels like preparation because it is specific. The specificity is the problem: it tells you where to look, and the defect is usually somewhere else.&lt;/p&gt;
+&lt;p&gt;Ask what the artifact does. Not what the document says it does.&lt;/p&gt;
+</content>
+  </entry>
   <entry>
     <title>An agent that cannot invent its sources</title>
     <id>https://gonzoblasco.github.io/a11y-portfolio/writing/an-agent-that-cannot-invent-its-sources.html</id>
