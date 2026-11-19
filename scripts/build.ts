@@ -707,9 +707,10 @@ const rolesEn: Role[] = [
     title: "Freelance software engineer",
     org: "Independent",
     bullets: [
-      "SoporteML: a multi-tenant CRM with AI-assisted replies for Mercado Libre sellers. Unified question inbox, retrieval-assisted suggestions with pgvector, an autopilot with confidence guardrails, team roles and Stripe billing. React, Vite, TypeScript, Supabase.",
-      "Designed the product's own design system: semantic tokens for color, type, spacing, radius, shadow, focus ring and states, with WCAG AA as the criterion of the system.",
-      "Built and maintains an MCP companion server that reports what a screen reader announces for a fragment of HTML.",
+      "Preflight: a pre-launch accessibility gate for AI-built websites. It loads a page, captures what the screen reader actually announces, and returns a fix prompt the builder can execute. React, Vite, TypeScript, Playwright.",
+      "kanam-fixer: asserts that same announcement on two planes — a virtual screen reader in CI, a real one locally — so an accessibility regression fails the build instead of being caught in review. Ships an MCP companion server that reports what a screen reader announces for a fragment of HTML.",
+      "SoporteML: a multi-tenant CRM with AI-assisted replies for Mercado Libre sellers. Unified question inbox, retrieval-assisted suggestions with pgvector, an autopilot with confidence guardrails, team roles and Stripe billing. Pro Motors as first client. React, Vite, TypeScript, Supabase with row-level security.",
+      "Designed that product's design system from scratch: semantic tokens for colour, type, spacing, radius, shadow, focus ring and states, with WCAG AA as the criterion of the system rather than a later audit.",
     ],
   },
   {
@@ -725,18 +726,23 @@ const rolesEn: Role[] = [
   },
   {
     period: "2020 — 2021",
-    title: "Frontend Engineer",
+    title: "Accessibility Engineer (contract)",
     org: "Super7ui",
     bullets: [
-      "Global streaming product. Accessibility was a central function of the role: 200+ fixes verified with screen readers, including JAWS.",
+      "Contracted to lead the remediation audit of Warner Bros. Screeners, the private streaming platform distributors use to review WB content.",
+      "Validated and expanded a previous third-party audit, testing every reported issue across NVDA, VoiceOver and TalkBack instead of trusting the report.",
+      "Resolved 200+ WCAG violations and produced the remediation documentation: proposed solutions, implementation guidance and development-ready specifications.",
+      "Set up the accessibility testing pipeline — axe-core with Playwright in CI — so the fixes stayed fixed.",
     ],
   },
   {
     period: "2016 — 2019",
-    title: "Frontend Developer",
+    title: "Frontend Developer, Accessibility Owner",
     org: "Minutentag / EULAS",
     bullets: [
-      "E-commerce at scale. Reviewed components in Storybook and wrote the technical accessibility requirements.",
+      "E-commerce for Ascena Retail Group — Ann Taylor, LOFT and Lou & Grey — three brands serving 2M+ monthly users.",
+      "Joined the migration to React and grew from frontend developer to the team's accessibility reference.",
+      "Ran A/B experiments in production with Adobe Target, implementing the variants in native JavaScript and testing them against live user segments.",
     ],
   },
 ];
