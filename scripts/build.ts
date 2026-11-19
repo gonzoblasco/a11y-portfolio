@@ -529,9 +529,13 @@ function counterpart(article: Article): Article | undefined {
 function alternatesFor(article: Article): Array<{ lang: string; href: string }> {
   const other = counterpart(article);
   if (!other) return [];
+  // x-default points at the original version so search engines serve one
+  // canonical target to users whose language matches neither variant.
+  const original = article.original_lang ? other : article;
   return [
     { lang: article.lang, href: `${BASE}/writing/${article.slug}.html` },
     { lang: other.lang, href: `${BASE}/writing/${other.slug}.html` },
+    { lang: "x-default", href: `${BASE}/writing/${original.slug}.html` },
   ];
 }
 
