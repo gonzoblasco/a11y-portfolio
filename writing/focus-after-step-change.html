@@ -4,13 +4,13 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Focus after the step changed — Gonzalo Blasco</title>
-  <meta name="description" content="After Next in CreateFullPage, focus jumped to the skip link because the helper inferred visibility from an attribute the component never sets. One querySelector on the real class fixed it." />
+  <meta name="description" content="Pressing Next in CreateFullPage sent focus to the skip link: the helper looked for an inert attribute the component never set. One querySelector for the visible step class fixed it, and a focus assertion that had never existed." />
   <meta name="author" content="Gonzalo Blasco" />
   <link rel="canonical" href="https://gonzoblasco.github.io/a11y-portfolio/writing/focus-after-step-change.html" />
   <meta property="og:site_name" content="Gonzalo Blasco" />
   <meta property="og:type" content="article" />
   <meta property="og:title" content="Focus after the step changed — Gonzalo Blasco" />
-  <meta property="og:description" content="After Next in CreateFullPage, focus jumped to the skip link because the helper inferred visibility from an attribute the component never sets. One querySelector on the real class fixed it." />
+  <meta property="og:description" content="Pressing Next in CreateFullPage sent focus to the skip link: the helper looked for an inert attribute the component never set. One querySelector for the visible step class fixed it, and a focus assertion that had never existed." />
   <meta property="og:url" content="https://gonzoblasco.github.io/a11y-portfolio/writing/focus-after-step-change.html" />
   <meta name="twitter:card" content="summary" />
   <link rel="alternate" type="application/atom+xml" href="../feed.xml" title="Gonzalo Blasco" />
@@ -32,31 +32,50 @@
     <header class="article-head">
       <p class="kicker"><a href="./">Writing</a> <span aria-hidden="true">/</span> <time datetime="2026-09-14">Sep 2026</time></p>
       <h1>Focus after the step changed</h1>
-      <p class="lede">After Next in CreateFullPage, focus jumped to the skip link because the helper inferred visibility from an attribute the component never sets. One querySelector on the real class fixed it.</p>
+      <p class="lede">Pressing Next in CreateFullPage sent focus to the skip link: the helper looked for an inert attribute the component never set. One querySelector for the visible step class fixed it, and a focus assertion that had never existed.</p>
       <p class="article-meta">
         <span>Accessibility</span>
         <span>Note</span>
-        <span>2 min read</span>
+        <span>4 min read</span>
         <span><time datetime="2026-09-14">September 14, 2026</time></span>
         <span>Originally published on LinkedIn</span>
       </p>
     </header>
     <div class="prose">
-<p>The bug report said focus was lost. It was not lost. It went somewhere specific: the &quot;Skip to main content&quot; link at the top of the page.</p>
-<p>In a multi-step <code>CreateFullPage</code>, a keyboard user presses Next and expects focus to land on the first interactive element of the newly visible step. Instead it jumped to the skip link, a nasty regression for anyone navigating with a keyboard, introduced between v2.43 and v2.44.</p>
-<p>The root cause was an inference. A helper called <code>getActiveStep()</code> walked every step in the DOM and returned the first one whose ancestor chain had no <code>[inert]</code> attribute. The idea: &quot;the visible step is the one that is not inert.&quot;</p>
-<p>But <code>CreateFullPageStep</code> never sets <code>inert</code>. It hides non-active steps with <code>display: none</code>, through a CSS modifier class. So the walk always returned the first step in DOM order, no matter which step was actually active.</p>
-<p>Then the hook did the reasonable thing with that wrong step: it found inputs inside it and called <code>.focus()</code>. Calling <code>.focus()</code> on an element inside a <code>display: none</code> subtree is a browser no-op. Focus never moved to the new step, stayed on the Next button or drifted to <code>&lt;body&gt;</code>, and the next tab stop picked it up: the skip link.</p>
-<p>The fix was to stop inferring visibility from an attribute that was never set, and query the class the component already applies to the visible step. One <code>querySelector</code>, O(1), unambiguous.</p>
-<p>The regression test renders two steps with real inputs, activates Next, and asserts that <code>document.activeElement</code> is the input of the visible step, and not the skip link, and not the body. It fails on <code>main</code> (the <code>waitFor</code> times out) and passes with the fix.</p>
-<p>Two things I took from this one:</p>
-<ul>
-<li>&quot;Hidden&quot; has more than one meaning in the DOM. <code>inert</code>, <code>display: none</code>, <code>aria-hidden</code> and <code>visibility</code> each remove an element from a different surface: focus, layout, the accessibility tree, paint. Code that assumes one and gets another fails silently. No error, no exception, just wrong behavior.</li>
-<li>The blast radius was worth spelling out. The same hook is used by <code>CreateTearsheet</code>, whose steps do set <code>inert</code>. Both paths had to keep resolving correctly, so that went into the PR description before review, not after.</li>
-</ul>
-<p>One note on the process: the maintainer flagged the component as heading toward deprecation, with an example pattern as the replacement. I kept the fix anyway. It is one line in a shared hook plus a test, no new API surface, and the bug is live for anyone on the published package today. Two maintainers approved it and it merged.</p>
-<p>If you have a focus helper that decides &quot;which container is visible&quot; by looking for a marker attribute, check that the component actually sets that marker. That unverified assumption is the whole bug.</p>
-<p>PR: <a href="https://github.com/carbon-design-system/ibm-products/pull/9878">https://github.com/carbon-design-system/ibm-products/pull/9878</a></p>
+<p>The bug report said focus was lost. It was not. It was delivered, with confidence, to the one element that undoes the step you just took.</p>
+<p>A keyboard user presses Next in a multi-step form and expects to land inside the step that just appeared. In <code>CreateFullPage</code>, focus went to the &quot;Skip to main content&quot; link at the top of the page instead.</p>
+<p>Picture the screen reader announcement. The user activates Next, the form swaps content, and what they hear is a link at the top of the document whose only job is to jump past the navigation. Nothing announces the new step. Nothing says the form moved on.</p>
+<p>A keyboard-only user pays in keystrokes. From the skip link, the way back to the form is tab, tab, tab through everything above it. The user who cannot see the page has no way to learn the new step ever rendered, and the announcement actively tells them they are at the beginning.</p>
+<p>Same bug, two bills.</p>
+<h2 id="the-step-that-was-never-inert">The step that was never inert</h2>
+<p>A helper called <code>getActiveStep()</code> walked every step in the DOM and returned the first one whose ancestor chain carried no <code>[inert]</code> attribute. In the abstract the logic is sound: the visible step is the one that is not inert.</p>
+<p><code>CreateFullPageStep</code> never sets <code>inert</code>. It hides the inactive steps with a class, <code>__step--hidden-step</code>, which is <code>display: none</code>, and marks the active one with <code>__step--visible-step</code>. So the walk returned the first step in DOM order every time, whichever step was actually active.</p>
+<p>The hook then did a reasonable thing with the wrong container. <code>getFocusableElement</code> queried it for <code>button, input, select, textarea, a[href]</code>, took the first enabled match, and called <code>.focus()</code> after a 10 ms wait.</p>
+<p>That wait mattered later. <code>TearsheetShell</code> needs a timer to claim focus during a stack change, so the focus call never runs on the same tick as the render.</p>
+<p>The element it found was real. <code>querySelectorAll</code> finds elements inside a <code>display: none</code> subtree without complaint. <code>.focus()</code> on one of them is a browser no-op.</p>
+<p>Find the wrong step, find a genuine input inside it, ask the browser to focus something it cannot focus, get silence. Focus stayed on the Next button or fell to <code>&lt;body&gt;</code>, and the next tab stop collected it.</p>
+<h2 id="why-the-tests-were-green">Why the tests were green</h2>
+<p>The file had 27 tests before mine. Not one of them read <code>document.activeElement</code>. They asserted that step two became visible, that <code>onNext</code> was called, that the progress indicator moved. The state was covered, the side effect was not.</p>
+<p>The helper was also right just often enough to hide. When the active step is the first in DOM order, &quot;the first step without <code>inert</code>&quot; and &quot;the visible step&quot; are the same element. Any test that stayed on step one, or supplied a working <code>firstFocusElement</code> selector, got the correct answer by accident.</p>
+<p>And the bug lived behind a timer. Even a test that watched focus would have needed to wait for it. Async with no assertion is invisible twice.</p>
+<p>This is the part I did not appreciate until the test failed: a green suite does not mean the behavior was checked. It means the assertions that exist passed. Focus management was simply not among them.</p>
+<h2 id="query-the-thing-itself">Query the thing itself</h2>
+<p>The fix is one line, and it is not clever. Stop inferring visibility and read the class the component already writes.</p>
+<pre tabindex="0" role="region" aria-label="Code sample"><code class="language-js">const getActiveStep = () =&gt; {
+  return document.querySelector(`${blockClass}__step--visible-step`);
+};
+</code></pre>
+<p>The visible-step class is how the component decides what a user sees. Reading it back is not a shortcut around the abstraction, it is the same source of truth the render already trusts. It is also one query instead of a walk up every ancestor of every step.</p>
+<p>There is a trap in that selector worth naming. <code>blockClass</code> already ends in <code>__step</code>, so appending <code>__step--visible-step</code> produces <code>...__step__step--visible-step</code>. I left the doubled form in a comment in the hook so the next person does not tidy it away.</p>
+<p>I kept the <code>isNotContainedInInert</code> check. <code>useCreateComponentFocus</code> is shared with <code>CreateTearsheet</code>, whose steps do set <code>inert</code> on the outer element as well as the visible class. Both paths still resolve, and I put that blast radius in the PR description before review rather than after.</p>
+<p>The regression test renders two steps with real inputs, clicks Next, and asserts that <code>document.activeElement</code> is the input inside the visible step, and is not the skip link, and is not the body. It fails on <code>main</code> with a <code>waitFor</code> timeout. The suite went to 28 of 28.</p>
+<h2 id="the-deprecation-review">The deprecation review</h2>
+<p>The first review approved the change and told me the component is on the deprecation list. There is an example pattern in StackBlitz now, and the advice was to copy that into the application and maintain the fix there.</p>
+<p>That is a fair argument in a roadmap sense, and it is not the one that settles this. The bug is live on the published package for everyone in the range the issue tested, 2.44 through 2.80. The change is one line in a shared hook plus a test, with no new API surface. Someone who upgrades today gets working focus without migrating first.</p>
+<p>I said that in the thread and offered to open a separate PR against the example if the pattern turned out to carry the same step-change logic. Two maintainers approved it and it merged on 14 September.</p>
+<h2 id="the-rule">The rule</h2>
+<p>A helper that decides what is visible has to read what the component actually writes. An attribute nobody sets is not a weak signal, it is a constant, and a constant will return the first element forever without ever throwing.</p>
+<p>The second rule is about the test. If the behavior is focus, assert on <code>document.activeElement</code>. A test that only checks which step carries the visible class will stay green while every keyboard user lands on the skip link to start over.</p>
 
     </div>
     <footer class="article-foot">
