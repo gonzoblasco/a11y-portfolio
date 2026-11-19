@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Gonzalo Blasco – Technical Magazine</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600&family=Newsreader:wght@400&family=IBM+Plex+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+html{font-size:16px;}
+body{margin:0;padding:2rem;line-height:1.5;background:#f6f2ea;color:#111;font-family:"Newsreader",serif;}
+h1{font-family:"Fraunces",serif;font-size:2.5rem;margin:0;}
+h2{font-size:1.2rem;margin:0.5rem 0;}
+a{color:#8b2500;text-decoration:none;}
+a:focus-visible{outline:2px solid #8b2500;}
+.skip-link{position:absolute;top:-40px;left:0;background:#fff;color:#000;padding:8px;z-index:100;}
+.skip-link:focus-visible{top:0;}
+.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:1rem;}
+.header{grid-column:span 12;display:flex;justify-content:space-between;align-items:center;}
+.section{grid-column:span 12;}
+.card{grid-column:span 12;}
+.meta{font-family:"IBM Plex Mono",monospace;font-size:0.9rem;}
+</style>
+</head>
+<body>
+<a href="#main" class="skip-link">Skip to main content</a>
+<div class="grid" id="main" role="main">
+  <header class="header">
+    <h1>Gonzalo Blasco</h1>
+    <nav>
+      <a href="#">Read the notes →</a>
+      <a href="mailto:gonzoblasco@icloud.com">Get in touch</a>
+    </nav>
+  </header>
+  <section class="section meta">
+    <p>Accessibility engineer. I fix what a screen reader actually says, not what the markup declares.</p>
+    <p>12 merged PRs across React Spectrum, Carbon, Astryx, MUI and shadcn/ui.</p>
+  </section>
+  <article class="card" style="border-top:1px solid;">
+    <h2>01 / WRITING</h2>
+    <h3>The Quieter Announcement</h3>
+    <p>Nov 2026</p>
+    <p>I fixed a VoiceOver bug by deleting an announcement. Every linter passed while the experience got worse.</p>
+  </article>
+  <article class="card" style="border-top:1px solid;">
+    <h2>02 / WORK</h2>
+    <h3>Preflight</h3>
+    <p>A pre-launch accessibility gate that reads what a screen reader announces and returns a repair prompt your builder can execute.</p>
+  </article>
+</div>
+</body>
+</html>

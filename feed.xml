@@ -11,6 +11,74 @@
     <uri>https://gonzoblasco.github.io/a11y-portfolio/</uri>
   </author>
   <entry>
+    <title>An agent that cannot invent its sources</title>
+    <id>https://gonzoblasco.github.io/a11y-portfolio/writing/an-agent-that-cannot-invent-its-sources.html</id>
+    <link href="https://gonzoblasco.github.io/a11y-portfolio/writing/an-agent-that-cannot-invent-its-sources.html" />
+    <category term="engineering" />
+    <updated>2026-11-18T12:00:00.000Z</updated>
+    <summary>Most retrieval demos fall apart the first time the model invents a page number. The fix is not a better model — it is a verifier the model cannot talk its way past.</summary>
+    <content type="html">&lt;p&gt;Every retrieval demo looks the same until it is wrong.&lt;/p&gt;
+&lt;p&gt;You upload PDFs, split them into chunks, embed, search by similarity, and pass the fragments to the model. It works. Then the model writes:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&amp;quot;The contract expires on December 15, according to clause 4.2, page 3.&amp;quot;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Clause 4.2 says something else. Page 3 does not exist. The model did not lie on purpose — it filled a gap with something that sounded probable. And since nobody checks, the wrong answer ships.&lt;/p&gt;
+&lt;p&gt;That is not a retrieval problem. It is a &lt;strong&gt;verification&lt;/strong&gt; problem, and you do not fix it with a better model.&lt;/p&gt;
+&lt;h2 id=&quot;the-verifier-has-to-be-independent&quot;&gt;The verifier has to be independent&lt;/h2&gt;
+&lt;p&gt;The answer comes back as structured data: a &lt;code&gt;chunk_id&lt;/code&gt; and a literal quote. The application does not trust the model. It checks the quote against the chunk.&lt;/p&gt;
+&lt;pre tabindex=&quot;0&quot; role=&quot;region&quot; aria-label=&quot;Code sample&quot;&gt;&lt;code class=&quot;language-python&quot;&gt;def verify_citations(citations, chunks_by_id):
+    valid, invalid = [], []
+    for cit in citations:
+        chunk = chunks_by_id.get(cit[&amp;quot;chunk_id&amp;quot;], &amp;quot;&amp;quot;)
+        if _normalize(cit[&amp;quot;quote&amp;quot;]) in _normalize(chunk):
+            valid.append(cit)
+        else:
+            invalid.append(cit)
+    return valid, invalid
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;A citation is valid only if its quote is a substring of the chunk, after whitespace normalization. If it fails, the model gets one more attempt. If it fails again, the answer becomes a refusal.&lt;/p&gt;
+&lt;p&gt;This is not another language model checking the first one. It is string containment. Anyone can reproduce it by opening the database, and that is the point: &lt;strong&gt;the verifier must not share a failure mode with the thing it verifies.&lt;/strong&gt;&lt;/p&gt;
+&lt;h2 id=&quot;three-times-it-almost-went-wrong&quot;&gt;Three times it almost went wrong&lt;/h2&gt;
+&lt;p&gt;This part is usually left out.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;The embeddings were fake and the tests were green.&lt;/strong&gt; The first version called &lt;code&gt;ollama embed&lt;/code&gt;, a CLI subcommand that does not exist. Every call failed and silently fell back to a three-dimension mock vector. The tests passed because they checked structure, not values. The fix was not to improve the mock — it was to remove the fallback. A system that degrades silently is worse than one that breaks loudly.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;The vector search was not vector search.&lt;/strong&gt; &lt;code&gt;sqlite-vec&lt;/code&gt; was never loaded, so &lt;code&gt;chunks_vec&lt;/code&gt; was an ordinary table and the nearest-neighbour query was brute force. It worked with thirteen chunks and would have collapsed with thirteen hundred. I found it by reading &lt;code&gt;sqlite_master&lt;/code&gt; instead of trusting the code that created it.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;A delegate reported files it never wrote.&lt;/strong&gt; Three times a subagent returned a delivery summary for a module that did not exist on disk. The lesson is procedural, not technical: run the repository before accepting a report. If the file is not there, the work is not there.&lt;/p&gt;
+&lt;h2 id=&quot;the-model-is-not-the-product&quot;&gt;The model is not the product&lt;/h2&gt;
+&lt;p&gt;Everyone asks which model. The honest answer is that it matters less than the measurement.&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;&lt;th&gt;Model&lt;/th&gt;&lt;th align=&quot;right&quot;&gt;Accuracy on 18 questions&lt;/th&gt;&lt;th align=&quot;right&quot;&gt;Median latency&lt;/th&gt;&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;&lt;td&gt;12B, local&lt;/td&gt;&lt;td align=&quot;right&quot;&gt;&lt;strong&gt;18/18&lt;/strong&gt;&lt;/td&gt;&lt;td align=&quot;right&quot;&gt;49.5 s&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;4B, local&lt;/td&gt;&lt;td align=&quot;right&quot;&gt;4/18&lt;/td&gt;&lt;td align=&quot;right&quot;&gt;6.8 s&lt;/td&gt;&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;The small model is seven times faster and four and a half times less accurate. Fine for a demo. Not fine for a contract.&lt;/p&gt;
+&lt;p&gt;One result nobody expects: a 9B model was &lt;strong&gt;slower&lt;/strong&gt; than the 12B. It kept a 262k context resident and did not finish a single answer in ninety seconds. Parameter count is not latency. Measure on your machine, with your corpus, with your questions.&lt;/p&gt;
+&lt;h2 id=&quot;what-the-model-should-not-do&quot;&gt;What the model should not do&lt;/h2&gt;
+&lt;p&gt;One question asked for the sum of two contract totals. The 12B failed it every time: it cannot add. The fix was eight lines of deterministic code. The agent retrieves and composes; the calculator sums.&lt;/p&gt;
+&lt;p&gt;The same principle, one layer down: &lt;strong&gt;anything that can be verified by code should be, and anything left to the model should be stated as a guess.&lt;/strong&gt;&lt;/p&gt;
+&lt;h2 id=&quot;what-local-first-means-as-a-claim-you-can-test&quot;&gt;What local-first means as a claim you can test&lt;/h2&gt;
+&lt;p&gt;Three proofs, not three promises:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Zero sockets.&lt;/strong&gt; During transcription and query, &lt;code&gt;lsof&lt;/code&gt; shows no outbound connection.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;It can be deleted.&lt;/strong&gt; One button removes index, embeddings and drafts, verified on the filesystem.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;It is not rented.&lt;/strong&gt; In ten years the archive opens without a subscription.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;And the consequence that is usually skipped: if the data does not leave, nothing comes in either. The model is local because privacy is the architecture, not a setting.&lt;/p&gt;
+&lt;h2 id=&quot;what-this-project-does-not-do&quot;&gt;What this project does not do&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;It does not read scanned PDFs. It refuses them with an explicit message.&lt;/li&gt;
+&lt;li&gt;It is not fast. Fifty seconds per answer with a 12B model.&lt;/li&gt;
+&lt;li&gt;It does not scale. One person, one machine, one corpus.&lt;/li&gt;
+&lt;li&gt;It does not have an independent benchmark. The eighteen questions were written by the person who wrote the system.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Saying this does not weaken the project. It makes it usable: a reader knows what they are getting, and a reviewer knows what is still missing.&lt;/p&gt;
+&lt;p&gt;The repository, including the failure log and the evaluation data, is at &lt;a href=&quot;https://github.com/gonzoblasco/localdoc-agent&quot;&gt;localdoc-agent&lt;/a&gt;. Its sibling, about family voices instead of contracts, is &lt;a href=&quot;https://github.com/gonzoblasco/memoria-oral&quot;&gt;memoria-oral&lt;/a&gt;.&lt;/p&gt;
+</content>
+  </entry>
+  <entry>
     <title>The challenge was closed before we started</title>
     <id>https://gonzoblasco.github.io/a11y-portfolio/writing/the-challenge-was-already-over.html</id>
     <link href="https://gonzoblasco.github.io/a11y-portfolio/writing/the-challenge-was-already-over.html" />
@@ -154,6 +222,74 @@ Reader must announce: Re-run Preflight: the contrast rule reports no failing ele
 &lt;h2 id=&quot;one-engine-several-surfaces&quot;&gt;One engine, several surfaces&lt;/h2&gt;
 &lt;p&gt;The same engine runs behind the CLI, the GitHub Action, the web report and the MCP server. The MCP tools are read-only by design, so a hosted builder can call them without an approval prompt. The score, the rule copy and the limits travel with every observation. A surface that recomputes the score is a bug, not a feature.&lt;/p&gt;
 &lt;p&gt;The point of the architecture is not elegance. It is that the thing you run locally and the thing a builder calls remotely cannot disagree about what the page says.&lt;/p&gt;
+</content>
+  </entry>
+  <entry>
+    <title>Un agente que no puede inventar sus fuentes</title>
+    <id>https://gonzoblasco.github.io/a11y-portfolio/writing/un-agente-que-no-puede-inventar-sus-fuentes.html</id>
+    <link href="https://gonzoblasco.github.io/a11y-portfolio/writing/un-agente-que-no-puede-inventar-sus-fuentes.html" />
+    <category term="engineering" />
+    <updated>2026-11-18T12:00:00.000Z</updated>
+    <summary>Casi todos los demos de retrieval se rompen la primera vez que el modelo inventa un número de página. No lo arregla un modelo mejor: lo arregla un verificador al que el modelo no puede convencer.</summary>
+    <content type="html">&lt;p&gt;Todo demo de recuperación de información se ve igual hasta que se equivoca.&lt;/p&gt;
+&lt;p&gt;Subís PDFs, los partís en fragmentos, los convertís en embeddings, buscás por similitud y le pasás los fragmentos al modelo. Funciona. Después el modelo escribe:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;«El contrato vence el 15 de diciembre, según la cláusula 4.2, página 3.»&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;La cláusula 4.2 dice otra cosa. La página 3 no existe. El modelo no mintió a propósito: rellenó un hueco con algo que sonaba probable. Y como nadie verifica, la respuesta incorrecta sale igual.&lt;/p&gt;
+&lt;p&gt;Eso no es un problema de recuperación. Es un problema de &lt;strong&gt;verificación&lt;/strong&gt;, y no se arregla con un modelo mejor.&lt;/p&gt;
+&lt;h2 id=&quot;el-verificador-tiene-que-ser-independiente&quot;&gt;El verificador tiene que ser independiente&lt;/h2&gt;
+&lt;p&gt;La respuesta vuelve como datos estructurados: un identificador de fragmento y una cita textual. La aplicación no le cree al modelo. Compara la cita contra el fragmento.&lt;/p&gt;
+&lt;pre tabindex=&quot;0&quot; role=&quot;region&quot; aria-label=&quot;Code sample&quot;&gt;&lt;code class=&quot;language-python&quot;&gt;def verify_citations(citations, chunks_by_id):
+    valid, invalid = [], []
+    for cit in citations:
+        chunk = chunks_by_id.get(cit[&amp;quot;chunk_id&amp;quot;], &amp;quot;&amp;quot;)
+        if _normalize(cit[&amp;quot;quote&amp;quot;]) in _normalize(chunk):
+            valid.append(cit)
+        else:
+            invalid.append(cit)
+    return valid, invalid
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Una cita es válida solo si su texto es una subcadena del fragmento, después de normalizar los espacios. Si falla, el modelo tiene un intento más. Si vuelve a fallar, la respuesta se convierte en una negativa.&lt;/p&gt;
+&lt;p&gt;Esto no es otro modelo revisando al primero. Es contención de cadenas. Cualquiera lo reproduce abriendo la base, y eso es justamente el punto: &lt;strong&gt;el verificador no puede compartir el modo de falla de lo que verifica.&lt;/strong&gt;&lt;/p&gt;
+&lt;h2 id=&quot;tres-veces-que-casi-sale-mal&quot;&gt;Tres veces que casi sale mal&lt;/h2&gt;
+&lt;p&gt;Esta parte suele quedar afuera.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Los embeddings eran falsos y los tests estaban en verde.&lt;/strong&gt; La primera versión llamaba a &lt;code&gt;ollama embed&lt;/code&gt;, un subcomando que no existe. Cada llamada fallaba y caía, en silencio, a un vector simulado de tres dimensiones. Los tests pasaban porque revisaban estructura, no valores. El arreglo no fue mejorar el simulado: fue eliminar el respaldo. Un sistema que degrada en silencio es peor que uno que se rompe fuerte.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;La búsqueda vectorial no era vectorial.&lt;/strong&gt; &lt;code&gt;sqlite-vec&lt;/code&gt; nunca se cargaba, así que &lt;code&gt;chunks_vec&lt;/code&gt; era una tabla común y la consulta de vecinos era fuerza bruta. Funcionaba con trece fragmentos y se habría caído con mil trescientos. Lo encontré leyendo &lt;code&gt;sqlite_master&lt;/code&gt; en vez de confiar en el código que la creaba.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Un delegado reportó archivos que nunca escribió.&lt;/strong&gt; Tres veces un subagente devolvió un resumen de entrega para un módulo que no existía en disco. La lección es de proceso, no de técnica: correr el repositorio antes de aceptar un informe. Si el archivo no está, el trabajo no está.&lt;/p&gt;
+&lt;h2 id=&quot;el-modelo-no-es-el-producto&quot;&gt;El modelo no es el producto&lt;/h2&gt;
+&lt;p&gt;Todos preguntan qué modelo. La respuesta honesta es que importa menos que la medición.&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;&lt;th&gt;Modelo&lt;/th&gt;&lt;th align=&quot;right&quot;&gt;Exactitud sobre 18 preguntas&lt;/th&gt;&lt;th align=&quot;right&quot;&gt;Latencia mediana&lt;/th&gt;&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;&lt;td&gt;12B local&lt;/td&gt;&lt;td align=&quot;right&quot;&gt;&lt;strong&gt;18/18&lt;/strong&gt;&lt;/td&gt;&lt;td align=&quot;right&quot;&gt;49,5 s&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;4B local&lt;/td&gt;&lt;td align=&quot;right&quot;&gt;4/18&lt;/td&gt;&lt;td align=&quot;right&quot;&gt;6,8 s&lt;/td&gt;&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;El modelo chico es siete veces más rápido y cuatro veces y media menos exacto. Sirve para un demo. No sirve para un contrato.&lt;/p&gt;
+&lt;p&gt;Un resultado que nadie espera: un modelo de 9B fue &lt;strong&gt;más lento&lt;/strong&gt; que el de 12B. Mantuvo un contexto de 262k en memoria y no terminó una sola respuesta en noventa segundos. La cantidad de parámetros no es la latencia. Se mide en tu máquina, con tu corpus y tus preguntas.&lt;/p&gt;
+&lt;h2 id=&quot;lo-que-el-modelo-no-deberia-hacer&quot;&gt;Lo que el modelo no debería hacer&lt;/h2&gt;
+&lt;p&gt;Una pregunta pedía la suma de dos totales de contrato. El 12B falló siempre: no suma. El arreglo fueron ocho líneas de código determinístico. El agente recupera y redacta; la calculadora suma.&lt;/p&gt;
+&lt;p&gt;El mismo principio, una capa más abajo: &lt;strong&gt;todo lo que se puede verificar con código se verifica con código, y lo que queda en manos del modelo se declara como suposición.&lt;/strong&gt;&lt;/p&gt;
+&lt;h2 id=&quot;que-significa-local-first-cuando-es-una-afirmacion-comprobable&quot;&gt;Qué significa local-first cuando es una afirmación comprobable&lt;/h2&gt;
+&lt;p&gt;Tres pruebas, no tres promesas:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Cero sockets.&lt;/strong&gt; Durante la transcripción y la consulta, &lt;code&gt;lsof&lt;/code&gt; no muestra ninguna conexión saliente.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Se puede borrar.&lt;/strong&gt; Un botón elimina índice, embeddings y borradores, verificado en el sistema de archivos.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;No se alquila.&lt;/strong&gt; En diez años el archivo se abre sin suscripción.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Y la consecuencia que suele omitirse: si los datos no salen, tampoco entran. El modelo es local porque la privacidad es la arquitectura, no una opción.&lt;/p&gt;
+&lt;h2 id=&quot;lo-que-este-proyecto-no-hace&quot;&gt;Lo que este proyecto no hace&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;No lee PDFs escaneados. Los rechaza con un mensaje explícito.&lt;/li&gt;
+&lt;li&gt;No es rápido. Cincuenta segundos por respuesta con un modelo de 12B.&lt;/li&gt;
+&lt;li&gt;No escala. Una persona, una máquina, un corpus.&lt;/li&gt;
+&lt;li&gt;No tiene un benchmark independiente. Las dieciocho preguntas las escribió la misma persona que escribió el sistema.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Decir esto no debilita el proyecto. Lo vuelve usable: quien lo lee sabe qué recibe, y quien lo revisa sabe qué falta.&lt;/p&gt;
+&lt;p&gt;El repositorio, con el registro de fallas y los datos de la evaluación, está en &lt;a href=&quot;https://github.com/gonzoblasco/localdoc-agent&quot;&gt;localdoc-agent&lt;/a&gt;. Su hermano, sobre voces de familia en vez de contratos, es &lt;a href=&quot;https://github.com/gonzoblasco/memoria-oral&quot;&gt;memoria-oral&lt;/a&gt;.&lt;/p&gt;
 </content>
   </entry>
   <entry>

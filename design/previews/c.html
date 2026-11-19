@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Gonzalo Blasco – Signal High</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black:wght@800&family=Public+Sans:wght@400&display=swap" rel="stylesheet">
+<style>
+html{font-size:16px;}
+body{margin:0;padding:2rem;background:#ffffff;color:#000000;font-family:"Public Sans",sans-serif;}
+h1{font-family:"Archivo Black",sans-serif;font-size:3rem;margin:0;line-height:1;}
+h2{font-weight:800;margin-top:1rem;}
+a{color:#ff0000;text-decoration:none;}
+a:focus-visible{outline:2px solid #ff0000;}
+.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:0.5rem;border:4px solid #000;}
+.skip-link{position:absolute;top:-40px;left:0;background:#fff;color:#000;padding:8px;z-index:100;}
+.skip-link:focus-visible{top:0;}
+.meta{font-size:0.9rem;color:#555;grid-column:span 12;}
+section{grid-column:span 12;}
+</style>
+</head>
+<body>
+<a href="#main" class="skip-link">Skip to main content</a>
+<div class="grid" id="main" role="main">
+  <h1>GONZALO BLASCO</h1>
+  <h2>ACCESSIBILITY ENGINEER</h2>
+  <p class="meta">I fix what a screen reader actually says, not what the markup declares.</p>
+  <a href="#" class="cta">Read the notes ↗</a>
+  <a href="mailto:gonzoblasco@icloud.com" class="cta">Get in touch ↗</a>
+  <h2>01 THE QUIETER ANNOUNCEMENT / NOV 2026</h2>
+  <p>I fixed a VoiceOver bug by deleting an announcement.</p>
+  <h2>02 PREFLIGHT / PRODUCT</h2>
+  <p>A pre-launch accessibility gate that reads what a screen reader announces.</p>
+  <p class="meta">12 merged PRs across React Spectrum, Carbon, Astryx, MUI and shadcn/ui.</p>
+</div>
+</body>
+</html>

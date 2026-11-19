@@ -4,6 +4,11 @@
  * Reads content/writing/*.md, renders with Bun's built-in markdown,
  * and writes plain HTML to the repository root. No dependencies.
  *
+ * Bilingual pairs: two files that share the same `pair` key and differ in
+ * `lang` are treated as translations of each other. Each page links to its
+ * counterpart and declares hreflang alternates so search engines do not treat
+ * them as duplicates.
+ *
  * Run: bun scripts/build.ts
  */
 
@@ -57,6 +62,8 @@ type Meta = {
   source?: string;
   source_url?: string;
   original_lang?: string;
+  translation_of?: string;
+  pair?: string;
 };
 
 type Article = Meta & { body: string; html: string; words: number };
@@ -224,6 +231,8 @@ const articles: Article[] = readdirSync(writingDir)
       source: meta.source as string | undefined,
       source_url: meta.source_url as string | undefined,
       original_lang: meta.original_lang as string | undefined,
+  translation_of: meta.translation_of as string | undefined,
+      pair: (meta.pair as string) || undefined,
       body: content,
       html: renderMarkdown(content),
       words,
@@ -245,6 +254,7 @@ function nav(root: string, current: string): string {
     ["Writing", `${root}writing/`, "writing"],
     ["Work", `${root}writing/preflight.html`, "preflight"],
     ["About", `${root}about/`, "about"],
+    ["Profile", `${root}profile/`, "profile"],
   ];
   return `<nav aria-label="Sections"><ul>${items
     .map(([label, href, key]) => `<li><a href="${href}"${current === key ? ' aria-current="page"' : ""}>${label}</a></li>`)
@@ -279,10 +289,14 @@ function page(options: {
   bodyClass?: string;
   ogType?: string;
   lang?: string;
+  alternates?: Array<{ lang: string; href: string }>;
 }): string {
-  const { root, current, title, description, canonical, body, bodyClass = "", ogType = "website", lang = "en" } = options;
+  const { root, current, title, description, canonical, body, bodyClass = "", ogType = "website", lang = "en", alternates = [] } = options;
   const canonicalTag = canonical ? `\n  <link rel="canonical" href="${canonical}" />` : "";
   const ogUrl = canonical ? `\n  <meta property="og:url" content="${canonical}" />` : "";
+  const alternateTags = alternates
+    .map((alt) => `\n  <link rel="alternate" hreflang="${alt.lang}" href="${alt.href}" />`)
+    .join("");
   return `<!DOCTYPE html>
 <html lang="${lang}">
 <head>
@@ -291,6 +305,7 @@ function page(options: {
   <title>${escapeHtml(title)}</title>
   <meta name="description" content="${escapeHtml(description)}" />
   <meta name="author" content="Gonzalo Blasco" />${canonicalTag}
+${alternateTags}
   <meta property="og:site_name" content="${SITE}" />
   <meta property="og:type" content="${ogType}" />
   <meta property="og:title" content="${escapeHtml(title)}" />
@@ -491,6 +506,35 @@ ${rows}
 
 /* articles */
 
+// Index translations by pair key so each article can link to its counterpart.
+const pairs = new Map<string, Article[]>();
+for (const article of articles) {
+  if (!article.pair) continue;
+  const list = pairs.get(article.pair) || [];
+  list.push(article);
+  pairs.set(article.pair, list);
+}
+for (const [key, list] of pairs) {
+  if (list.length > 2) fail(`pair "${key}" has ${list.length} articles; expected at most 2`);
+  if (new Set(list.map((a) => a.lang)).size !== list.length) {
+    fail(`pair "${key}" has two articles in the same language`);
+  }
+}
+
+function counterpart(article: Article): Article | undefined {
+  if (!article.pair) return undefined;
+  return (pairs.get(article.pair) || []).find((a) => a.slug !== article.slug);
+}
+
+function alternatesFor(article: Article): Array<{ lang: string; href: string }> {
+  const other = counterpart(article);
+  if (!other) return [];
+  return [
+    { lang: article.lang, href: `${BASE}/writing/${article.slug}.html` },
+    { lang: other.lang, href: `${BASE}/writing/${other.slug}.html` },
+  ];
+}
+
 for (const article of articles) {
   const root = "../";
   const isSpanish = article.lang === "es";
@@ -508,6 +552,15 @@ for (const article of articles) {
       ? `<span>PR <a href="https://github.com/${article.repo}/pull/${article.pr}">${article.repo}#${article.pr}</a></span>`
       : "";
 
+  // Bilingual pair: a visible switch to the counterpart, labelled in the
+  // target language so the reader knows what they will get.
+  const other = counterpart(article);
+  const translationLink = other
+    ? `<a class="translation-switch" href="${other.slug}.html" hreflang="${other.lang}" lang="${other.lang}">${
+        other.lang === "es" ? "Leer en español" : "Read in English"
+      } <span aria-hidden="true">→</span></a>`
+    : "";
+
   const articleBody = `<main id="main">
   <article class="article wrap">
     <header class="article-head">
@@ -521,6 +574,7 @@ for (const article of articles) {
         <span><time datetime="${article.date}">${formatLongDate(article.date)}</time></span>
         ${sourceLine}
       </p>
+      ${translationLink ? `<p class="translation">${translationLink}</p>` : ""}
     </header>
     <div class="prose"${isSpanish ? ' lang="es"' : ""}>
 ${article.html}
@@ -543,6 +597,7 @@ ${article.html}
       body: articleBody,
       ogType: "article",
       lang: article.lang,
+      alternates: alternatesFor(article),
     })
   );
 }
@@ -601,6 +656,129 @@ writeFile(
       "Software engineer focused on accessibility. Ten years building software, five in accessibility roles, twelve merged pull requests in design systems.",
     canonical: `${BASE}/about/`,
     body: aboutBody,
+  })
+);
+
+/* profile: the professional record, in both languages */
+
+type Role = {
+  period: string;
+  title: string;
+  org: string;
+  bullets: string[];
+};
+
+const rolesEn: Role[] = [
+  {
+    period: "2025 — present",
+    title: "Freelance software engineer",
+    org: "Independent",
+    bullets: [
+      "SoporteML: a multi-tenant CRM with AI-assisted replies for Mercado Libre sellers. Unified question inbox, retrieval-assisted suggestions with pgvector, an autopilot with confidence guardrails, team roles and Stripe billing. React, Vite, TypeScript, Supabase.",
+      "Designed the product's own design system: semantic tokens for color, type, spacing, radius, shadow, focus ring and states, with WCAG AA as the criterion of the system.",
+      "Built and maintains an MCP companion server that reports what a screen reader announces for a fragment of HTML.",
+    ],
+  },
+  {
+    period: "2021 — 2025",
+    title: "Senior Frontend Engineer, Accessibility Lead",
+    org: "EY (Ernst & Young)",
+    bullets: [
+      "Audited and remediated 50+ enterprise React components to WCAG 2.2 AA in EY Motif: keyboard navigation, screen reader support, focus management and contrast, verified with Axe DevTools, Lighthouse, JAWS and NVDA.",
+      "Accessibility reference for several product teams: reviewed components in Storybook before implementation, defined component-level standards and wrote the technical requirements embedded in UI stories.",
+      "Led a team of three engineers building an AI financial-intelligence platform in Next.js, from architecture to production.",
+      "Worked inside a cross-regional matrix team (US / India) across several SDLC phases in parallel agile squads.",
+    ],
+  },
+  {
+    period: "2020 — 2021",
+    title: "Frontend Engineer",
+    org: "Super7ui",
+    bullets: [
+      "Global streaming product. Accessibility was a central function of the role: 200+ fixes verified with screen readers, including JAWS.",
+    ],
+  },
+  {
+    period: "2016 — 2019",
+    title: "Frontend Developer",
+    org: "Minutentag / EULAS",
+    bullets: [
+      "E-commerce at scale. Reviewed components in Storybook and wrote the technical accessibility requirements.",
+    ],
+  },
+];
+
+function timeline(roles: Role[], lang: string): string {
+  return roles
+    .map(
+      (role) => `<article class="role" lang="${lang}">
+        <p class="role-period">${role.period}</p>
+        <h2>${escapeHtml(role.title)}</h2>
+        <p class="role-org">${escapeHtml(role.org)}</p>
+        <ul>
+${role.bullets.map((b) => `          <li>${escapeHtml(b)}</li>`).join("\n")}
+        </ul>
+      </article>`
+    )
+    .join("\n");
+}
+
+const profileBody = `<main id="main">
+  <div class="wrap">
+    <header class="page-head">
+      <p class="kicker">Profile</p>
+      <h1>Ten years of software, five of them in accessibility.</h1>
+      <p class="lede">Software engineer based in Buenos Aires, working remotely. The through-line is behaviour: what a user interface actually does once assistive technology is attached, not what the markup claims.</p>
+    </header>
+
+    <div class="page-body">
+      <div class="prose-col prose">
+        <h2>Experience</h2>
+        ${timeline(rolesEn, "en")}
+
+        <h2>Open source</h2>
+        <p>Twelve merged pull requests across design systems: Adobe React Spectrum, IBM Carbon, IBM Products, Meta Astryx, MUI Base UI, MUI Material UI and shadcn/ui. The fixes are usually small and structural — an ARIA contract, a focus path, an announcement that competes with one the platform already makes.</p>
+
+        <h2>Tools</h2>
+        <p>TypeScript, React, Next.js, Node.js, PostgreSQL and Supabase, Playwright, Vitest, Biome, Tailwind, Storybook, Zod, Docker, GitHub Actions. Local model inference with Ollama; Python for tooling and evaluation.</p>
+
+        <h2>Languages</h2>
+        <p>Spanish native; English B2+ (working proficiency, currently studying toward C1).</p>
+      </div>
+
+      <aside class="side-col" aria-label="Contact and links">
+        <h2>Contact</h2>
+        <ul>
+          <li><a href="mailto:${EMAIL}">${EMAIL}</a></li>
+          <li><a href="${GITHUB}">github.com/gonzoblasco</a></li>
+          <li><a href="${LINKEDIN}">linkedin.com/in/gonzalo-blasco</a></li>
+        </ul>
+        <h2>At a glance</h2>
+        <ul>
+          <li>Buenos Aires, GMT-3</li>
+          <li>Remote, LATAM or US EST overlap</li>
+          <li>Freelance since 2025</li>
+        </ul>
+        <h2>Elsewhere</h2>
+        <ul>
+          <li><a href="../about/">About the accessibility work</a></li>
+          <li><a href="../writing/">Writing</a></li>
+        </ul>
+      </aside>
+    </div>
+  </div>
+</main>`;
+
+writeFile(
+  "profile/index.html",
+  page({
+    root: "../",
+    current: "profile",
+    title: "Profile — Gonzalo Blasco",
+    description:
+      "Software engineer, ten years building software and five in accessibility roles. Experience at EY, Super7ui and Minutentag, twelve merged pull requests in design systems.",
+    canonical: `${BASE}/profile/`,
+    body: profileBody,
   })
 );
 
@@ -687,6 +865,7 @@ const urls: Array<{ loc: string; lastmod?: string }> = [
   { loc: `${BASE}/` },
   { loc: `${BASE}/writing/` },
   { loc: `${BASE}/about/` },
+  { loc: `${BASE}/profile/` },
   ...(Object.keys(CATEGORIES) as CategorySlug[])
     .filter((slug) => articles.some((article) => article.category === slug))
     .map((slug) => ({ loc: `${BASE}/writing/category/${slug}/` })),
@@ -718,4 +897,4 @@ Sitemap: ${BASE}/sitemap.xml
 );
 
 console.log(`Built ${articles.length} articles.`);
-console.log(`Home, writing index, about, preflight, 404, feed, sitemap, robots.`);
+console.log(`Home, writing index, about, profile, preflight, 404, feed, sitemap, robots.`);

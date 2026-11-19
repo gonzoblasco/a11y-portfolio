@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Direction B — Transcript</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0b0d0c;
+    --surface:#111513;
+    --ink:#ece7db;
+    --muted:#9fa79c;
+    --rule:#28302b;
+    --signal:#b6f24a;
+    --rail:15rem;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:1.0625rem;line-height:1.65}
+  a{color:var(--signal);text-underline-offset:.16em;text-decoration-thickness:.06em}
+  a:focus-visible{outline:2px solid var(--signal);outline-offset:4px;border-radius:1px}
+  .skip{position:absolute;left:-9999px;top:0;background:var(--signal);color:#0b0d0c;padding:.8rem 1rem;z-index:9;font-family:"IBM Plex Mono",monospace}
+  .skip:focus{left:1rem;top:1rem}
+  .mono{font-family:"IBM Plex Mono",monospace}
+
+  .layout{display:grid;grid-template-columns:var(--rail) minmax(0,1fr);min-height:100vh}
+  .rail{border-right:1px solid var(--rule);padding:2rem 1.6rem;position:sticky;top:0;align-self:start;height:100vh}
+  .rail .name{font-family:"Archivo",sans-serif;font-weight:800;font-size:1.5rem;line-height:1.02;letter-spacing:-.03em;margin:0 0 .5rem}
+  .status{display:flex;align-items:center;gap:.5rem;font-family:"IBM Plex Mono",monospace;font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 2.2rem}
+  .status::before{content:"";width:.5rem;height:.5rem;border-radius:50%;background:var(--signal);box-shadow:0 0 0 3px rgba(182,242,74,.12)}
+  .meta{font-family:"IBM Plex Mono",monospace;font-size:.72rem;line-height:1.7;letter-spacing:.02em;color:var(--muted);margin:0}
+  .meta dt{color:var(--signal);text-transform:lowercase;font-size:.7rem;margin-top:1rem}
+  .meta dd{margin:.15rem 0 0;color:var(--ink)}
+
+  main{padding:2.2rem clamp(1.5rem,5vw,5rem) 4rem;max-width:60rem}
+  .crumbs{font-family:"IBM Plex Mono",monospace;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:0 0 3rem}
+  .crumbs span{color:var(--signal)}
+  h1{font-family:"Archivo",sans-serif;font-weight:800;font-size:clamp(2.4rem,5.4vw,4.6rem);line-height:.98;letter-spacing:-.04em;margin:0 0 1.4rem;max-width:16ch}
+  .lede{font-size:1.2rem;line-height:1.55;color:var(--ink);max-width:48ch;margin:0 0 1.8rem}
+  .actions{display:flex;gap:1.6rem;flex-wrap:wrap;margin:0 0 3.5rem;font-family:"IBM Plex Mono",monospace;font-size:.78rem;letter-spacing:.06em;text-transform:uppercase}
+  .actions a{text-decoration:none;border-bottom:1px solid var(--signal);padding-bottom:.2rem}
+  .actions a.secondary{color:var(--muted);border-bottom-color:var(--rule)}
+  .actions a.secondary:hover{color:var(--signal);border-bottom-color:var(--signal)}
+
+  section{border-top:1px solid var(--rule);padding-top:1.2rem;margin-top:2.6rem}
+  h2{font-family:"IBM Plex Mono",monospace;font-weight:500;font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;color:var(--signal);margin:0 0 1.6rem}
+  .rows{list-style:none;margin:0;padding:0}
+  .rows li{border-bottom:1px solid var(--rule)}
+  .rows a{display:grid;grid-template-columns:2.2rem minmax(0,1fr) auto;gap:.2rem 1rem;padding:1.25rem 0;text-decoration:none;color:inherit;align-items:baseline}
+  .rows .idx{font-family:"IBM Plex Mono",monospace;font-size:.72rem;color:var(--muted)}
+  .rows .title{font-family:"Archivo",sans-serif;font-weight:600;font-size:1.2rem;letter-spacing:-.015em;line-height:1.25}
+  .rows .excerpt{grid-column:2/3;color:var(--muted);font-size:.98rem;line-height:1.55;max-width:58ch;margin-top:.2rem}
+  .rows .date{font-family:"IBM Plex Mono",monospace;font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+  .rows a:hover .title,.rows a:focus-visible .title{color:var(--signal)}
+  .rows a:focus-visible{outline:2px solid var(--signal);outline-offset:4px}
+
+  .work{display:grid;grid-template-columns:minmax(0,1fr) 14rem;gap:2rem}
+  .work h3{font-family:"Archivo",sans-serif;font-weight:800;font-size:1.9rem;letter-spacing:-.03em;margin:.2rem 0 .6rem}
+  .work p{max-width:52ch;color:var(--muted);margin:0 0 .9rem}
+  .work .facts{font-family:"IBM Plex Mono",monospace;font-size:.72rem;line-height:1.8;color:var(--muted);border-left:1px solid var(--signal);padding-left:1rem}
+  .work .facts strong{color:var(--ink);font-weight:500}
+
+  footer{border-top:1px solid var(--rule);margin-top:4rem;padding-top:1.4rem;font-family:"IBM Plex Mono",monospace;font-size:.72rem;color:var(--muted);display:flex;flex-wrap:wrap;gap:1rem;justify-content:space-between}
+  footer a{color:var(--ink);text-decoration:none}
+  footer a:hover{color:var(--signal)}
+
+  @media (max-width:860px){
+    .layout{grid-template-columns:1fr}
+    .rail{position:static;height:auto;border-right:0;border-bottom:1px solid var(--rule);padding:1.4rem 1.25rem}
+    .rail .name{font-size:1.25rem}
+    .status{margin-bottom:0}
+    .meta{display:none}
+    main{padding:2rem 1.25rem 3rem}
+    .rows a{grid-template-columns:1.8rem minmax(0,1fr)}
+    .rows .date{grid-column:2;margin-top:.25rem}
+    .work{grid-template-columns:1fr}
+  }
+  @media (prefers-reduced-motion:no-preference){
+    .rows a{transition:color .15s ease}
+    .rows .title{transition:color .15s ease}
+  }
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="layout">
+  <aside class="rail" aria-label="About this page">
+    <p class="name">Gonzalo<br>Blasco</p>
+    <p class="status">available for work</p>
+    <dl class="meta">
+      <dt>name</dt><dd>Accessibility engineer</dd>
+      <dt>announces</dt><dd>I fix what a screen reader actually says, not what the markup declares.</dd>
+      <dt>merged</dt><dd>12 PRs · React Spectrum, Carbon, Astryx, MUI, shadcn/ui</dd>
+      <dt>based</dt><dd>Buenos Aires, GMT-3</dd>
+    </dl>
+  </aside>
+  <main id="main">
+    <p class="crumbs">transcript <span>/</span> home</p>
+    <h1>What a screen reader actually says.</h1>
+    <p class="lede">Accessibility is a runtime property. I fix the announcement, not the attribute, and I build tools that listen instead of linting.</p>
+    <p class="actions"><a href="#writing">Read the notes</a><a class="secondary" href="mailto:gonzoblasco@icloud.com">Get in touch</a></p>
+
+    <section aria-labelledby="writing">
+      <h2 id="writing">writing /</h2>
+      <ul class="rows">
+        <li><a href="#"><span class="idx">01</span><span class="title">The Quieter Announcement</span><span class="date">Nov 2026</span><span class="excerpt">I fixed a VoiceOver bug by deleting an announcement. Every linter passed while the experience got worse.</span></a></li>
+        <li><a href="#"><span class="idx">02</span><span class="title">The dialog description that never arrived</span><span class="date">Oct 2026</span><span class="excerpt">ComposedModal accepted the prop and dropped it before the native dialog path could use it.</span></a></li>
+        <li><a href="#"><span class="idx">03</span><span class="title">Naming a tree</span><span class="date">Aug 2026</span><span class="excerpt">A headerless TreeList could not be named at all. Three decisions, three review rounds, one accessible name.</span></a></li>
+      </ul>
+    </section>
+
+    <section aria-labelledby="work">
+      <h2 id="work">work /</h2>
+      <div class="work">
+        <div>
+          <h3>Preflight</h3>
+          <p>A pre-launch accessibility gate for AI-built websites. It loads a page in a browser, reads what a screen reader actually announces, and returns a repair prompt your builder can execute.</p>
+          <p><a href="#">See how it works</a></p>
+        </div>
+        <div class="facts"><strong>reads</strong> the accessibility output<br><strong>returns</strong> a repair prompt<br><strong>runs</strong> before launch</div>
+      </div>
+    </section>
+
+    <footer>
+      <span>Gonzalo Blasco · Buenos Aires</span>
+      <span><a href="mailto:gonzoblasco@icloud.com">email</a> · <a href="#">GitHub</a> · <a href="#">LinkedIn</a></span>
+    </footer>
+  </main>
+</div>
+</body>
+</html>

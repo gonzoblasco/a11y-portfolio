@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Direction A — Technical magazine</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#f4efe6;
+    --ink:#17140f;
+    --muted:#5d564b;
+    --rule:#cfc7b8;
+    --oxide:#8a2f12;
+    --measure:66ch;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0;background:var(--paper);color:var(--ink);
+    font-family:"Newsreader",Georgia,serif;font-size:1.125rem;line-height:1.55;
+    font-optical-sizing:auto;
+  }
+  a{color:var(--oxide);text-underline-offset:.16em;text-decoration-thickness:.06em}
+  a:hover{text-decoration-thickness:.12em}
+  a:focus-visible{outline:2px solid var(--oxide);outline-offset:4px;border-radius:1px}
+  .skip{position:absolute;left:-9999px;top:0;background:var(--ink);color:var(--paper);padding:.8rem 1rem;z-index:9}
+  .skip:focus{left:1rem;top:1rem}
+  .wrap{width:min(1180px,calc(100% - 3rem));margin-inline:auto}
+
+  header.site{padding:1.6rem 0;border-bottom:1px solid var(--rule)}
+  .head{display:flex;align-items:baseline;justify-content:space-between;gap:1rem}
+  .wordmark{font-family:"Fraunces",serif;font-weight:600;font-size:1.15rem;color:var(--ink);text-decoration:none;letter-spacing:-.01em}
+  nav ul{display:flex;gap:1.6rem;list-style:none;margin:0;padding:0}
+  nav a{font-family:"IBM Plex Mono",monospace;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink);text-decoration:none}
+  nav a:hover{color:var(--oxide)}
+
+  .hero{display:grid;grid-template-columns:repeat(12,1fr);gap:0 1.5rem;padding:4.5rem 0 3.5rem}
+  .hero-main{grid-column:1/9}
+  .kicker{font-family:"IBM Plex Mono",monospace;font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:0 0 1.6rem}
+  h1{
+    font-family:"Fraunces",serif;font-weight:600;font-size:clamp(3.4rem,7.2vw,6.4rem);
+    line-height:.94;letter-spacing:-.035em;margin:0 0 1.8rem;max-width:12ch;
+    font-variation-settings:"SOFT" 0,"WONK" 1;
+  }
+  h1 em{font-style:italic;font-weight:300}
+  .lede{font-size:1.25rem;line-height:1.5;max-width:46ch;margin:0 0 2rem;color:var(--ink)}
+  .actions{display:flex;gap:1.6rem;align-items:baseline;margin:0}
+  .cta{font-family:"IBM Plex Mono",monospace;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;border-bottom:1px solid var(--oxide);padding-bottom:.2rem}
+  .actions a:not(.cta){font-family:"IBM Plex Mono",monospace;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;color:var(--muted)}
+  .actions a:not(.cta):hover{color:var(--oxide)}
+
+  .note{grid-column:10/13;border-top:1px solid var(--ink);padding-top:.9rem;align-self:start;margin-top:.4rem}
+  .note .label{font-family:"IBM Plex Mono",monospace;font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:0 0 .7rem}
+  .note p:last-child{font-size:.98rem;line-height:1.55;color:var(--muted);margin:0}
+
+  .index{padding:0 0 2rem}
+  .index h2{display:flex;align-items:baseline;gap:1rem;font-family:"IBM Plex Mono",monospace;font-weight:500;font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;margin:0;padding:1rem 0;border-top:1px solid var(--ink)}
+  .index h2 span{color:var(--oxide)}
+  .entries{list-style:none;margin:0;padding:0}
+  .entries li{border-bottom:1px solid var(--rule)}
+  .entries a{display:grid;grid-template-columns:8.5rem minmax(0,1fr);gap:.2rem 2rem;padding:1.6rem 0;text-decoration:none;color:inherit}
+  .entries .date{font-family:"IBM Plex Mono",monospace;font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding-top:.45rem}
+  .entries .title{font-family:"Fraunces",serif;font-size:1.75rem;font-weight:500;letter-spacing:-.015em;line-height:1.15}
+  .entries .excerpt{grid-column:2;font-size:1rem;line-height:1.55;color:var(--muted);max-width:60ch;margin-top:.35rem}
+  .entries a:hover .title,.entries a:focus-visible .title{color:var(--oxide)}
+  .entries a:focus-visible{outline:2px solid var(--oxide);outline-offset:6px}
+
+  .work{display:grid;grid-template-columns:repeat(12,1fr);gap:0 1.5rem;padding:2rem 0 4rem}
+  .work h2{grid-column:1/13;display:flex;align-items:baseline;gap:1rem;font-family:"IBM Plex Mono",monospace;font-weight:500;font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;margin:0;padding:1rem 0;border-top:1px solid var(--ink)}
+  .work h2 span{color:var(--oxide)}
+  .work-body{grid-column:1/9}
+  .work-body h3{font-family:"Fraunces",serif;font-size:1.9rem;font-weight:500;margin:.6rem 0 .5rem;letter-spacing:-.015em}
+  .work-body p{max-width:58ch;color:var(--muted);margin:0 0 .8rem}
+  .work-meta{grid-column:10/13;font-family:"IBM Plex Mono",monospace;font-size:.74rem;line-height:1.8;letter-spacing:.04em;color:var(--muted);padding-top:.8rem}
+  .work-meta dt{text-transform:uppercase;letter-spacing:.12em;font-size:.68rem;margin-top:.8rem}
+  .work-meta dd{margin:.1rem 0 0;color:var(--ink)}
+
+  footer.site{border-top:1px solid var(--rule);padding:2rem 0 3rem}
+  footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:1rem;font-family:"IBM Plex Mono",monospace;font-size:.74rem;letter-spacing:.06em;color:var(--muted)}
+  footer a{color:var(--ink);text-decoration:none}
+  footer a:hover{color:var(--oxide)}
+
+  @media (max-width:820px){
+    .hero{grid-template-columns:1fr;gap:2.2rem;padding:3rem 0 2rem}
+    .hero-main,.note{grid-column:1}
+    .note{border-top:1px solid var(--rule);padding-top:1rem}
+    .entries a{grid-template-columns:1fr;gap:.35rem}
+    .entries .date{padding-top:0}
+    .entries .excerpt{grid-column:1}
+    .work{grid-template-columns:1fr}
+    .work h2,.work-body,.work-meta{grid-column:1}
+    .work-meta{display:grid;grid-template-columns:auto 1fr;gap:.2rem 1rem;padding-top:1rem}
+    .work-meta dt{margin-top:.4rem}
+  }
+  @media (prefers-reduced-motion:no-preference){
+    .entries a{transition:color .15s ease}
+    a{transition:text-decoration-thickness .12s ease,color .15s ease}
+  }
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site">
+  <div class="wrap head">
+    <a class="wordmark" href="#">Gonzalo Blasco</a>
+    <nav aria-label="Sections">
+      <ul><li><a href="#writing">Writing</a></li><li><a href="#work">Work</a></li><li><a href="#">About</a></li></ul>
+    </nav>
+  </div>
+</header>
+<main id="main">
+  <section class="hero wrap" aria-labelledby="title">
+    <div class="hero-main">
+      <p class="kicker">Accessibility engineering · Buenos Aires</p>
+      <h1 id="title">What a screen reader <em>actually</em> says.</h1>
+      <p class="lede">I fix what assistive technology announces, not what the markup declares. Twelve merged pull requests across React Spectrum, Carbon, Astryx, MUI and shadcn/ui.</p>
+      <p class="actions"><a class="cta" href="#writing">Read the notes</a> <a href="mailto:gonzoblasco@icloud.com">Get in touch</a></p>
+    </div>
+    <aside class="note" aria-label="Currently">
+      <p class="label">Currently</p>
+      <p>Preflight, a pre-launch accessibility gate. It reads the accessibility output a screen reader consumes and returns a repair prompt a builder can execute.</p>
+    </aside>
+  </section>
+
+  <section class="index wrap" aria-labelledby="writing">
+    <h2 id="writing"><span>01</span> Writing</h2>
+    <ul class="entries">
+      <li><a href="#"><span class="date">Nov 2026</span><span class="title">The Quieter Announcement</span><span class="excerpt">I fixed a VoiceOver bug by deleting an announcement. Every linter passed while the experience got worse.</span></a></li>
+      <li><a href="#"><span class="date">Oct 2026</span><span class="title">The dialog description that never arrived</span><span class="excerpt">ComposedModal accepted the prop and dropped it before the native dialog path could use it.</span></a></li>
+      <li><a href="#"><span class="date">Aug 2026</span><span class="title">Naming a tree</span><span class="excerpt">A headerless TreeList could not be named at all. Three decisions, three review rounds, one accessible name.</span></a></li>
+    </ul>
+  </section>
+
+  <section class="work wrap" aria-labelledby="work-h">
+    <h2 id="work-h"><span>02</span> Work</h2>
+    <div class="work-body">
+      <h3>Preflight</h3>
+      <p>A pre-launch accessibility gate for AI-built websites. It loads a page in a browser, reads what a screen reader actually announces, and returns a repair prompt your builder can execute.</p>
+      <p><a href="#">See how it works</a></p>
+    </div>
+    <dl class="work-meta">
+      <dt>Merged</dt><dd>12 PRs</dd>
+      <dt>Repos</dt><dd>React Spectrum · Carbon · Astryx · MUI · shadcn/ui</dd>
+      <dt>Focus</dt><dd>ARIA contracts, focus management, announcements</dd>
+    </dl>
+  </section>
+</main>
+<footer class="site">
+  <div class="wrap">
+    <span>Gonzalo Blasco · Buenos Aires</span>
+    <span><a href="mailto:gonzoblasco@icloud.com">gonzoblasco@icloud.com</a> · <a href="#">GitHub</a> · <a href="#">LinkedIn</a></span>
+  </div>
+</footer>
+</body>
+</html>

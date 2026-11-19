@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>An agent that cannot invent its sources — Gonzalo Blasco</title>
+  <meta name="description" content="Most retrieval demos fall apart the first time the model invents a page number. The fix is not a better model — it is a verifier the model cannot talk its way past." />
+  <meta name="author" content="Gonzalo Blasco" />
+  <link rel="canonical" href="https://gonzoblasco.github.io/a11y-portfolio/writing/an-agent-that-cannot-invent-its-sources.html" />
+
+  <link rel="alternate" hreflang="en" href="https://gonzoblasco.github.io/a11y-portfolio/writing/an-agent-that-cannot-invent-its-sources.html" />
+  <link rel="alternate" hreflang="es" href="https://gonzoblasco.github.io/a11y-portfolio/writing/un-agente-que-no-puede-inventar-sus-fuentes.html" />
+  <meta property="og:site_name" content="Gonzalo Blasco" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="An agent that cannot invent its sources — Gonzalo Blasco" />
+  <meta property="og:description" content="Most retrieval demos fall apart the first time the model invents a page number. The fix is not a better model — it is a verifier the model cannot talk its way past." />
+  <meta property="og:url" content="https://gonzoblasco.github.io/a11y-portfolio/writing/an-agent-that-cannot-invent-its-sources.html" />
+  <meta name="twitter:card" content="summary" />
+  <link rel="alternate" type="application/atom+xml" href="../feed.xml" title="Gonzalo Blasco" />
+  <link rel="stylesheet" href="../style.css" />
+  <link rel="preload" href="../assets/fonts/fraunces-normal.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="../assets/fonts/newsreader-normal.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="../assets/fonts/ibm-plex-mono-400.woff2" as="font" type="font/woff2" crossorigin />
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site">
+  <div class="wrap head">
+    <a class="wordmark" href="../">Gonzalo Blasco</a>
+    <nav aria-label="Sections"><ul><li><a href="../writing/" aria-current="page">Writing</a></li><li><a href="../writing/preflight.html">Work</a></li><li><a href="../about/">About</a></li><li><a href="../profile/">Profile</a></li></ul></nav>
+  </div>
+</header>
+<main id="main">
+  <article class="article wrap">
+    <header class="article-head">
+      <p class="kicker"><a href="./">Writing</a> <span aria-hidden="true">/</span> <time datetime="2026-11-18">Nov 2026</time></p>
+      <h1>An agent that cannot invent its sources</h1>
+      <p class="lede">Most retrieval demos fall apart the first time the model invents a page number. The fix is not a better model — it is a verifier the model cannot talk its way past.</p>
+      <p class="article-meta">
+        <span>Engineering</span>
+        <span>Essay</span>
+        <span>4 min read</span>
+        <span><time datetime="2026-11-18">November 18, 2026</time></span>
+        
+      </p>
+      <p class="translation"><a class="translation-switch" href="un-agente-que-no-puede-inventar-sus-fuentes.html" hreflang="es" lang="es">Leer en español <span aria-hidden="true">→</span></a></p>
+    </header>
+    <div class="prose">
+<p>Every retrieval demo looks the same until it is wrong.</p>
+<p>You upload PDFs, split them into chunks, embed, search by similarity, and pass the fragments to the model. It works. Then the model writes:</p>
+<blockquote>
+<p>&quot;The contract expires on December 15, according to clause 4.2, page 3.&quot;</p>
+</blockquote>
+<p>Clause 4.2 says something else. Page 3 does not exist. The model did not lie on purpose — it filled a gap with something that sounded probable. And since nobody checks, the wrong answer ships.</p>
+<p>That is not a retrieval problem. It is a <strong>verification</strong> problem, and you do not fix it with a better model.</p>
+<h2 id="the-verifier-has-to-be-independent">The verifier has to be independent</h2>
+<p>The answer comes back as structured data: a <code>chunk_id</code> and a literal quote. The application does not trust the model. It checks the quote against the chunk.</p>
+<pre tabindex="0" role="region" aria-label="Code sample"><code class="language-python">def verify_citations(citations, chunks_by_id):
+    valid, invalid = [], []
+    for cit in citations:
+        chunk = chunks_by_id.get(cit[&quot;chunk_id&quot;], &quot;&quot;)
+        if _normalize(cit[&quot;quote&quot;]) in _normalize(chunk):
+            valid.append(cit)
+        else:
+            invalid.append(cit)
+    return valid, invalid
+</code></pre>
+<p>A citation is valid only if its quote is a substring of the chunk, after whitespace normalization. If it fails, the model gets one more attempt. If it fails again, the answer becomes a refusal.</p>
+<p>This is not another language model checking the first one. It is string containment. Anyone can reproduce it by opening the database, and that is the point: <strong>the verifier must not share a failure mode with the thing it verifies.</strong></p>
+<h2 id="three-times-it-almost-went-wrong">Three times it almost went wrong</h2>
+<p>This part is usually left out.</p>
+<p><strong>The embeddings were fake and the tests were green.</strong> The first version called <code>ollama embed</code>, a CLI subcommand that does not exist. Every call failed and silently fell back to a three-dimension mock vector. The tests passed because they checked structure, not values. The fix was not to improve the mock — it was to remove the fallback. A system that degrades silently is worse than one that breaks loudly.</p>
+<p><strong>The vector search was not vector search.</strong> <code>sqlite-vec</code> was never loaded, so <code>chunks_vec</code> was an ordinary table and the nearest-neighbour query was brute force. It worked with thirteen chunks and would have collapsed with thirteen hundred. I found it by reading <code>sqlite_master</code> instead of trusting the code that created it.</p>
+<p><strong>A delegate reported files it never wrote.</strong> Three times a subagent returned a delivery summary for a module that did not exist on disk. The lesson is procedural, not technical: run the repository before accepting a report. If the file is not there, the work is not there.</p>
+<h2 id="the-model-is-not-the-product">The model is not the product</h2>
+<p>Everyone asks which model. The honest answer is that it matters less than the measurement.</p>
+<table>
+<thead>
+<tr><th>Model</th><th align="right">Accuracy on 18 questions</th><th align="right">Median latency</th></tr>
+</thead>
+<tbody>
+<tr><td>12B, local</td><td align="right"><strong>18/18</strong></td><td align="right">49.5 s</td></tr>
+<tr><td>4B, local</td><td align="right">4/18</td><td align="right">6.8 s</td></tr>
+</tbody>
+</table>
+<p>The small model is seven times faster and four and a half times less accurate. Fine for a demo. Not fine for a contract.</p>
+<p>One result nobody expects: a 9B model was <strong>slower</strong> than the 12B. It kept a 262k context resident and did not finish a single answer in ninety seconds. Parameter count is not latency. Measure on your machine, with your corpus, with your questions.</p>
+<h2 id="what-the-model-should-not-do">What the model should not do</h2>
+<p>One question asked for the sum of two contract totals. The 12B failed it every time: it cannot add. The fix was eight lines of deterministic code. The agent retrieves and composes; the calculator sums.</p>
+<p>The same principle, one layer down: <strong>anything that can be verified by code should be, and anything left to the model should be stated as a guess.</strong></p>
+<h2 id="what-local-first-means-as-a-claim-you-can-test">What local-first means as a claim you can test</h2>
+<p>Three proofs, not three promises:</p>
+<ol>
+<li><strong>Zero sockets.</strong> During transcription and query, <code>lsof</code> shows no outbound connection.</li>
+<li><strong>It can be deleted.</strong> One button removes index, embeddings and drafts, verified on the filesystem.</li>
+<li><strong>It is not rented.</strong> In ten years the archive opens without a subscription.</li>
+</ol>
+<p>And the consequence that is usually skipped: if the data does not leave, nothing comes in either. The model is local because privacy is the architecture, not a setting.</p>
+<h2 id="what-this-project-does-not-do">What this project does not do</h2>
+<ul>
+<li>It does not read scanned PDFs. It refuses them with an explicit message.</li>
+<li>It is not fast. Fifty seconds per answer with a 12B model.</li>
+<li>It does not scale. One person, one machine, one corpus.</li>
+<li>It does not have an independent benchmark. The eighteen questions were written by the person who wrote the system.</li>
+</ul>
+<p>Saying this does not weaken the project. It makes it usable: a reader knows what they are getting, and a reviewer knows what is still missing.</p>
+<p>The repository, including the failure log and the evaluation data, is at <a href="https://github.com/gonzoblasco/localdoc-agent">localdoc-agent</a>. Its sibling, about family voices instead of contracts, is <a href="https://github.com/gonzoblasco/memoria-oral">memoria-oral</a>.</p>
+
+    </div>
+    <footer class="article-foot">
+      <span></span>
+      <a href="./">Back to all notes</a>
+    </footer>
+  </article>
+</main>
+<footer class="site">
+  <div class="wrap">
+    <span>Gonzalo Blasco · Buenos Aires</span>
+    <span><a href="mailto:gonzoblasco@icloud.com">gonzoblasco@icloud.com</a> · <a href="https://github.com/gonzoblasco">GitHub</a> · <a href="https://www.linkedin.com/in/gonzalo-blasco">LinkedIn</a></span>
+  </div>
+</footer>
+</body>
+</html>

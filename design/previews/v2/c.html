@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Direction C — Signal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Public+Sans:wght@300;400;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#ffffff;
+    --ink:#0a0a0a;
+    --muted:#525252;
+    --rule:#0a0a0a;
+    --signal:#d92d20;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:"Public Sans",system-ui,sans-serif;font-size:1.0625rem;line-height:1.6}
+  a{color:var(--ink);text-decoration-thickness:.08em;text-underline-offset:.18em}
+  a:hover{color:var(--signal)}
+  a:focus-visible{outline:3px solid var(--signal);outline-offset:3px}
+  .skip{position:absolute;left:-9999px;top:0;background:var(--ink);color:#fff;padding:.8rem 1rem;z-index:9}
+  .skip:focus{left:1rem;top:1rem}
+  .wrap{width:min(1240px,calc(100% - 3rem));margin-inline:auto}
+  .mono{font-family:"IBM Plex Mono",monospace}
+
+  header.site{border-bottom:3px solid var(--rule)}
+  .head{display:flex;justify-content:space-between;align-items:center;gap:1rem;padding:.9rem 0;font-family:"IBM Plex Mono",monospace;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase}
+  .head a{text-decoration:none}
+  nav ul{display:flex;gap:1.6rem;list-style:none;margin:0;padding:0}
+
+  .masthead{padding:2.6rem 0 1.6rem;border-bottom:3px solid var(--rule)}
+  .masthead .top{display:flex;justify-content:space-between;align-items:flex-start;gap:2rem}
+  h1{font-family:"Archivo Black",sans-serif;font-weight:400;font-size:clamp(4rem,11.5vw,9.5rem);line-height:.82;letter-spacing:-.045em;margin:0;text-transform:uppercase}
+  .role{font-family:"IBM Plex Mono",monospace;font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;margin:0;padding-top:.5rem;white-space:nowrap}
+  .role::before{content:"";display:inline-block;width:.55rem;height:.55rem;background:var(--signal);margin-right:.55rem;vertical-align:baseline}
+  .statement{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:2rem;padding:1.6rem 0 0;border-top:0}
+  .statement p{margin:0;font-size:1.15rem;line-height:1.5}
+  .statement p:first-child{font-weight:600}
+  .statement p:last-child{color:var(--muted)}
+  .actions{display:flex;gap:2rem;flex-wrap:wrap;padding:1.6rem 0 2rem;font-family:"IBM Plex Mono",monospace;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase}
+  .actions a{text-decoration:none;border-bottom:3px solid var(--signal);padding-bottom:.25rem}
+  .actions a.secondary{border-bottom-color:var(--ink)}
+  .actions a.secondary:hover{border-bottom-color:var(--signal)}
+
+  .cols{display:grid;grid-template-columns:1fr 1fr;border-top:3px solid var(--rule)}
+  .col{padding:2rem 2rem 3rem 0}
+  .col + .col{border-left:3px solid var(--rule);padding-left:2rem}
+  .kicker{font-family:"IBM Plex Mono",monospace;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;margin:0 0 1.4rem;display:flex;gap:.6rem;align-items:baseline}
+  .kicker span{color:var(--signal)}
+
+  .entries{list-style:none;margin:0;padding:0}
+  .entries li{border-top:1px solid #d4d4d4;padding:1.35rem 0}
+  .entries li:first-child{border-top:0;padding-top:0}
+  .entries a{text-decoration:none;display:block}
+  .entries .date{font-family:"IBM Plex Mono",monospace;font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+  .entries .title{display:block;font-family:"Archivo Black",sans-serif;font-size:1.5rem;line-height:1.05;letter-spacing:-.02em;margin:.35rem 0 .45rem;text-transform:uppercase}
+  .entries .excerpt{display:block;font-size:.98rem;line-height:1.55;color:var(--muted);max-width:46ch}
+  .entries a:hover .title,.entries a:focus-visible .title{color:var(--signal)}
+  .entries a:focus-visible{outline:3px solid var(--signal);outline-offset:6px}
+
+  .work h3{font-family:"Archivo Black",sans-serif;font-size:2.1rem;line-height:1;letter-spacing:-.03em;text-transform:uppercase;margin:0 0 .8rem}
+  .work p{max-width:46ch;color:var(--muted);margin:0 0 1rem}
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:2rem 0 0;border-top:3px solid var(--rule);padding-top:1rem}
+  .stats div{border-left:3px solid var(--signal);padding-left:.8rem}
+  .stats dt{font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+  .stats dd{font-family:"Archivo Black",sans-serif;font-size:1.4rem;line-height:1.1;margin:.2rem 0 0}
+
+  footer{border-top:3px solid var(--rule);margin-top:0;padding:1.2rem 0 3rem}
+  footer .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;font-family:"IBM Plex Mono",monospace;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase}
+  footer a{text-decoration:none}
+
+  @media (max-width:860px){
+    h1{font-size:clamp(3.4rem,16vw,5.5rem)}
+    .masthead .top{display:block}
+    .role{padding-top:1rem}
+    .statement{grid-template-columns:1fr;gap:.8rem}
+    .cols{grid-template-columns:1fr}
+    .col{padding:1.6rem 0 2rem}
+    .col + .col{border-left:0;border-top:3px solid var(--rule);padding-left:0}
+    .stats{grid-template-columns:1fr;gap:1.2rem}
+    .stats div{border-left:0;border-top:3px solid var(--signal);padding:.6rem 0 0}
+  }
+  @media (prefers-reduced-motion:no-preference){
+    .entries .title{transition:color .12s ease}
+    a{transition:color .12s ease}
+  }
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site">
+  <div class="wrap head">
+    <a href="#">Gonzalo Blasco</a>
+    <nav aria-label="Sections"><ul><li><a href="#writing">Writing</a></li><li><a href="#work">Work</a></li><li><a href="#">About</a></li></ul></nav>
+  </div>
+</header>
+<main id="main">
+  <section class="masthead wrap" aria-labelledby="title">
+    <div class="top">
+      <h1 id="title">Gonzalo<br>Blasco</h1>
+      <p class="role">Accessibility engineer</p>
+    </div>
+    <div class="statement">
+      <p>I fix what a screen reader actually says, not what the markup declares.</p>
+      <p>Twelve merged pull requests across React Spectrum, Carbon, Astryx, MUI and shadcn/ui. Accessibility is a runtime property; most tooling only checks the markup.</p>
+    </div>
+    <div class="actions"><a href="#writing">Read the notes</a><a class="secondary" href="mailto:gonzoblasco@icloud.com">Get in touch</a></div>
+  </section>
+
+  <div class="wrap cols">
+    <section class="col" aria-labelledby="writing">
+      <p class="kicker" id="writing"><span>01</span> Writing</p>
+      <ul class="entries">
+        <li><a href="#"><span class="date">Nov 2026</span><span class="title">The Quieter Announcement</span><span class="excerpt">I fixed a VoiceOver bug by deleting an announcement. Every linter passed while the experience got worse.</span></a></li>
+        <li><a href="#"><span class="date">Oct 2026</span><span class="title">The dialog description that never arrived</span><span class="excerpt">ComposedModal accepted the prop and dropped it before the native dialog path could use it.</span></a></li>
+        <li><a href="#"><span class="date">Aug 2026</span><span class="title">Naming a tree</span><span class="excerpt">A headerless TreeList could not be named at all. Three decisions, three review rounds, one accessible name.</span></a></li>
+      </ul>
+    </section>
+    <section class="col work" aria-labelledby="work">
+      <p class="kicker" id="work"><span>02</span> Work</p>
+      <h3>Preflight</h3>
+      <p>A pre-launch accessibility gate for AI-built websites. It loads a page in a browser, reads what a screen reader actually announces, and returns a repair prompt your builder can execute.</p>
+      <p><a href="#">See how it works</a></p>
+      <dl class="stats">
+        <div><dt>Merged</dt><dd>12</dd></div>
+        <div><dt>Repos</dt><dd>5</dd></div>
+        <div><dt>Mode</dt><dd>Runtime</dd></div>
+      </dl>
+    </section>
+  </div>
+</main>
+<footer>
+  <div class="wrap">
+    <span>Gonzalo Blasco · Buenos Aires</span>
+    <span><a href="mailto:gonzoblasco@icloud.com">Email</a> · <a href="#">GitHub</a> · <a href="#">LinkedIn</a></span>
+  </div>
+</footer>
+</body>
+</html>

@@ -677,6 +677,64 @@ h1 em {
   color: var(--rule);
 }
 
+.translation {
+  margin: -1.4rem 0 2.2rem;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+}
+
+.translation-switch {
+  display: inline-block;
+  padding: 0.35rem 0.7rem;
+  border: 1px solid var(--rule);
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.translation-switch:hover,
+.translation-switch:focus-visible {
+  border-color: var(--oxide);
+  color: var(--oxide);
+}
+
+/* Profile timeline */
+
+.role {
+  padding: 1.6rem 0;
+  border-top: 1px solid var(--rule);
+}
+
+.role-period {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.3rem;
+}
+
+.role h2 {
+  font-size: 1.15rem;
+  margin: 0 0 0.15rem;
+}
+
+.role-org {
+  font-family: "Newsreader", serif;
+  font-style: italic;
+  color: var(--muted);
+  margin: 0 0 0.8rem;
+}
+
+.role ul {
+  margin: 0;
+  padding-left: 1.1rem;
+}
+
+.role li + li {
+  margin-top: 0.5rem;
+}
+
 .prose {
   max-width: var(--measure);
   margin: 0 auto;

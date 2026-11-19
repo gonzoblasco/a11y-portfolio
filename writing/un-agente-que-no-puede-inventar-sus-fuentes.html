@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Un agente que no puede inventar sus fuentes — Gonzalo Blasco</title>
+  <meta name="description" content="Casi todos los demos de retrieval se rompen la primera vez que el modelo inventa un número de página. No lo arregla un modelo mejor: lo arregla un verificador al que el modelo no puede convencer." />
+  <meta name="author" content="Gonzalo Blasco" />
+  <link rel="canonical" href="https://gonzoblasco.github.io/a11y-portfolio/writing/un-agente-que-no-puede-inventar-sus-fuentes.html" />
+
+  <link rel="alternate" hreflang="es" href="https://gonzoblasco.github.io/a11y-portfolio/writing/un-agente-que-no-puede-inventar-sus-fuentes.html" />
+  <link rel="alternate" hreflang="en" href="https://gonzoblasco.github.io/a11y-portfolio/writing/an-agent-that-cannot-invent-its-sources.html" />
+  <meta property="og:site_name" content="Gonzalo Blasco" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Un agente que no puede inventar sus fuentes — Gonzalo Blasco" />
+  <meta property="og:description" content="Casi todos los demos de retrieval se rompen la primera vez que el modelo inventa un número de página. No lo arregla un modelo mejor: lo arregla un verificador al que el modelo no puede convencer." />
+  <meta property="og:url" content="https://gonzoblasco.github.io/a11y-portfolio/writing/un-agente-que-no-puede-inventar-sus-fuentes.html" />
+  <meta name="twitter:card" content="summary" />
+  <link rel="alternate" type="application/atom+xml" href="../feed.xml" title="Gonzalo Blasco" />
+  <link rel="stylesheet" href="../style.css" />
+  <link rel="preload" href="../assets/fonts/fraunces-normal.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="../assets/fonts/newsreader-normal.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="../assets/fonts/ibm-plex-mono-400.woff2" as="font" type="font/woff2" crossorigin />
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site" lang="en">
+  <div class="wrap head">
+    <a class="wordmark" href="../">Gonzalo Blasco</a>
+    <nav aria-label="Sections"><ul><li><a href="../writing/" aria-current="page">Writing</a></li><li><a href="../writing/preflight.html">Work</a></li><li><a href="../about/">About</a></li><li><a href="../profile/">Profile</a></li></ul></nav>
+  </div>
+</header>
+<main id="main">
+  <article class="article wrap">
+    <header class="article-head">
+      <p class="kicker" lang="en"><a href="./">Writing</a> <span aria-hidden="true">/</span> <time datetime="2026-11-18">Nov 2026</time><span class="badge" lang="es">En español</span></p>
+      <h1 lang="es">Un agente que no puede inventar sus fuentes</h1>
+      <p class="lede" lang="es">Casi todos los demos de retrieval se rompen la primera vez que el modelo inventa un número de página. No lo arregla un modelo mejor: lo arregla un verificador al que el modelo no puede convencer.</p>
+      <p class="article-meta" lang="en">
+        <span>Engineering</span>
+        <span>Essay</span>
+        <span>4 min read</span>
+        <span><time datetime="2026-11-18">November 18, 2026</time></span>
+        
+      </p>
+      <p class="translation"><a class="translation-switch" href="an-agent-that-cannot-invent-its-sources.html" hreflang="en" lang="en">Read in English <span aria-hidden="true">→</span></a></p>
+    </header>
+    <div class="prose" lang="es">
+<p>Todo demo de recuperación de información se ve igual hasta que se equivoca.</p>
+<p>Subís PDFs, los partís en fragmentos, los convertís en embeddings, buscás por similitud y le pasás los fragmentos al modelo. Funciona. Después el modelo escribe:</p>
+<blockquote>
+<p>«El contrato vence el 15 de diciembre, según la cláusula 4.2, página 3.»</p>
+</blockquote>
+<p>La cláusula 4.2 dice otra cosa. La página 3 no existe. El modelo no mintió a propósito: rellenó un hueco con algo que sonaba probable. Y como nadie verifica, la respuesta incorrecta sale igual.</p>
+<p>Eso no es un problema de recuperación. Es un problema de <strong>verificación</strong>, y no se arregla con un modelo mejor.</p>
+<h2 id="el-verificador-tiene-que-ser-independiente">El verificador tiene que ser independiente</h2>
+<p>La respuesta vuelve como datos estructurados: un identificador de fragmento y una cita textual. La aplicación no le cree al modelo. Compara la cita contra el fragmento.</p>
+<pre tabindex="0" role="region" aria-label="Code sample"><code class="language-python">def verify_citations(citations, chunks_by_id):
+    valid, invalid = [], []
+    for cit in citations:
+        chunk = chunks_by_id.get(cit[&quot;chunk_id&quot;], &quot;&quot;)
+        if _normalize(cit[&quot;quote&quot;]) in _normalize(chunk):
+            valid.append(cit)
+        else:
+            invalid.append(cit)
+    return valid, invalid
+</code></pre>
+<p>Una cita es válida solo si su texto es una subcadena del fragmento, después de normalizar los espacios. Si falla, el modelo tiene un intento más. Si vuelve a fallar, la respuesta se convierte en una negativa.</p>
+<p>Esto no es otro modelo revisando al primero. Es contención de cadenas. Cualquiera lo reproduce abriendo la base, y eso es justamente el punto: <strong>el verificador no puede compartir el modo de falla de lo que verifica.</strong></p>
+<h2 id="tres-veces-que-casi-sale-mal">Tres veces que casi sale mal</h2>
+<p>Esta parte suele quedar afuera.</p>
+<p><strong>Los embeddings eran falsos y los tests estaban en verde.</strong> La primera versión llamaba a <code>ollama embed</code>, un subcomando que no existe. Cada llamada fallaba y caía, en silencio, a un vector simulado de tres dimensiones. Los tests pasaban porque revisaban estructura, no valores. El arreglo no fue mejorar el simulado: fue eliminar el respaldo. Un sistema que degrada en silencio es peor que uno que se rompe fuerte.</p>
+<p><strong>La búsqueda vectorial no era vectorial.</strong> <code>sqlite-vec</code> nunca se cargaba, así que <code>chunks_vec</code> era una tabla común y la consulta de vecinos era fuerza bruta. Funcionaba con trece fragmentos y se habría caído con mil trescientos. Lo encontré leyendo <code>sqlite_master</code> en vez de confiar en el código que la creaba.</p>
+<p><strong>Un delegado reportó archivos que nunca escribió.</strong> Tres veces un subagente devolvió un resumen de entrega para un módulo que no existía en disco. La lección es de proceso, no de técnica: correr el repositorio antes de aceptar un informe. Si el archivo no está, el trabajo no está.</p>
+<h2 id="el-modelo-no-es-el-producto">El modelo no es el producto</h2>
+<p>Todos preguntan qué modelo. La respuesta honesta es que importa menos que la medición.</p>
+<table>
+<thead>
+<tr><th>Modelo</th><th align="right">Exactitud sobre 18 preguntas</th><th align="right">Latencia mediana</th></tr>
+</thead>
+<tbody>
+<tr><td>12B local</td><td align="right"><strong>18/18</strong></td><td align="right">49,5 s</td></tr>
+<tr><td>4B local</td><td align="right">4/18</td><td align="right">6,8 s</td></tr>
+</tbody>
+</table>
+<p>El modelo chico es siete veces más rápido y cuatro veces y media menos exacto. Sirve para un demo. No sirve para un contrato.</p>
+<p>Un resultado que nadie espera: un modelo de 9B fue <strong>más lento</strong> que el de 12B. Mantuvo un contexto de 262k en memoria y no terminó una sola respuesta en noventa segundos. La cantidad de parámetros no es la latencia. Se mide en tu máquina, con tu corpus y tus preguntas.</p>
+<h2 id="lo-que-el-modelo-no-deberia-hacer">Lo que el modelo no debería hacer</h2>
+<p>Una pregunta pedía la suma de dos totales de contrato. El 12B falló siempre: no suma. El arreglo fueron ocho líneas de código determinístico. El agente recupera y redacta; la calculadora suma.</p>
+<p>El mismo principio, una capa más abajo: <strong>todo lo que se puede verificar con código se verifica con código, y lo que queda en manos del modelo se declara como suposición.</strong></p>
+<h2 id="que-significa-local-first-cuando-es-una-afirmacion-comprobable">Qué significa local-first cuando es una afirmación comprobable</h2>
+<p>Tres pruebas, no tres promesas:</p>
+<ol>
+<li><strong>Cero sockets.</strong> Durante la transcripción y la consulta, <code>lsof</code> no muestra ninguna conexión saliente.</li>
+<li><strong>Se puede borrar.</strong> Un botón elimina índice, embeddings y borradores, verificado en el sistema de archivos.</li>
+<li><strong>No se alquila.</strong> En diez años el archivo se abre sin suscripción.</li>
+</ol>
+<p>Y la consecuencia que suele omitirse: si los datos no salen, tampoco entran. El modelo es local porque la privacidad es la arquitectura, no una opción.</p>
+<h2 id="lo-que-este-proyecto-no-hace">Lo que este proyecto no hace</h2>
+<ul>
+<li>No lee PDFs escaneados. Los rechaza con un mensaje explícito.</li>
+<li>No es rápido. Cincuenta segundos por respuesta con un modelo de 12B.</li>
+<li>No escala. Una persona, una máquina, un corpus.</li>
+<li>No tiene un benchmark independiente. Las dieciocho preguntas las escribió la misma persona que escribió el sistema.</li>
+</ul>
+<p>Decir esto no debilita el proyecto. Lo vuelve usable: quien lo lee sabe qué recibe, y quien lo revisa sabe qué falta.</p>
+<p>El repositorio, con el registro de fallas y los datos de la evaluación, está en <a href="https://github.com/gonzoblasco/localdoc-agent">localdoc-agent</a>. Su hermano, sobre voces de familia en vez de contratos, es <a href="https://github.com/gonzoblasco/memoria-oral">memoria-oral</a>.</p>
+
+    </div>
+    <footer class="article-foot" lang="en">
+      <span></span>
+      <a href="./">Back to all notes</a>
+    </footer>
+  </article>
+</main>
+<footer class="site" lang="en">
+  <div class="wrap">
+    <span>Gonzalo Blasco · Buenos Aires</span>
+    <span><a href="mailto:gonzoblasco@icloud.com">gonzoblasco@icloud.com</a> · <a href="https://github.com/gonzoblasco">GitHub</a> · <a href="https://www.linkedin.com/in/gonzalo-blasco">LinkedIn</a></span>
+  </div>
+</footer>
+</body>
+</html>

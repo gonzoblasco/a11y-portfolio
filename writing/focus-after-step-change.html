@@ -7,6 +7,7 @@
   <meta name="description" content="Pressing Next in CreateFullPage sent focus to the skip link: the helper looked for an inert attribute the component never set. One querySelector for the visible step class fixed it, and a focus assertion that had never existed." />
   <meta name="author" content="Gonzalo Blasco" />
   <link rel="canonical" href="https://gonzoblasco.github.io/a11y-portfolio/writing/focus-after-step-change.html" />
+
   <meta property="og:site_name" content="Gonzalo Blasco" />
   <meta property="og:type" content="article" />
   <meta property="og:title" content="Focus after the step changed — Gonzalo Blasco" />
@@ -24,7 +25,7 @@
 <header class="site">
   <div class="wrap head">
     <a class="wordmark" href="../">Gonzalo Blasco</a>
-    <nav aria-label="Sections"><ul><li><a href="../writing/" aria-current="page">Writing</a></li><li><a href="../writing/preflight.html">Work</a></li><li><a href="../about/">About</a></li></ul></nav>
+    <nav aria-label="Sections"><ul><li><a href="../writing/" aria-current="page">Writing</a></li><li><a href="../writing/preflight.html">Work</a></li><li><a href="../about/">About</a></li><li><a href="../profile/">Profile</a></li></ul></nav>
   </div>
 </header>
 <main id="main">
@@ -40,6 +41,7 @@
         <span><time datetime="2026-09-14">September 14, 2026</time></span>
         <span>Originally published on LinkedIn</span>
       </p>
+      
     </header>
     <div class="prose">
 <p>The bug report said focus was lost. It was not. It was delivered, with confidence, to the one element that undoes the step you just took.</p>

@@ -7,6 +7,7 @@
   <meta name="description" content="A labelled HoverCard trigger described itself with aria-describedby, so screen reader users heard the card&#39;s contents as a description instead of learning that a dialog opens. The fix is the popup contract, with two review catches along the way." />
   <meta name="author" content="Gonzalo Blasco" />
   <link rel="canonical" href="https://gonzoblasco.github.io/a11y-portfolio/writing/hovercard-dialog-semantics.html" />
+
   <meta property="og:site_name" content="Gonzalo Blasco" />
   <meta property="og:type" content="article" />
   <meta property="og:title" content="When a HoverCard calls itself a dialog — Gonzalo Blasco" />
@@ -24,7 +25,7 @@
 <header class="site">
   <div class="wrap head">
     <a class="wordmark" href="../">Gonzalo Blasco</a>
-    <nav aria-label="Sections"><ul><li><a href="../writing/" aria-current="page">Writing</a></li><li><a href="../writing/preflight.html">Work</a></li><li><a href="../about/">About</a></li></ul></nav>
+    <nav aria-label="Sections"><ul><li><a href="../writing/" aria-current="page">Writing</a></li><li><a href="../writing/preflight.html">Work</a></li><li><a href="../about/">About</a></li><li><a href="../profile/">Profile</a></li></ul></nav>
   </div>
 </header>
 <main id="main">
@@ -40,6 +41,7 @@
         <span><time datetime="2026-08-25">August 25, 2026</time></span>
         <span>Originally published on LinkedIn</span>
       </p>
+      
     </header>
     <div class="prose">
 <p>A HoverCard with a label was a dialog that never said so. The trigger pointed at it with <code>aria-describedby</code>, so the first thing a screen reader user heard about the card was its contents, flattened into a description of the button.</p>
