@@ -416,11 +416,14 @@ h1 em {
   border-bottom: 1px solid var(--rule);
 }
 
-.entries a {
+.entries .row {
   display: grid;
   grid-template-columns: 8.5rem minmax(0, 1fr);
   gap: 0.2rem 2rem;
   padding: 1.6rem 0;
+}
+
+.entries .title a {
   text-decoration: none;
   color: inherit;
 }
@@ -451,14 +454,22 @@ h1 em {
   margin-top: 0.35rem;
 }
 
-.entries a:hover .title,
-.entries a:focus-visible .title {
+.entries .title a:hover,
+.entries .title a:focus-visible {
   color: var(--oxide);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
 }
 
-.entries a:focus-visible {
+.entries .title a:focus-visible {
   outline: 2px solid var(--oxide);
-  outline-offset: 6px;
+  outline-offset: 4px;
+}
+
+.entries .badge:hover,
+.entries .badge:focus-visible {
+  color: var(--ink);
+  border-color: var(--ink);
 }
 
 .badge {
@@ -1048,7 +1059,7 @@ footer.site a:hover {
     margin-top: 0;
   }
 
-  .entries a,
+  .entries .row,
   .index-list .row {
     grid-template-columns: 1fr;
     gap: 0.35rem;
@@ -1132,8 +1143,8 @@ footer.site a:hover {
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .entries a,
-  .index-list a {
+  .entries .row,
+  .index-list .row {
     transition: color 0.15s ease;
   }
 
